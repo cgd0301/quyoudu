@@ -1,0 +1,51 @@
+{
+  "name": "quyoudu",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "packageManager": "pnpm@12.11.2",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "node scripts/not-implemented.mjs",
+    "validate:cases": "node scripts/not-implemented.mjs",
+    "diff:oracle": "node scripts/not-implemented.mjs",
+    "golden:check": "tsx scripts/golden-check.ts",
+    "golden:freeze": "tsx scripts/golden-approve.ts",
+    "trace:update": "node scripts/not-implemented.mjs",
+    "test:report": "node scripts/not-implemented.mjs",
+    "figures": "node scripts/not-implemented.mjs",
+    "book:build": "node scripts/not-implemented.mjs",
+    "count:chars": "node scripts/not-implemented.mjs",
+    "lint": "oxlint",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "decimal.js": "^10.6.0",
+    "echarts": "^6.1.0",
+    "echarts-for-react": "^3.0.6",
+    "openai": "^7.32.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "tailwindcss": "^4.3.3",
+    "zod": "^4.6.6",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@mermaid-js/mermaid-cli": "^12.0.0",
+    "@playwright/test": "^1.64.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "fast-check": "^4.10.2",
+    "oxlint": "^1.81.0",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0",
+    "vitest": "^5.0.4"
+  }
+}
