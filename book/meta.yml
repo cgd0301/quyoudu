@@ -1,0 +1,13 @@
+# book/meta.yml
+title: "趣有度：跨城观演资金规划助手"
+subtitle: "2026 工行杯 / 青年群体服务赛道"
+team_name: "NaiLong(tmp)"
+school: "香港理工大学"
+members:
+  - name: "陈冠达"
+    role: "队长 / 产品与规则"
+  - name: "张洛华"
+    role: "计算与测试"
+  - name: "刘博文"
+    role: "原型实现"
+date: "2026-10"
