@@ -89,7 +89,7 @@
 - 历史观测可以用于R020的独立预测，但不能因其曾经有效而当作当前报价。独立预测须形成新的估算依据和输入版本，经确认后重新评估，不能声称过期报价恢复有效。
 - 没有可用历史时，可以用来源明确且按模拟时点有效的价格作为规划参考；参考价并不保证未来同价成交。连有效参考价也没有时保留待填，不补造。
 - 预测只能估算已知窗口内的价格，不能补出购买窗口、延期付款权利、优惠资格或库存保证。
-- 同一项目的价格依据按以下优先级取用：同一购买日的有效模拟报价＞已确认的合格预测＞有效参考价（标估算）＞待填；有可用历史时也不得以预测覆盖同一购买日的有效报价（V2.1 依 D-13 修订）。
+- 同一项目的价格依据按以下优先级取用：同一购买日的有效模拟报价＞已确认的合格预测＞有效参考价（标估算）＞有效期未知的报价（标估算）＞待填；有可用历史时也不得以预测覆盖同一购买日的有效报价（V2.1 依 D-13 修订）。
 - 影响功能：费用状态、候选检查、优惠校验、价格依据区分；
 - 对应测试：T009
 - 状态：已确认；对应测试待执行
@@ -554,41 +554,41 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 
 - D01 推荐数量K：Top-K使用K = 3；推荐结果、界面和测试输出同时显示“K=3（演示配置v1）”。K据此视为已配置，R016中“K未配置”的异常分支不触发；K = 3不是最终定案。
 - D02 技术配置：§7.1消费情景配置和§7.2价格预测配置全部启用，作为DEMO-CFG-1的组成部分。R018、R020的结果须记录所用配置版本；缺少配置版本引用的预测或情景结果，仍按R020第4条、§7.3处理。
-- D03 计算时点与快照阶段：as_of、cash_as_of用带时区偏移的ISO 8601时刻表示，偏移固定为+08:00，例如2026-09-01T09:00:00+08:00。快照阶段snapshot_phase只取三种值：DAY_START（as_of当日的事件均未计入快照）、AFTER_EVENT(n)（已计入至当日第n个事件）、DAY_END（当日事件均已计入）。as_of缺少时区偏移或缺少快照阶段时，按R001、R010视为输入冲突。n的计数顺序及时刻与阶段不一致的情形见SG-20。
-- D04 资金检查期间I：起点为as_of；终点为“最后一笔目标相关收付款日”与“其后第一笔已确认收入到账日”中较晚者；不存在后者时，终点为2027-01-01。任一必要事件晚于2027-01-01时，计划状态为“暂无法完整判断”，不截断时间轴（R008）。计算步骤见§10.1，边界情形见SG-08。
+- D03 计算时点与快照阶段：as_of、cash_as_of用带时区偏移的ISO 8601时刻表示，偏移固定为+08:00，例如2026-09-01T09:00:00+08:00。快照阶段snapshot_phase只取三种值：DAY_START（as_of当日的事件均未计入快照）、AFTER_EVENT(n)（已计入至当日第n个事件）、DAY_END（当日事件均已计入）。as_of缺少时区偏移或缺少快照阶段时，按R001、R010视为输入冲突。哪些事件已计入快照以各事件的in_snapshot为准（R002），snapshot_phase用于核对：n为as_of当日in_snapshot = true的收付款事件（GOAL_PAYMENT、OTHER_EXPENSE、INCOME、RETURN）笔数，机动预留释放、预留建立等非收付款事件不计数；DAY_START时该笔数为0，DAY_END时当日收付款事件均须已计入。下列情形按R001、R010视为输入冲突：快照阶段与计入标记不符；in_snapshot = true的事件不是实际发生（ACTUAL），或实际时刻晚于cash_as_of；已实际发生且实际时刻不晚于cash_as_of的事件未计入快照。
+- D04 资金检查期间I：起点为as_of；终点为“最后一笔目标相关收付款日”与“其后第一笔已确认收入到账日”中较晚者；不存在后者时，终点为2027-01-01。任一必要事件晚于2027-01-01时，计划状态为“暂无法完整判断”，不截断时间轴（R008）。计算步骤见§10.1，边界情形见SG-08，终点之后的已确认必要支出是否纳入见SG-26；逾期未履行的事件按§10.1第7步处理。
 
 #### 8.2 资金与时间轴（D05—D11）
 
-- D05 节点判定：在起始节点和每个事件节点计算G = C - L - N - O，H = G - M，U = H - A，并依次判定：①L + N + O + M > C，为保护性资金缺口；②否则若U < 0：出现在快照或用户修改分配、预留之后，为分配冲突，金额为-U；出现在某笔流出之后，为付款缺口，金额为-U，相关项目为该笔流出；③其余为通过。保护性资金缺口的判断包含M（V2.1 依 D-05 修订§1）。保护性资金缺口的金额与相关项目见SG-01，缺口持续时的后续节点见SG-02，与D07的关系见SG-03，其他节点类型见SG-04。步骤见§10.4。
+- D05 节点判定：在起始节点和每个事件节点计算G = C - L - N - O，H = G - M，U = H - A，并依次判定：①L + N + O + M > C，为保护性资金缺口；②否则若U < 0：出现在快照或用户修改分配、预留之后，为分配冲突，金额为-U；出现在某笔流出之后，为付款缺口，金额为-U，相关项目为该笔流出；③其余为通过。保护性资金缺口的判断包含M（V2.1 依 D-05 修订§1）。②按引起U下降的原因归类：收入节点因建立生活预留（D08）或计划分配转为A（D18）而首次出现U < 0，属预留、分配变化，为分配冲突，金额为-U。各类缺口的相关项目均为触发该节点判定的事件：流出、流出组内全部流出、收入及其建立的预留或计划分配；起始节点为快照或as_of时生效的用户修改。保护性资金缺口的金额见SG-01，缺口持续时的后续节点见SG-02。步骤见§10.4。
 - D06 本目标付款：先按覆盖关系核销预留q，每项核销不超过对应剩余预留（R003）；剩余部分r = x - q先冲减A，冲减额为min(r, A)；仍未覆盖的部分使用未分配资金。
-- D07 不属于本目标、也无预留覆盖的支出：只能使用未分配资金；不足即付款缺口；不得自动挪用A或保护资金。
+- D07 不属于本目标的支出中未被预留覆盖的部分（含完全无覆盖的支出）：只能使用未分配资金，不得自动挪用A或保护资金。不足时出现缺口，节点类型按D05判定：先判保护性资金缺口，否则为付款缺口；两者在计划状态中都属于“发现付款缺口”（D19）。
 - D08 未来生活预留：未来各期生活预留挂在指定的预计收入上，在该收入到账（或在假设时间线中到账）的节点建立；覆盖期结束时剩余部分默认不释放，即release_at_end = false。预留晚于覆盖期开始建立等情形见SG-07。
-- D09 机动预留与其他目标：M在活动结束日的次日释放为未分配资金，案例另有规定的除外。首版第二目标只表示为一条固定占用O，字段为名称和金额，无付款时间，在检查期间内保持不变。释放时点见SG-06。
+- D09 机动预留与其他目标：M在活动结束日的次日释放为未分配资金，案例另有规定的除外；用户取消计划时只释放A（R012），M的释放时点不变。首版第二目标只表示为一条固定占用O，字段为名称和金额，无付款时间，在检查期间内保持不变。释放时点见SG-06。
 - D10 同日顺序：先后已知时按已知顺序；先后未知时，流出排在不能确定已到账的流入之前；同日多笔流出先后未知时，报告日级累计缺口及相关项目列表，不指认其中哪一笔先失败。“先后已知”的判定见SG-05。
 - D11 缺口展示：界面显示最早缺口的日期、类型、金额、相关项目和计算依据，并可展开检查期间内的全部缺口节点。计算依据为该节点的C、L、N、O、M、A、G、H、U和D05判定分支。
 
 #### 8.3 成本、价格与候选（D12—D17）
 
-- D12 返现与R：同时满足“付款即返”“金额与日期明确”“不依赖后续行为”的返现计入R并参与排序；依赖后续条件的返现不计入R，结果中另显示“若到账”时的净支出。返现进入资金时间轴的时点仍按R005，不能提前填补缺口。“付款即返”的含义见SG-09。
-- D13 价格依据优先级：同一购买日的有效模拟报价＞已确认的合格预测＞有效参考价（标“估算”）＞待填。“合格”指满足§7.2的样本门槛和回测门槛（V2.1 依 D-13 修订R009、政策卡第五节“价格估算”）。未确认预测和有效期未知报价的位置见SG-10。
+- D12 返现与R：同时满足“付款即返”“金额与日期明确”“不依赖后续行为”的返现计入R并参与排序；依赖后续条件的返现不计入R，结果中另显示“若到账”时的净支出。返现进入资金时间轴的时点仍按R005，不能提前填补缺口。“付款即返”指付款完成即取得返现权利、不再需要其他行为或条件；到账日期可以晚于付款日，但必须明确，并按该日期进入假设时间线（R005）。
+- D13 价格依据优先级：同一购买日的有效模拟报价＞已确认的合格预测＞有效参考价（标“估算”）＞有效期未知的报价（标“估算”）＞待填。“合格”指满足§7.2的样本门槛和回测门槛（V2.1 依 D-13 修订R009、政策卡第五节“价格估算”）。未确认的预测不属于第二档，按顺序取下一档，并提示存在待确认的预测（D14）；有效期未知的报价按R009只作估算，不当作有效报价或有效参考价，因此排在有效参考价之后。
 - D14 预测确认：预测估算按“项目＋购买日”逐条确认，可以批量确认；未确认的预测不进入候选比较（R020第9条）。
 - D15 候选来源：候选完整组合由案例数据直接列出，并带固定编号C01、C02……；程序只做校验、排除和排序，不做排列组合生成。同价时按编号升序稳定展示和截取（R016第7条）。
-- D16 相容性约束字段：arrive_before_show_min、lodging_nights_required、return_after_show_min、seat_tier_allowed、lodging_max_distance_km、refundable_required。候选违反任一已填写的约束即确定性排除，并列明原因。各字段的单位、比较对象和取值见SG-11。
+- D16 相容性约束字段：arrive_before_show_min、lodging_nights_required、return_after_show_min、seat_tier_allowed、lodging_max_distance_km、refundable_required。候选违反任一已填写的约束即确定性排除，并列明原因；约束已填写而候选缺少比较所需字段时，该候选计入待确认数，不作排除（R010、R011）。各字段的单位、比较对象和取值见SG-11。
 - D17 优惠字段：type（立减／满减／折扣／返现／返券）、scope、threshold、valid_from、valid_to、applies_at（下单／付款）、max_uses、stackable_with、rounding。有效期按applies_at对应的时点判断（R009）；rounding未知时该优惠条件不完整，依赖它的候选不能完整评估，计入待确认数（R007、R011）；返券不从当前目标成本中扣除（政策卡第五节）。缺少的金额与比例字段等见SG-12。
 
 #### 8.4 确认与状态（D18—D20）
 
-- D18 确认时的分配：建议分配额 = min(剩余计划目标付款中未被预留覆盖的部分, 当前U0)；不足部分记为挂在指定预计收入上的计划分配，不计入当前A和U0。计划状态为“暂无法完整判断”“发现付款缺口”或“存在约束问题”的方案只能保存为“草案”，不写入正式分配（V2.1 依 D-18 修订R017第4条）。建议分配额与现有A的关系见SG-13。
+- D18 确认时的分配：记W为剩余计划目标付款中未被预留覆盖的部分，A0为现有本目标分配。建议分配额是在A0之上新增的金额：ΔA = max(0, min(W - A0, 当前U0))，确认后A = A0 + ΔA；不足部分max(0, W - A0) - ΔA记为挂在指定预计收入上的计划分配，不计入当前A和U0。A0 ≥ W时ΔA = 0，确认不调减现有A（调减属D29“改分配额”）。计划分配在所挂收入到账（或在假设时间线中到账）的节点转为A，与D08的生活预留相同（§10.3）。确认时按拟建立的A和计划分配重跑完整检查（§10.1—§10.4），计划状态为“按当前假设可行”时才一并写入确认状态、分配和付款任务，否则不写入（R017第2、3条，R013）。计划状态为“暂无法完整判断”“发现付款缺口”或“存在约束问题”的方案只能保存为“草案”，不写入正式分配（V2.1 依 D-18 修订R017第4条）。
 - D19 三类状态：计划状态、优化状态和确认状态分别保存；取值、优先级、触发条件和界面文案见§11。
 - D20 草案预览：没有已确认方案时，资金日历页基于用户初始描述或当前选中的候选显示“草案预览”，并标注“预览，未确认”；预览不写入正式账面，也不计算每日参考金额（D27）。两者并存时取哪一个见SG-14。
 
 #### 8.5 情景、预测与每日参考（D21—D27）
 
-- D21 消费类别：餐饮、本地交通、日用、娱乐、目标相关、收入、退款、转账。每个类别须标注“是否由生活预留覆盖”和“是否属非计划支出同口径”。收入、退款、转账及目标相关的一次性消费不进入日常支出均值（§7.1）。各类别的具体标注见SG-16。
+- D21 消费类别：餐饮、本地交通、日用、娱乐、目标相关、收入、退款、转账。每个类别须标注“是否由生活预留覆盖”和“是否属非计划支出同口径”；两项不得同时为“是”，因为同口径部分由待测额x替换，而x是未被预留覆盖的支出（R019第2条、D22）。标为由生活预留覆盖的情景支出，核销覆盖期间包含该日的生活预留，不足部分作为未覆盖支出（R003、§10.3）；可对应的生活预留不止一项时，属覆盖关系不清，该情景不可用（R018异常）。收入、退款、转账及目标相关的一次性消费不进入日常支出均值（§7.1）。各类别的具体标注见SG-16。
 - D22 今日情景替换额 = max(0, 今日情景额 - 今日已发生同口径支出)。R019第5条和§4第3步中由x替换的即这一部分。
-- D23 情景总额按分四舍五入（ROUND_HALF_UP），分币余数按§7.1从早到晚分配。作用对象见SG-17。
+- D23 情景总额按分四舍五入（ROUND_HALF_UP），分币余数按§7.1从早到晚分配。Pg按§5的组（同一类别、同一覆盖期间）分别计算和取整；Δg = max(0, Pg - Eg)按组算出后，在该组位于检查期间内的各日平均分摊，分币余数从早到晚分配，Eg的安排日期不改变Δg的分摊（§5、§7.1）。不先把Pg分摊到各日再逐日去重：Eg分布不均时，那样得到的逐日结果之和可能不等于Δg。
 - D24 预测样本：取预测起点前最近一段连续可比日级样本；不足14个时显示“历史不足”。
-- D25 数值规则：Holt中间值每步递推后按ROUND_HALF_UP（0.5远离零）保留12位小数，至少包括每步的l、b；TS实现使用decimal.js，Python独立核对使用decimal。最终预测金额按同一舍入方式转为整数分（§7.2）。其他中间量和运算精度见SG-18。
+- D25 数值规则：Holt中间值每步递推后按ROUND_HALF_UP（0.5远离零）保留12位小数；TS实现使用decimal.js，Python独立核对使用decimal。最终预测金额按同一舍入方式转为整数分（§7.2）。§7.2所称“模型中间数值”包括每步的l、b，以及φ幂和、一步预测值、误差平方、SSE、MAE和转为整数分前的预测值：每个量按其公式算出后保留12位小数，公式内部不另行舍入；参数选择比较舍入后的SSE，同值按α、β、φ升序取第一组（§7.2）。回测误差用保留12位小数的预测值计算，整数分只在预测进入金额计算时使用（R007）。运算精度见SG-18。
 - D26 每日参考的情景：2026年9月1日案例只按已确认安排计算；2026年10月1日案例同时计算“仅已确认安排”和“近月情景”两种结果，主展示其中较低者，并注明限制来源（R019第7条）。
 - D27 每日参考的前提：只在存在已确认方案时计算每日参考金额；没有已确认方案时显示“确认方案后可计算”，不显示0（V2.1 依 D-27 修订R019异常）。
 
@@ -761,12 +761,13 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 
 #### 10.1 检查期间（D04）
 
-1. 起点为as_of。快照已计入的事件按D03排除，其余事件按10.2排序后进入时间轴。
+1. 起点为as_of。快照已计入的事件按D03排除；其余事件中，预计日期不早于as_of的按10.2排序后进入时间轴，逾期事件按第7步处理。
 2. 在本计划的全部目标相关收付款中取日期最晚者，记为lastGoalDate。本计划指已确认方案；没有已确认方案时，指D20草案预览所依据的方案（SG-14）。
 3. 在lastGoalDate之后取第一笔已确认收入的到账日，记为nextIncomeDate。
 4. 存在nextIncomeDate时，终点为max(lastGoalDate, nextIncomeDate)；否则终点为2027-01-01。
 5. 任一必要事件晚于2027-01-01时，计划状态为“暂无法完整判断”，原因为超出边界；不截断时间轴（R008）。
-6. 条件收付款是否参与确定期间、终点日是否含当日全部事件等边界情形见SG-08。
+6. 条件收付款是否参与确定期间、终点日是否含当日全部事件等边界情形见SG-08；终点之后的已确认必要支出是否纳入见SG-26。
+7. 逾期事件：事件状态为EXPECTED、未计入快照，且预计日期早于as_of所在日期（有时刻精度的，预计时刻早于cash_as_of）。逾期事件保留在事件列表中并标“逾期”，不自动标为已付款或已到账（R005、R017第8条），也不静默删去（R008）。存在逾期事件时，计划状态为“暂无法完整判断”，原因为逾期事件待核对（R001：快照须与已发生事件同步）。附局部检查时，逾期流出按as_of时刻立即发生处理（R006、D10），逾期流入不计入（R005）。记录的预计日期不变；用户可用D29的收入延期或改付款日期给出新日期，形成新的输入版本。
 
 #### 10.2 事件类型与同日排序（D10）
 
@@ -774,7 +775,7 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 
 - GOAL_PAYMENT：本目标付款（D06）。
 - OTHER_EXPENSE：不属于本目标的支出，含生活支出；有预留覆盖时先核销（D07）。
-- INCOME：已确认的预计收入或实际收入；可带以其为funding_event_id的生活预留（D08）。
+- INCOME：已确认的预计收入或实际收入；可带以其为funding_event_id的生活预留（D08）和以其为所挂收入的计划分配（D18）。
 - RETURN：返现、退款等返还；金额、日期和条件均明确的进入假设时间线，依赖后续条件的只进入对应条件模拟（R005、D12）。
 - CONTINGENCY_RELEASE：活动结束日次日的机动预留释放（D09）。
 
@@ -785,7 +786,7 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 1. 按北京时间自然日分组（R008）。
 2. 同日内，先后已知的事件按已知顺序；先后未知时，流出（GOAL_PAYMENT、OTHER_EXPENSE）排在不能确定已到账的流入（INCOME、RETURN）之前（D10、R006）。
 3. 同日先后未知的多笔流出组成一个流出组：组内按event_id升序逐笔执行10.3，该顺序只用于确定性计算，不表示真实先后；组末只做一次节点判定，相关项目为组内全部流出（D10）。
-4. CONTINGENCY_RELEASE等非收支事件在同日中的位置，以及流出组内多笔共用同一预留时的覆盖分配，见SG-05、SG-06。
+4. 流出组内多笔声明由同一项预留覆盖时：各笔covered_amount之和不超过该预留在组开始时的剩余额的，各笔按声明额足额核销，组末结果与执行次序无关；超过的，各笔实际覆盖额取决于未知的先后，按输入冲突处理，计划状态为“暂无法完整判断”（R003、D10）。CONTINGENCY_RELEASE等非收支事件在同日中的位置见SG-05、SG-06。
 
 #### 10.3 逐事件计算步骤
 
@@ -801,7 +802,8 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
   3. r = x - q由未分配资金承担；A和未被覆盖的各项预留不变。
 - INCOME：
   1. C ← C + x；
-  2. 以该收入为funding_event_id的生活预留在本节点建立：L ← L + 该预留金额，并记录其覆盖期间和release_at_end，release_at_end默认为false（D08）。
+  2. 以该收入为funding_event_id的生活预留在本节点建立：L ← L + 该预留金额，并记录其覆盖期间和release_at_end，release_at_end默认为false（D08）；
+  3. 以该收入为所挂收入的计划分配在本节点转为本目标分配：A ← A + 该计划分配额（D18）。
 - RETURN：
   1. 金额、日期和条件均明确且不依赖后续行为的：C ← C + x（R005）；
   2. 依赖后续条件的：基础时间轴不计入，只在对应条件模拟中计入（R005、D12）。
@@ -821,23 +823,25 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
    - 起始节点：分配冲突（ALLOCATION_CONFLICT），金额为-U，即L + N + O + M + A - C；
    - 由一笔流出触发：付款缺口（PAYMENT_SHORTFALL），金额为-U，相关项目为该笔流出；
    - 由流出组触发：日级累计付款缺口，金额为组末-U，相关项目为组内全部流出（D10）；
-   - 其他节点：此前节点已有缺口时属于缺口持续，见SG-02；首次出现时类型未定义，见SG-04。
+   - 收入节点且上一节点U ≥ 0：U的下降来自本节点建立的生活预留或转入A的计划分配，为分配冲突（ALLOCATION_CONFLICT），金额为-U，相关项目为该收入及其建立的预留或计划分配（D05）；
+   - 其他节点，以及上一节点已有缺口的收入节点：属于缺口持续，见SG-02。
 4. 否则：通过（PASS）。
 5. 记录节点的日期时刻、触发事件、C、L、N、O、M、A、G、H、U、判定结果、金额和相关项目，作为D11的计算依据。
 6. 汇总：
    - 最早缺口为检查期间内第一个判定为保护性资金缺口或付款缺口的节点；分配冲突作为约束问题另列（R010、D19）。
    - 检查期间内存在保护性资金缺口或付款缺口时，计划状态为“发现付款缺口”；只有分配冲突或预算超限时，为“存在约束问题”；优先级见§11.1。
-7. 保护性资金缺口的金额（-H或-U）与相关项目见SG-01；缺口持续时后续节点是否重复列出、金额按累计还是增量见SG-02；与D07措辞的冲突见SG-03。
+7. 保护性资金缺口的金额（-H或-U）见SG-01，相关项目同第3步各类缺口，为触发该节点判定的事件（D05）；缺口持续时后续节点是否重复列出、金额按累计还是增量见SG-02。
 
-由D05、D06直接推出（不是新规则）：本目标付款使U由非负变为负时，A已冲减为0，此时U = H < 0，即L + N + O + M > C。因此本目标付款不足一律判为保护性资金缺口，且该节点-H = -U；“付款缺口”类型只由不属于本目标、且无预留覆盖的支出产生。
+由D05、D06直接推出（不是新规则）：本目标付款使U由非负变为负时，A已冲减为0，此时U = H < 0，即L + N + O + M > C。因此本目标付款不足一律判为保护性资金缺口，且该节点-H = -U；单笔流出触发的“付款缺口”只由不属于本目标的支出中未被预留覆盖的部分产生，完全无覆盖或部分覆盖的支出都可能触发（例见T003-07）。
 
 #### 10.5 每日参考金额的前提（D27）
 
 1. 不存在已确认方案时，不计算D，显示“确认方案后可计算”，不显示0。
 2. 关键资金、付款、生活安排、用途或检查期间不足时，显示“暂无法给出建议金额”及原因（R019）。
-3. 否则按§4计算：检查期间按10.1；情景集合S按D26；x作为as_of时刻不属于本目标、无预留覆盖的流出，排在时间轴最前，按10.3、10.4检查；今日同口径情景支出按D22替换。
-4. 任一所选情景在x = 0时已出现缺口或冲突，显示“当前不建议新增非计划支出”，可以显示0元并说明原因（R019）。
-5. 否则，每个情景的D为满足x ≤ U0且全部节点通过的最大整数分x；主展示各情景D中的较低者，并注明限制来源（D26、R019第7条）。
+3. 否则按§4计算：检查期间按10.1；方案金额取已确认方案版本，尚未确认的新价格估算只用于R017第10条的风险重评和待确认差异，不进入D的计算（R019输入为已确认方案）；情景集合S按D26；x作为as_of时刻不属于本目标、无预留覆盖的流出，排在时间轴最前，按10.3、10.4检查；今日同口径情景支出按D22替换。
+4. D26所选的近月情景因历史不足、记录不完整、配置版本缺失、类别标注缺失或覆盖关系不清而不可用时（R018异常），从S中移出，不按0元或缺口处理；结果按“仅已确认安排”给出，标“仅依据已确认安排”，并列出不可用的情景及原因（R019异常、R010）。“仅已确认安排”本身无法评估的，按第2步处理。
+5. S中任一情景在x = 0时检查不通过（出现缺口、冲突或预算超限），显示“当前不建议新增非计划支出”，可以显示0元并说明原因（R019）。
+6. 否则，每个情景的D为满足x ≤ U0且检查通过的最大整数分x；主展示各情景D中的较低者，并注明限制来源（D26、R019第7条）。
 
 #### 10.6 伪代码
 
@@ -846,18 +850,21 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 function runTimeline(start: Snapshot, events: TimelineEvent[], plan: Plan): TimelineResult {
   const period = checkPeriod(start.asOf, plan)                          // 10.1 / D04
   if (period.outOfRange) return incomplete('超出边界')                   // R008
+  const issues = [...snapshotConflicts(start, events), ...overdueIssues(start, events)] // D03 / 10.1 第7步
   const s: State = cloneBalances(start)                                 // cash、各项预留剩余额、otherGoalHold、goalAllocation
-  const nodes: NodeRecord[] = [judge(s, { kind: 'START' })]             // 快照与 as_of 时生效的用户修改
-  for (const step of orderSameDay(eventsWithin(events, period))) {      // 10.2 / D10
+  const nodes: NodeRecord[] = [judge(s, { kind: 'START' }, null)]       // 快照与 as_of 时生效的用户修改
+  for (const step of orderSameDay(eventsWithin(events, period))) {      // 10.2 / D10；逾期流出按 as_of 排入（10.1 第7步）
+    const prevUnallocated = nodes[nodes.length - 1].unallocated
     if (step.kind === 'OUTFLOW_GROUP') {
-      for (const e of sortByEventId(step.events)) apply(s, e)           // 组内顺序只用于计算
-      nodes.push(judge(s, { kind: 'OUTFLOW_GROUP', events: step.events }))
+      if (coverageOversubscribed(s, step.events)) issues.push(inputConflict('同一预留的覆盖声明合计超过剩余额')) // 10.2 第4步
+      for (const e of sortByEventId(step.events)) apply(s, e)           // 未超额时组末结果与次序无关
+      nodes.push(judge(s, { kind: 'OUTFLOW_GROUP', events: step.events }, prevUnallocated))
     } else {
       apply(s, step.event)                                              // 10.3 / D06—D09
-      nodes.push(judge(s, triggerOf(step.event)))                       // 流出为 OUTFLOW，其余为 OTHER
+      nodes.push(judge(s, triggerOf(step.event), prevUnallocated))      // 流出为 OUTFLOW，收入为 INCOME，其余为 OTHER
     }
   }
-  return summarize(nodes)                                               // 10.4 第6步 / D11
+  return summarize(nodes, issues)                                       // 10.4 第6步 / D11；issues 非空时为暂无法完整判断
 }
 
 function apply(s: State, e: TimelineEvent): void {
@@ -872,9 +879,10 @@ function apply(s: State, e: TimelineEvent): void {
       s.cash -= e.amount
       writeOff(s, e.coverage)
       break
-    case 'INCOME':                                                      // D08
+    case 'INCOME':                                                      // D08 / D18
       s.cash += e.amount
       for (const rsv of reservesFundedBy(e)) establish(s, rsv)          // releaseAtEnd 默认 false
+      s.goalAllocation += plannedAllocationFundedBy(e)                  // 计划分配在所挂收入到账时转为 A
       break
     case 'RETURN':                                                      // R005 / D12
       if (e.unconditional) s.cash += e.amount                           // 依赖后续条件的只进条件模拟
@@ -885,19 +893,24 @@ function apply(s: State, e: TimelineEvent): void {
   }
 }
 
-function judge(s: State, trigger: Trigger): NodeRecord {                // D05
+function judge(s: State, trigger: Trigger, prevUnallocated: number | null): NodeRecord { // D05
   const goalAvailable = s.cash - s.livingReserve - s.otherProtectedReserve - s.otherGoalHold
   const paymentHeadroom = goalAvailable - s.contingencyReserve
   const unallocated = paymentHeadroom - s.goalAllocation
   const protectedTotal =
     s.livingReserve + s.otherProtectedReserve + s.otherGoalHold + s.contingencyReserve
-  if (protectedTotal > s.cash) return record(s, trigger, 'PROTECTED_SHORTFALL', specGap('SG-01'))
+  const related = relatedOf(trigger)                                    // 触发该节点判定的事件（D05）
+  if (protectedTotal > s.cash) return record(s, trigger, 'PROTECTED_SHORTFALL', specGap('SG-01'), related)
   if (unallocated < 0) {
     switch (trigger.kind) {
-      case 'START':         return record(s, trigger, 'ALLOCATION_CONFLICT', -unallocated)
-      case 'OUTFLOW':       return record(s, trigger, 'PAYMENT_SHORTFALL', -unallocated, [trigger.event])
-      case 'OUTFLOW_GROUP': return record(s, trigger, 'PAYMENT_SHORTFALL', -unallocated, trigger.events)
-      default:              return record(s, trigger, specGap('SG-02', 'SG-04'))
+      case 'START':         return record(s, trigger, 'ALLOCATION_CONFLICT', -unallocated, related)
+      case 'OUTFLOW':
+      case 'OUTFLOW_GROUP': return record(s, trigger, 'PAYMENT_SHORTFALL', -unallocated, related)
+      case 'INCOME':
+        if (prevUnallocated !== null && prevUnallocated >= 0)           // 建立预留或计划分配转入 A 后首次为负
+          return record(s, trigger, 'ALLOCATION_CONFLICT', -unallocated, related)
+        return record(s, trigger, specGap('SG-02'))
+      default:              return record(s, trigger, specGap('SG-02'))  // 缺口持续
     }
   }
   return record(s, trigger, 'PASS')
@@ -906,7 +919,9 @@ function judge(s: State, trigger: Trigger): NodeRecord {                // D05
 function dailyReference(plan: Plan, scenarioSet: Scenario[], u0: number): DailyRefResult { // D27 / R019 / §4
   if (plan.confirmationState !== 'CONFIRMED') return { display: '确认方案后可计算' }        // 不显示 0
   if (missingKeyInputs(plan)) return { display: '暂无法给出建议金额', reasons: missingReasons(plan) }
-  const results = scenarioSet.map((sc) => {
+  const usable = scenarioSet.filter((sc) => sc.available)              // 10.5 第4步；“仅已确认安排”始终在内
+  const unavailable = scenarioSet.filter((sc) => !sc.available).map((sc) => ({ scenario: sc, reason: sc.unavailableReason }))
+  const results = usable.map((sc) => {
     if (!passesAll(plan, sc, 0)) return { scenario: sc, blocked: true }
     let lo = 0
     let hi = u0                                                         // x ≤ U0（R019 第3条）
@@ -917,19 +932,20 @@ function dailyReference(plan: Plan, scenarioSet: Scenario[], u0: number): DailyR
     }
     return { scenario: sc, amount: lo }
   })
-  if (results.some((r) => r.blocked)) return { display: '当前不建议新增非计划支出', amount: 0 }
+  if (results.some((r) => r.blocked)) return { display: '当前不建议新增非计划支出', amount: 0, unavailable }
   const lowest = minBy(results, (r) => r.amount)                        // D26：取较低者并注明来源
-  return { amount: lowest.amount, limitedBy: lowest.scenario }
+  const label = usable.length === 1 ? '仅依据已确认安排' : undefined     // R019 异常、D26
+  return { amount: lowest.amount, limitedBy: lowest.scenario, label, unavailable }
 }
 ```
 
-passesAll(plan, sc, x)：在情景sc下按D22替换今日同口径情景支出，把x作为as_of时刻不属于本目标、无预留覆盖的流出插在时间轴最前，运行runTimeline；全部节点为PASS时返回true。
+passesAll(plan, sc, x)：方案金额取已确认方案版本（10.5第3步）；在情景sc下按D22替换今日同口径情景支出，把x作为as_of时刻不属于本目标、无预留覆盖的流出插在时间轴最前，运行runTimeline；全部节点为PASS，且预算检查通过（P + F - R ≤ B，§3、§4第6步）时返回true。x不改变P、F、R，所以预算超限时x = 0即不通过，按10.5第5步显示“当前不建议新增非计划支出”并列出预算超限额。
 
 #### 10.7 例1：最早缺口按D05判定
 
 本例取自review_v2.0.md第三节第3条。
 
-- 初始：as_of = 2026-09-01T09:00:00+08:00，DAY_START；C0 = 1000，L0 = 300，N0 = O0 = M0 = 0，A0 = 400。
+- 初始：as_of = 2026-09-01T09:00:00+08:00，DAY_START；C0 = 1000，L0 = 300，N0 = O0 = M0 = 0，A0 = 400；B = 900，除9月10日的本目标付款外没有其他费用。
 - 事件：9月5日一笔不属于本目标、无预留覆盖的支出400；9月10日本目标付款400，无预留覆盖。
 - 检查期间：最后一笔目标相关收付款在9月10日，其后没有已确认收入，终点为2027-01-01（D04）。
 
@@ -951,6 +967,7 @@ passesAll(plan, sc, x)：在情景sc下按D22替换今日同口径情景支出�
 c01是本节和traceability.csv使用的基础资金数据：
 
 - as_of = 2026-09-01T09:00:00+08:00，DAY_START；C0 = 1000，L0 = 300，M0 = 200，A0 = 400，N0 = O0 = 0；除各测试列出的事件外，没有其他事件。
+- 预算与费用：B = 900；各测试列出的本目标收付款即所检查计划的全部收付款，其余必要费用均已填或明确不适用，P = 0，无返还；各测试另有规定的从其规定。断言计划状态或每日参考的子用例依赖这些设定（R010、§11.1）。
 - 快照：G0 = 1000 - 300 = 700，H0 = 700 - 200 = 500，U0 = 500 - 400 = 100；L0 + N0 + O0 + M0 + A0 = 900 ≤ 1000，通过。
 
 | 测试 | 操作 | C | L | M | A | G | H | U | 结论 |
@@ -976,7 +993,7 @@ c01是本节和traceability.csv使用的基础资金数据：
 
 | 优先级 | 取值 | 枚举值 | 触发条件 | 界面文案与必显字段 |
 |----|----|----|----|----|
-| 1 | 暂无法完整判断 | INCOMPLETE | 关键费用、付款时间、资金信息、预算或优惠条件缺失（R010）；输入冲突，包括cash_as_of与as_of不对应（R001）、as_of格式不符（D03）、覆盖关系合计超过支出额（R003）；关键报价失效（R009）；必要事件晚于2027-01-01（D04、R008）；非人民币输入（R008） | “暂无法完整判断”；列出缺失或冲突原因；可附已确认的局部缺口（R010） |
+| 1 | 暂无法完整判断 | INCOMPLETE | 关键费用、付款时间、资金信息、预算或优惠条件缺失（R010）；输入冲突，包括cash_as_of与as_of不对应（R001）、as_of格式不符（D03）、覆盖关系合计超过支出额（R003）、快照阶段与计入标记不符（D03）、流出组内对同一预留的覆盖声明合计超过其剩余额（§10.2）；存在逾期未履行的预计事件（§10.1）；关键报价失效（R009）；必要事件晚于2027-01-01（D04、R008）；非人民币输入（R008） | “暂无法完整判断”；列出缺失或冲突原因；可附已确认的局部缺口（R010） |
 | 2 | 发现付款缺口 | PAYMENT_GAP | 检查期间内任一节点判定为保护性资金缺口或付款缺口（D05、D19） | “发现付款缺口”；最早缺口的日期、类型、金额、相关项目和计算依据，可展开全部缺口节点（D11） |
 | 3 | 存在约束问题 | CONSTRAINT_ISSUE | 预算超限，即P + F - R > B，金额为P + F - R - B；或分配冲突（D05）；且不存在更高优先级的状态 | “存在约束问题”；逐项列出预算超限额和分配冲突额；不得称为付款缺口（R010） |
 | 4 | 按当前假设可行 | FEASIBLE_UNDER_ASSUMPTIONS | 检查期间内全部节点通过，预算检查和分配检查通过 | “按当前假设可行”；列出依赖条件：尚未到账的预计收入及日期、已确认的预测估算和其他估算费用（R010）；不得显示为资金已经充足 |
@@ -1006,8 +1023,8 @@ c01是本节和traceability.csv使用的基础资金数据：
 |----|----|----|----|
 | 未选择 | NOT_SELECTED | 用户尚未选择该候选 | “未选择” |
 | 待用户确认 | PENDING_CONFIRMATION | 用户已选择，尚未确认 | “待用户确认”；完整方案、金额依据、依赖条件、付款安排、D18建议分配额及拟发生的分配差额（R017第2条）；输入版本已变化时先重新检查 |
-| 已确认 | CONFIRMED | 用户确认，且确认时计划状态为“按当前假设可行” | “已确认”；方案版本和输入版本；不表示已经付款，也不替代可行性判断（R010） |
-| 草案 | DRAFT | 用户保存的方案在保存时计划状态为暂无法完整判断、发现付款缺口或存在约束问题（D18、R017第4条） | “草案”；问题和风险说明；不写入正式分配；资金日历页标“预览，未确认”（D20） |
+| 已确认 | CONFIRMED | 用户确认，且按D18拟建立的分配和计划分配重跑后计划状态为“按当前假设可行” | “已确认”；方案版本和输入版本；不表示已经付款，也不替代可行性判断（R010） |
+| 草案 | DRAFT | 用户保存的方案在保存时计划状态为暂无法完整判断、发现付款缺口或存在约束问题，含按D18拟建立的分配重跑后才出现的问题（D18、R017第4条） | “草案”；问题和风险说明；不写入正式分配；资金日历页标“预览，未确认”（D20） |
 
 - 确认后计划状态可能因输入变化而改变，确认状态不随之自动改变；更换渠道、改变购买或付款日期、改变优惠安排、替换正式方案、暂停或取消均须再次确认（R017第9—11条）。
 - 同一方案版本重复确认，不重复分配资金或生成任务（R017第5条）。

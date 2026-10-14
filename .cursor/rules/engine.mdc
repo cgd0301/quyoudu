@@ -1,3 +1,10 @@
 ---
-alwaysApply: true
+description: 计算引擎规则
+globs: src/engine/**,tests/unit/**
+alwaysApply: false
 ---
+- evaluate(caseData, inputVersion, config) 是纯函数：不读写全局状态、不联网、不读系统时间。
+- 每个输出金额带 basis：参与计算的事件编号、预留编号、规则编号，供界面和解释模板使用。
+- 事件排序：日期 → 已知时刻 → 同日先后未知时流出排在不确定流入之前（R006、D10）。
+- 状态与文案只能取 rules.md §11 的枚举。
+- 预测用 decimal.js，按 D25 舍入，进入金额计算前转为整数分。
