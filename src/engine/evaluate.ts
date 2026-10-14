@@ -3,6 +3,7 @@ import { inputIssues, type InputIssue } from './issues/index.ts'
 import { makeMoney } from './money.ts'
 import { normalize } from './normalize/index.ts'
 import { applyMutation, ensureCheckpoint, type Op } from './ops/index.ts'
+import { priceCandidates } from './pricing/index.ts'
 import type { ResultCore } from './result.ts'
 import type { CaseFile } from './schema.ts'
 import { buildSnapshot } from './snapshot/index.ts'
@@ -53,6 +54,7 @@ function skeleton(
   config: EngineConfig,
 ): ResultCore {
   const normalized = normalize(data)
+  const priced = new Map(priceCandidates(normalized).map((row) => [row.candidateId, row]))
   const report = inputIssues(data, opIssues)
   const confirmed = data.confirmed_plan != null
   const labels: ResultCore['labels'] = ['SIMULATED_DATA', 'TOP_K_DEMO']
@@ -103,8 +105,8 @@ function skeleton(
       candidateId: candidate.candidate_id,
       planVersion: `${candidate.candidate_id}@v1`,
       evaluable: false,
-      pendingReasons: [],
-      excludedReasons: [],
+      pendingReasons: priced.get(candidate.candidate_id)?.pendingReasons ?? [],
+      excludedReasons: priced.get(candidate.candidate_id)?.excludedReasons ?? [],
       feasible: null,
       netSpend: null,
       netSpendIfReceived: null,
