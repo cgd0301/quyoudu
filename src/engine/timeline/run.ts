@@ -88,8 +88,16 @@ function slotOf(state: State, reserveId: string): Slot | undefined {
   return state.slots.find((slot) => slot.reserveId === reserveId)
 }
 
-/** R003、§10.3 第2步：返回 q。未建立的预留 q=0（D40）；q 不超过 x（SPEC-GAP SG-57） */
+/** 覆盖声明合计。T003-04：超过支出额时不执行核销 */
+function declaredCoverage(event: TimelineEvent): number {
+  let declared = 0
+  for (const cover of event.coverage) declared += Math.max(0, cover.coveredAmount)
+  return declared
+}
+
+/** R003、§10.3 第2步：返回 q。未建立的预留 q=0（D40）；未超过支出额时 q 不超过剩余额（SPEC-GAP SG-57） */
 function writeOff(state: State, event: TimelineEvent): number {
+  if (event.coverage.length > 0 && declaredCoverage(event) > event.amount) return 0
   let q = 0
   for (const cover of event.coverage) {
     const slot = slotOf(state, cover.reserveId)

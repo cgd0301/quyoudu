@@ -1,12 +1,13 @@
 import type { EngineConfig } from './config.ts'
+import { buildCost } from './cost/index.ts'
 import { inputIssues, type InputIssue } from './issues/index.ts'
-import { makeMoney } from './money.ts'
 import { normalize } from './normalize/index.ts'
 import { applyMutation, ensureCheckpoint, type Op } from './ops/index.ts'
 import { priceCandidates } from './pricing/index.ts'
 import type { ResultCore } from './result.ts'
 import type { CaseFile } from './schema.ts'
 import { buildSnapshot } from './snapshot/index.ts'
+import { buildDependencies, buildStates, withStateLabels } from './states/index.ts'
 import { runTimeline, timelineInput, type PlanLifecycle } from './timeline/index.ts'
 
 export type Checkpoint = {
@@ -43,10 +44,6 @@ function userConfirmations(data: CaseFile, version: number): ResultCore['userCon
   })
 }
 
-function zeroMoney() {
-  return makeMoney(0)
-}
-
 function skeleton(
   data: CaseFile,
   version: number,
@@ -60,17 +57,47 @@ function skeleton(
   const report = inputIssues(data, opIssues)
   // D47：已确认方案，否则当前选中的候选
   const planCandidateId = data.confirmed_plan?.candidate_id ?? selectedCandidateId
+  const planPriced = planCandidateId == null ? undefined : priced.get(planCandidateId)
   const timeline = runTimeline(
     timelineInput(normalized, {
       candidateId: planCandidateId,
-      priced: planCandidateId === null ? undefined : priced.get(planCandidateId),
+      priced: planPriced,
       lifecycle,
     }),
   )
   const confirmed = data.confirmed_plan != null
-  const labels: ResultCore['labels'] = ['SIMULATED_DATA', 'TOP_K_DEMO']
-  if (!confirmed) labels.push('DRAFT_PREVIEW', 'PREVIEW_UNCONFIRMED')
+  const planTarget = confirmed ? 'CONFIRMED_PLAN' : selectedCandidateId != null ? 'SELECTED_CANDIDATE' : 'NONE'
+  const confirmations = userConfirmations(data, version)
+  const labels = withStateLabels(['SIMULATED_DATA', 'TOP_K_DEMO'], planTarget, confirmations)
   if (report.preRangePaid) labels.push('PRE_RANGE_PAID')
+  const snapshot = buildSnapshot(normalized)
+  const costReport = buildCost({
+    data: normalized,
+    candidateId: planCandidateId,
+    priced: planPriced,
+    lifecycle,
+    snapshot,
+  })
+  const issues = [...report.issues, ...timeline.issues]
+  const states = buildStates({
+    issues,
+    nodes: timeline.nodes,
+    allocationConflicts: timeline.allocationConflicts,
+    lifecycle,
+    confirmed,
+    selected: selectedCandidateId != null,
+    budgetCap: normalized.goal.budgetCap,
+    unresolvedNecessary: costReport.unresolvedNecessary,
+    pendingCount: planPriced?.pendingReasons.length ?? 0,
+    planTarget,
+    overrun: costReport.cost.budgetOverrun,
+  })
+  const dependencies = buildDependencies({
+    feasible: (states.underlyingPlanState ?? states.planState) === 'FEASIBLE_UNDER_ASSUMPTIONS',
+    data: normalized,
+    facts: costReport.facts,
+    futureReturns: costReport.futureReturns,
+  })
   const living = normalized.snapshot.livingArrangement
   let dailyReference: ResultCore['dailyReference']
   if (living === 'NOT_PROVIDED') {
@@ -80,38 +107,20 @@ function skeleton(
   } else {
     dailyReference = { display: 'NEED_CONFIRMED_PLAN', unavailable: [], missingReasons: [] }
   }
-  const planTarget = confirmed ? 'CONFIRMED_PLAN' : selectedCandidateId != null ? 'SELECTED_CANDIDATE' : 'NONE'
   return {
     asOf: data.snapshot.as_of,
     inputVersion: versionLabel(version),
     configVersion: config.configVersion,
     topKLabel: config.topKLabel,
     checkPeriod: { ...timeline.checkPeriod, outOfRange: report.outOfRange || timeline.checkPeriod.outOfRange },
-    inputIssues: [...report.issues, ...timeline.issues],
-    snapshot: buildSnapshot(normalized),
+    inputIssues: issues,
+    snapshot,
     nodes: timeline.nodes,
     earliestGap: timeline.earliestGap,
     gapList: timeline.gapList,
-    constraintIssues: { budgetOverrun: null, allocationConflicts: timeline.allocationConflicts },
-    cost: {
-      paidTotal: zeroMoney(),
-      futurePayable: null,
-      eligibleReturn: zeroMoney(),
-      netSpend: null,
-      netSpendIfReceived: null,
-      budgetOverrun: null,
-      paidPayments: [],
-      futurePayments: [],
-      protectedReserves: {
-        livingReserve: zeroMoney(),
-        otherProtectedReserve: zeroMoney(),
-        otherGoalHold: zeroMoney(),
-      },
-      contingencyReserve: zeroMoney(),
-      pendingCostItemIds: [],
-      possibleRefund: null,
-    },
-    dependencies: [],
+    constraintIssues: { budgetOverrun: costReport.cost.budgetOverrun, allocationConflicts: timeline.allocationConflicts },
+    cost: costReport.cost,
+    dependencies,
     candidates: data.candidates.map((candidate) => ({
       candidateId: candidate.candidate_id,
       planVersion: `${candidate.candidate_id}@v1`,
@@ -135,14 +144,8 @@ function skeleton(
     actionList: [],
     dailyReference,
     pendingDifferences: [],
-    userConfirmations: userConfirmations(data, version),
-    states: {
-      planState: 'INCOMPLETE',
-      underlyingPlanState: null,
-      optimizationState: 'NOT_COMPARED',
-      confirmationState: 'NOT_SELECTED',
-      planTarget,
-    },
+    userConfirmations: confirmations,
+    states,
     labels,
   }
 }

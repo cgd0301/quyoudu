@@ -360,16 +360,18 @@ describe('§2 预留核销与 §10.3 逐事件计算', () => {
     expect(node.paymentHeadroom.value).toBe(50000 - (40000 - 30000))
   })
 
-  test('覆盖声明合计超过支出额时仍有 q≤x：全部被覆盖的支出不再扣减付款空间', () => {
+  test('T003-04 覆盖合计超过支出额时不执行核销，现金仍扣支出额', () => {
     const result = run(
       withCase((draft) => {
         draft.events.push(expense({ amount: 10000, coverage: [covered('R-LIV-09', 20000)] }))
       }),
     )
     expect(codes(result)).toContain('COVERAGE_EXCEEDS_AMOUNT')
+    const start = nth(result, 0)
     const node = nodeOf(result, 'E1')
-    expect(node.livingReserve.value).toBe(30000 - 10000)
-    expect(node.paymentHeadroom.value).toBe(50000)
+    expect(node.livingReserve.value).toBe(start.livingReserve.value)
+    expect(node.cash.value).toBe(start.cash.value - 10000)
+    expect(node.paymentHeadroom.value).toBe(start.paymentHeadroom.value - 10000)
   })
 
   test('多项预留共同覆盖时 q 为不重叠核销额之和，只有未覆盖部分冲减 A', () => {
@@ -1109,13 +1111,13 @@ describe('性质', () => {
         const takenLiving = start.livingReserve.value - node.livingReserve.value
         const takenContingency = start.contingencyReserve.value - node.contingencyReserve.value
         const q = takenLiving + takenContingency
+        const declared = entry.coverLiving + entry.coverContingency
+        const withinSpend = Math.min(entry.coverLiving, entry.living) + Math.min(entry.coverContingency, entry.contingency)
         expect(takenLiving).toBeGreaterThanOrEqual(0)
         expect(takenLiving).toBeLessThanOrEqual(Math.min(entry.coverLiving, entry.living))
         expect(takenContingency).toBeGreaterThanOrEqual(0)
         expect(takenContingency).toBeLessThanOrEqual(Math.min(entry.coverContingency, entry.contingency))
-        expect(q).toBe(
-          Math.min(entry.amount, Math.min(entry.coverLiving, entry.living) + Math.min(entry.coverContingency, entry.contingency)),
-        )
+        expect(q).toBe(declared > entry.amount ? 0 : Math.min(entry.amount, withinSpend))
         expect(node.cash.value).toBe(start.cash.value - entry.amount)
         expect(node.paymentHeadroom.value).toBe(start.paymentHeadroom.value - (entry.amount - q))
         expect(start.goalAllocation.value - node.goalAllocation.value).toBe(
