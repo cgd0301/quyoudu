@@ -1,0 +1,687 @@
+{
+  "test_id": "T019-09",
+  "rule": "R019",
+  "layer": "ENGINE",
+  "needs_review": false,
+  "source_text": "初始：同T019-03，但9/15为MISSING，完整历日只有29个；操作：计算D；预期：近月情景按§7.1不可用（历史不足），从情景集合中移出；按“仅已确认安排”计算D=100，标“仅依据已确认安排”，并列出近月情景不可用及原因；不显示“当前不建议新增非计划支出”，也不以0元或“暂无法给出建议金额”代替",
+  "base": null,
+  "input": {
+    "meta": {
+      "case_id": "T019-09",
+      "purpose": "同 T019-03 的已确认安排，另给 9 月娱乐消费记录，其中 9/15 为 MISSING，完整历日只有 29 个。",
+      "data_version": "1",
+      "simulated": true,
+      "source_type": "HAND_WRITTEN",
+      "generator": "cursor-agent",
+      "batch": "vectors-2026-10-14",
+      "created_at_real": "2026-10-14T20:00:00+08:00",
+      "demo_points": []
+    },
+    "snapshot": {
+      "as_of": "2026-10-01T09:00:00+08:00",
+      "cash_as_of": "2026-10-01T09:00:00+08:00",
+      "snapshot_phase": "DAY_START",
+      "cash": 100000,
+      "goal_allocation": 40000,
+      "other_goal_hold": null
+    },
+    "reserves": [
+      {
+        "reserve_id": "R-LIV-10",
+        "reserve_kind": "LIVING",
+        "amount": 30000,
+        "coverage_start": "2026-10-01",
+        "coverage_end": "2026-10-31",
+        "release_at_end": false
+      }
+    ],
+    "events": [
+      {
+        "event_id": "E-LIV-1009",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "amount": 30000,
+        "expected_at": "2026-10-09",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [
+          {
+            "reserve_id": "R-LIV-10",
+            "covered_amount": 30000
+          }
+        ],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY",
+        "category": "MEALS"
+      },
+      {
+        "event_id": "E-INC",
+        "event_kind": "INCOME",
+        "event_status": "EXPECTED",
+        "amount": 50000,
+        "expected_at": "2026-10-10",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY"
+      }
+    ],
+    "goal": {
+      "goal_id": "G1",
+      "budget_cap": 60000,
+      "show_start_at": "2026-10-27T19:30:00+08:00",
+      "show_end_at": "2026-10-27T22:00:00+08:00",
+      "venue_city": "上海",
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "arrive_before_show_min": null,
+      "return_after_show_min": null,
+      "lodging_nights_required": null,
+      "seat_tier_allowed": null,
+      "lodging_max_distance_m": null,
+      "refundable_required": null
+    },
+    "cost_items": [
+      {
+        "cost_item_id": "TICKET",
+        "category": "TICKET",
+        "necessary": true,
+        "amount_status": "CONFIRMED"
+      }
+    ],
+    "candidates": [
+      {
+        "candidate_id": "C01",
+        "items": [
+          {
+            "cost_item_id": "TICKET",
+            "channel": "渠道甲",
+            "spec": "B",
+            "price": 60000,
+            "currency": "CNY",
+            "price_basis": "QUOTE",
+            "order_id": "O1",
+            "purchase_date": "2026-10-08",
+            "payment_at": "2026-10-08",
+            "quote": {
+              "valid_from": "2026-10-01",
+              "valid_to": "2026-10-31",
+              "recorded_at": "2026-10-01T08:00:00+08:00",
+              "available_at": "2026-10-01T08:00:00+08:00"
+            }
+          }
+        ],
+        "offers_used": [],
+        "returns": []
+      }
+    ],
+    "offers": [],
+    "price_series": [],
+    "consumption_records": [
+      {
+        "observed_on": "2026-09-01",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0901-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-01T20:00:00+08:00",
+            "available_at": "2026-09-01T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-02",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0902-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-02T20:00:00+08:00",
+            "available_at": "2026-09-02T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-03",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0903-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-03T20:00:00+08:00",
+            "available_at": "2026-09-03T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-04",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0904-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-04T20:00:00+08:00",
+            "available_at": "2026-09-04T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-05",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0905-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-05T20:00:00+08:00",
+            "available_at": "2026-09-05T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-06",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0906-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-06T20:00:00+08:00",
+            "available_at": "2026-09-06T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-07",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0907-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-07T20:00:00+08:00",
+            "available_at": "2026-09-07T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-08",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0908-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-08T20:00:00+08:00",
+            "available_at": "2026-09-08T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-09",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0909-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-09T20:00:00+08:00",
+            "available_at": "2026-09-09T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-10",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0910-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-10T20:00:00+08:00",
+            "available_at": "2026-09-10T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-11",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0911-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-11T20:00:00+08:00",
+            "available_at": "2026-09-11T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-12",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0912-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-12T20:00:00+08:00",
+            "available_at": "2026-09-12T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-13",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0913-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-13T20:00:00+08:00",
+            "available_at": "2026-09-13T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-14",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0914-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-14T20:00:00+08:00",
+            "available_at": "2026-09-14T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-15",
+        "day_coverage": "MISSING",
+        "items": []
+      },
+      {
+        "observed_on": "2026-09-16",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0916-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-16T20:00:00+08:00",
+            "available_at": "2026-09-16T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-17",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0917-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-17T20:00:00+08:00",
+            "available_at": "2026-09-17T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-18",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0918-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-18T20:00:00+08:00",
+            "available_at": "2026-09-18T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-19",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0919-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-19T20:00:00+08:00",
+            "available_at": "2026-09-19T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-20",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0920-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-20T20:00:00+08:00",
+            "available_at": "2026-09-20T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-21",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0921-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-21T20:00:00+08:00",
+            "available_at": "2026-09-21T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-22",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0922-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-22T20:00:00+08:00",
+            "available_at": "2026-09-22T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-23",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0923-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-23T20:00:00+08:00",
+            "available_at": "2026-09-23T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-24",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0924-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-24T20:00:00+08:00",
+            "available_at": "2026-09-24T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-25",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0925-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-25T20:00:00+08:00",
+            "available_at": "2026-09-25T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-26",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0926-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-26T20:00:00+08:00",
+            "available_at": "2026-09-26T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-27",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0927-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-27T20:00:00+08:00",
+            "available_at": "2026-09-27T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-28",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0928-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-28T20:00:00+08:00",
+            "available_at": "2026-09-28T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-29",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0929-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-29T20:00:00+08:00",
+            "available_at": "2026-09-29T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-30",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0930-ENTERTAINMENT",
+            "category": "ENTERTAINMENT",
+            "amount": 1000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-30T20:00:00+08:00",
+            "available_at": "2026-09-30T20:00:00+08:00",
+            "covered_by_living_reserve": false,
+            "same_scope_as_discretionary": true
+          }
+        ]
+      }
+    ],
+    "planned_allocation": null,
+    "confirmed_plan": {
+      "candidate_id": "C01",
+      "plan_version": "C01@v1",
+      "input_version": "v1"
+    },
+    "forecast_confirmations": []
+  },
+  "ops": [],
+  "expect": [
+    {
+      "checkpoint": "final",
+      "path": "daily_reference.amount.value",
+      "op": "eq",
+      "value": 10000
+    },
+    {
+      "checkpoint": "final",
+      "path": "daily_reference.label",
+      "op": "eq",
+      "value": "CONFIRMED_ONLY"
+    },
+    {
+      "checkpoint": "final",
+      "path": "daily_reference.unavailable",
+      "op": "includes",
+      "value": {
+        "scenario": "RECENT_MONTH",
+        "reason": "HISTORY_INSUFFICIENT"
+      }
+    },
+    {
+      "checkpoint": "final",
+      "path": "scenarios[kind=RECENT_MONTH].available",
+      "op": "eq",
+      "value": false
+    },
+    {
+      "checkpoint": "final",
+      "path": "daily_reference.display",
+      "op": "not_eq",
+      "value": "NOT_RECOMMENDED"
+    },
+    {
+      "checkpoint": "final",
+      "path": "daily_reference.display",
+      "op": "not_eq",
+      "value": "UNAVAILABLE"
+    },
+    {
+      "checkpoint": "final",
+      "path": "daily_reference.amount.value",
+      "op": "not_eq",
+      "value": 0
+    }
+  ]
+}

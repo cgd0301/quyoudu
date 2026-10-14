@@ -1,0 +1,151 @@
+{
+  "test_id": "T007-06#1",
+  "rule": "R007",
+  "layer": "ENGINE",
+  "needs_review": false,
+  "source_text": "初始：住宿报价123.45元（12345分），享9.5折，渠道规则写明折后舍去分以下；操作：计算应付；预期：12345×0.95=11727.75分，按渠道规则得11727分，不按模型的ROUND_HALF_UP得11728分；若渠道舍入规则未知，该优惠条件不完整，依赖它的候选计入待确认数（D17）；优惠字段按D45",
+  "base": null,
+  "input": {
+    "meta": {
+      "case_id": "T007-06#1",
+      "purpose": "资金取 c01 的数值；候选 C01 的住宿报价 123.45 元（12345 分），使用 9.5 折优惠 Y1（PERCENT_OFF 9500），渠道规则为舍去分以下（FLOOR）。",
+      "data_version": "1",
+      "simulated": true,
+      "source_type": "HAND_WRITTEN",
+      "generator": "cursor-agent",
+      "batch": "vectors-2026-10-14",
+      "created_at_real": "2026-10-14T20:00:00+08:00",
+      "demo_points": []
+    },
+    "snapshot": {
+      "as_of": "2026-09-01T09:00:00+08:00",
+      "cash_as_of": "2026-09-01T09:00:00+08:00",
+      "snapshot_phase": "DAY_START",
+      "cash": 100000,
+      "goal_allocation": 40000,
+      "other_goal_hold": null
+    },
+    "reserves": [
+      {
+        "reserve_id": "R-LIV-09",
+        "reserve_kind": "LIVING",
+        "amount": 30000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-30",
+        "release_at_end": false
+      },
+      {
+        "reserve_id": "R-CON",
+        "reserve_kind": "CONTINGENCY",
+        "amount": 20000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-28",
+        "release_at_end": false
+      }
+    ],
+    "events": [],
+    "goal": {
+      "goal_id": "G1",
+      "budget_cap": 90000,
+      "show_start_at": "2026-09-27T19:30:00+08:00",
+      "show_end_at": "2026-09-27T22:00:00+08:00",
+      "venue_city": "上海",
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "arrive_before_show_min": null,
+      "return_after_show_min": null,
+      "lodging_nights_required": null,
+      "seat_tier_allowed": null,
+      "lodging_max_distance_m": null,
+      "refundable_required": null
+    },
+    "cost_items": [
+      {
+        "cost_item_id": "LODGING",
+        "category": "LODGING",
+        "necessary": true,
+        "amount_status": "CONFIRMED"
+      }
+    ],
+    "candidates": [
+      {
+        "candidate_id": "C01",
+        "items": [
+          {
+            "cost_item_id": "LODGING",
+            "channel": "渠道乙",
+            "spec": "大床房",
+            "price": 12345,
+            "currency": "CNY",
+            "price_basis": "QUOTE",
+            "order_id": "O1",
+            "purchase_date": "2026-09-10",
+            "payment_at": "2026-09-10",
+            "quote": {
+              "valid_from": "2026-09-01",
+              "valid_to": "2026-09-30",
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "available_at": "2026-09-01T08:00:00+08:00"
+            }
+          }
+        ],
+        "offers_used": [
+          {
+            "offer_id": "Y1",
+            "order_id": "O1"
+          }
+        ],
+        "returns": []
+      }
+    ],
+    "offers": [
+      {
+        "offer_id": "Y1",
+        "type": "PERCENT_OFF",
+        "value": 9500,
+        "scope": [
+          "LODGING"
+        ],
+        "threshold": null,
+        "valid_from": "2026-09-01",
+        "valid_to": "2026-09-30",
+        "applies_at": "ORDER",
+        "max_uses": 1,
+        "stackable_with": [],
+        "rounding": "FLOOR"
+      }
+    ],
+    "price_series": [],
+    "consumption_records": [],
+    "planned_allocation": null,
+    "forecast_confirmations": []
+  },
+  "ops": [
+    {
+      "type": "SELECT_CANDIDATE",
+      "candidate_id": "C01"
+    }
+  ],
+  "expect": [
+    {
+      "checkpoint": "final",
+      "path": "cost.future_payable.value",
+      "op": "eq",
+      "value": 11727
+    },
+    {
+      "checkpoint": "final",
+      "path": "cost.future_payable.value",
+      "op": "not_eq",
+      "value": 11728
+    }
+  ]
+}

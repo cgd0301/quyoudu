@@ -1,0 +1,174 @@
+{
+  "test_id": "T008-05",
+  "rule": "R008",
+  "layer": "ENGINE",
+  "needs_review": false,
+  "source_text": "初始：as_of=2026-09-01T09:00:00+08:00；另有日期为2026-08-25的消费与价格记录；操作：请求近月情景与价格预测；预期：8月记录超出范围，不进入统计；可用历史为0，显示“历史不足”",
+  "base": null,
+  "input": {
+    "meta": {
+      "case_id": "T008-05",
+      "purpose": "as_of=2026-09-01T09:00:00+08:00，资金取 c01 的数值；另有 2026-08-25 的住宿价格观测与餐饮消费记录；候选 C01 的住宿价格项与该价格序列同项目、渠道、规格，用来请求预测。",
+      "data_version": "1",
+      "simulated": true,
+      "source_type": "HAND_WRITTEN",
+      "generator": "cursor-agent",
+      "batch": "vectors-2026-10-14",
+      "created_at_real": "2026-10-14T20:00:00+08:00",
+      "demo_points": []
+    },
+    "snapshot": {
+      "as_of": "2026-09-01T09:00:00+08:00",
+      "cash_as_of": "2026-09-01T09:00:00+08:00",
+      "snapshot_phase": "DAY_START",
+      "cash": 100000,
+      "goal_allocation": 40000,
+      "other_goal_hold": null
+    },
+    "reserves": [
+      {
+        "reserve_id": "R-LIV-09",
+        "reserve_kind": "LIVING",
+        "amount": 30000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-30",
+        "release_at_end": false
+      },
+      {
+        "reserve_id": "R-CON",
+        "reserve_kind": "CONTINGENCY",
+        "amount": 20000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-28",
+        "release_at_end": false
+      }
+    ],
+    "events": [],
+    "goal": {
+      "goal_id": "G1",
+      "budget_cap": 90000,
+      "show_start_at": "2026-09-27T19:30:00+08:00",
+      "show_end_at": "2026-09-27T22:00:00+08:00",
+      "venue_city": "上海",
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "arrive_before_show_min": null,
+      "return_after_show_min": null,
+      "lodging_nights_required": null,
+      "seat_tier_allowed": null,
+      "lodging_max_distance_m": null,
+      "refundable_required": null
+    },
+    "cost_items": [
+      {
+        "cost_item_id": "LODGING",
+        "category": "LODGING",
+        "necessary": true,
+        "amount_status": "ESTIMATE"
+      }
+    ],
+    "candidates": [
+      {
+        "candidate_id": "C01",
+        "items": [
+          {
+            "cost_item_id": "LODGING",
+            "channel": "渠道乙",
+            "spec": "大床房",
+            "price": 40000,
+            "currency": "CNY",
+            "price_basis": "REFERENCE",
+            "order_id": "O1",
+            "purchase_date": "2026-09-20",
+            "payment_at": "2026-09-27",
+            "quote": {
+              "valid_from": "2026-09-01",
+              "valid_to": "2026-09-30",
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "available_at": "2026-09-01T08:00:00+08:00"
+            }
+          }
+        ],
+        "offers_used": [],
+        "returns": []
+      }
+    ],
+    "offers": [],
+    "price_series": [
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-09-27",
+        "observed_on": "2026-08-25",
+        "price": 40000,
+        "currency": "CNY",
+        "recorded_at": "2026-08-25T20:00:00+08:00",
+        "available_at": "2026-08-25T20:00:00+08:00"
+      }
+    ],
+    "consumption_records": [
+      {
+        "observed_on": "2026-08-25",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0825-MEALS",
+            "category": "MEALS",
+            "amount": 3000,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-08-25T20:00:00+08:00",
+            "available_at": "2026-08-25T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      }
+    ],
+    "planned_allocation": null,
+    "forecast_confirmations": []
+  },
+  "ops": [],
+  "expect": [
+    {
+      "checkpoint": "final",
+      "path": "forecasts[series_id=S-LODGING].sample_count",
+      "op": "eq",
+      "value": 0
+    },
+    {
+      "checkpoint": "final",
+      "path": "forecasts[series_id=S-LODGING].status",
+      "op": "eq",
+      "value": "HISTORY_INSUFFICIENT"
+    },
+    {
+      "checkpoint": "final",
+      "path": "scenarios[kind=RECENT_MONTH].complete_days",
+      "op": "eq",
+      "value": 0
+    },
+    {
+      "checkpoint": "final",
+      "path": "scenarios[kind=RECENT_MONTH].unavailable_reason",
+      "op": "eq",
+      "value": "HISTORY_INSUFFICIENT"
+    },
+    {
+      "checkpoint": "final",
+      "path": "labels",
+      "op": "includes",
+      "value": "HISTORY_INSUFFICIENT"
+    }
+  ]
+}

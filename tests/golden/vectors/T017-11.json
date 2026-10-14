@@ -1,0 +1,268 @@
+{
+  "test_id": "T017-11",
+  "rule": "R017",
+  "layer": "ENGINE",
+  "needs_review": false,
+  "source_text": "初始：资金C0=1000、L0=N0=O0=M0=A0=0（U0=1000），B=900；已确认安排中9/5有一笔不属于本目标、无预留覆盖的支出600，9/8有已确认预计收入600；候选C01为9/10本目标付款600（无预留覆盖）；操作：用户选择C01并确认；预期：确认前按A=0模拟，各节点通过，最小U为400（9/5与9/10）。ΔA=0，A0仍为0；计划分配600挂在9/8收入上。确认后9/5：C=400、A=0、U=400；9/8：C=1000、A=600、U=400；9/10：C=400、A=0、U=400。最小值仍为400，确认成功（D46）（A4-0 参考实现核对一致）",
+  "base": null,
+  "input": {
+    "meta": {
+      "case_id": "T017-11",
+      "purpose": "H3 复核输入：C0=1000、L0=N0=O0=M0=A0=0（U0=1000），B=900；9/5 不属于本目标、无预留覆盖的支出 600（E-0905）；9/8 已确认预计收入 600（E-INC）；候选 C01 为 9/10 本目标付款 600（无预留覆盖）；用户选择 C01 并确认。",
+      "data_version": "1",
+      "simulated": true,
+      "source_type": "HAND_WRITTEN",
+      "generator": "cursor-agent",
+      "batch": "vectors-2026-10-14",
+      "created_at_real": "2026-10-14T20:00:00+08:00",
+      "demo_points": []
+    },
+    "snapshot": {
+      "as_of": "2026-09-01T09:00:00+08:00",
+      "cash_as_of": "2026-09-01T09:00:00+08:00",
+      "snapshot_phase": "DAY_START",
+      "cash": 100000,
+      "goal_allocation": 0,
+      "other_goal_hold": null
+    },
+    "reserves": [],
+    "events": [
+      {
+        "event_id": "E-0905",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "amount": 60000,
+        "expected_at": "2026-09-05",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY"
+      },
+      {
+        "event_id": "E-INC",
+        "event_kind": "INCOME",
+        "event_status": "EXPECTED",
+        "amount": 60000,
+        "expected_at": "2026-09-08",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY"
+      }
+    ],
+    "goal": {
+      "goal_id": "G1",
+      "budget_cap": 90000,
+      "show_start_at": "2026-09-27T19:30:00+08:00",
+      "show_end_at": "2026-09-27T22:00:00+08:00",
+      "venue_city": "上海",
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "arrive_before_show_min": null,
+      "return_after_show_min": null,
+      "lodging_nights_required": null,
+      "seat_tier_allowed": null,
+      "lodging_max_distance_m": null,
+      "refundable_required": null
+    },
+    "cost_items": [
+      {
+        "cost_item_id": "TICKET",
+        "category": "TICKET",
+        "necessary": true,
+        "amount_status": "CONFIRMED"
+      }
+    ],
+    "candidates": [
+      {
+        "candidate_id": "C01",
+        "items": [
+          {
+            "cost_item_id": "TICKET",
+            "channel": "渠道甲",
+            "spec": "B",
+            "price": 60000,
+            "currency": "CNY",
+            "price_basis": "QUOTE",
+            "order_id": "O1",
+            "purchase_date": "2026-09-10",
+            "payment_at": "2026-09-10",
+            "quote": {
+              "valid_from": "2026-09-01",
+              "valid_to": "2026-09-30",
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "available_at": "2026-09-01T08:00:00+08:00"
+            }
+          }
+        ],
+        "offers_used": [],
+        "returns": []
+      }
+    ],
+    "offers": [],
+    "price_series": [],
+    "consumption_records": [],
+    "planned_allocation": null,
+    "forecast_confirmations": []
+  },
+  "ops": [
+    {
+      "type": "SELECT_CANDIDATE",
+      "candidate_id": "C01"
+    },
+    {
+      "type": "EVALUATE",
+      "label": "确认前"
+    },
+    {
+      "type": "CONFIRM",
+      "candidate_id": "C01",
+      "plan_version": "C01@v1",
+      "input_version": "v1"
+    },
+    {
+      "type": "EVALUATE",
+      "label": "确认后"
+    }
+  ],
+  "expect": [
+    {
+      "checkpoint": "确认前",
+      "path": "nodes[trigger.event_ids=E-0905].unallocated.value",
+      "op": "eq",
+      "value": 40000
+    },
+    {
+      "checkpoint": "确认前",
+      "path": "nodes[at=2026-09-10].unallocated.value",
+      "op": "eq",
+      "value": 40000
+    },
+    {
+      "checkpoint": "确认前",
+      "path": "nodes[0].node_verdict",
+      "op": "eq",
+      "value": "PASS"
+    },
+    {
+      "checkpoint": "确认前",
+      "path": "nodes[trigger.event_ids=E-0905].node_verdict",
+      "op": "eq",
+      "value": "PASS"
+    },
+    {
+      "checkpoint": "确认前",
+      "path": "nodes[trigger.event_ids=E-INC].node_verdict",
+      "op": "eq",
+      "value": "PASS"
+    },
+    {
+      "checkpoint": "确认前",
+      "path": "nodes[at=2026-09-10].node_verdict",
+      "op": "eq",
+      "value": "PASS"
+    },
+    {
+      "checkpoint": "确认后",
+      "path": "confirmation.m.value",
+      "op": "eq",
+      "value": 40000
+    },
+    {
+      "checkpoint": "确认后",
+      "path": "confirmation.delta_a.value",
+      "op": "eq",
+      "value": 0
+    },
+    {
+      "checkpoint": "确认后",
+      "path": "snapshot.goal_allocation.value",
+      "op": "eq",
+      "value": 0
+    },
+    {
+      "checkpoint": "确认后",
+      "path": "confirmation.planned_allocation.amount.value",
+      "op": "eq",
+      "value": 60000
+    },
+    {
+      "checkpoint": "确认后",
+      "path": "confirmation.planned_allocation.funding_event_id",
+      "op": "eq",
+      "value": "E-INC"
+    },
+    {
+      "checkpoint": "确认后",
+      "path": "nodes[trigger.event_ids=E-0905].cash.value",
+      "op": "eq",
+      "value": 40000
+    },
+    {
+      "checkpoint": "确认后",
+      "path": "nodes[trigger.event_ids=E-0905].goal_allocation.value",
+      "op": "eq",
+      "value": 0
+    },
+    {
+      "checkpoint": "确认后",
+      "path": "nodes[trigger.event_ids=E-0905].unallocated.value",
+      "op": "eq",
+      "value": 40000
+    },
+    {
+      "checkpoint": "确认后",
+      "path": "nodes[trigger.event_ids=E-INC].cash.value",
+      "op": "eq",
+      "value": 100000
+    },
+    {
+      "checkpoint": "确认后",
+      "path": "nodes[trigger.event_ids=E-INC].goal_allocation.value",
+      "op": "eq",
+      "value": 60000
+    },
+    {
+      "checkpoint": "确认后",
+      "path": "nodes[trigger.event_ids=E-INC].unallocated.value",
+      "op": "eq",
+      "value": 40000
+    },
+    {
+      "checkpoint": "确认后",
+      "path": "nodes[at=2026-09-10].cash.value",
+      "op": "eq",
+      "value": 40000
+    },
+    {
+      "checkpoint": "确认后",
+      "path": "nodes[at=2026-09-10].goal_allocation.value",
+      "op": "eq",
+      "value": 0
+    },
+    {
+      "checkpoint": "确认后",
+      "path": "nodes[at=2026-09-10].unallocated.value",
+      "op": "eq",
+      "value": 40000
+    },
+    {
+      "checkpoint": "确认后",
+      "path": "states.confirmation_state",
+      "op": "eq",
+      "value": "CONFIRMED"
+    }
+  ]
+}

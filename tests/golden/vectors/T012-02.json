@@ -1,0 +1,183 @@
+{
+  "test_id": "T012-02",
+  "rule": "R012",
+  "layer": "ENGINE",
+  "needs_review": false,
+  "source_text": "初始：c01；用户取消计划，可能退款150，条件为平台审核通过；本行没有 cancellable=true 的预计付款（D61，省略视为仍有效义务）；操作：确认取消；预期：C0仍为1000；150写入 cost.possible_refund（金额150、条件为平台审核通过），不入账；计划状态＝已取消；尚未发生且 cancellable 不为 true 的付款仍计入义务",
+  "base": "c01",
+  "input": {
+    "meta": {
+      "case_id": "T012-02",
+      "purpose": "c01；已确认方案 C01 无付款；9/15 有一笔本目标住宿付款 200（E-PAY，未写 cancellable，仍为有效义务）；可能退款 150（E-RF）以平台审核通过为条件；用户 CANCEL。",
+      "data_version": "1",
+      "simulated": true,
+      "source_type": "HAND_WRITTEN",
+      "generator": "cursor-agent",
+      "batch": "vectors-2026-10-14",
+      "created_at_real": "2026-10-14T20:00:00+08:00",
+      "demo_points": []
+    },
+    "snapshot": {
+      "as_of": "2026-09-01T09:00:00+08:00",
+      "cash_as_of": "2026-09-01T09:00:00+08:00",
+      "snapshot_phase": "DAY_START",
+      "cash": 100000,
+      "goal_allocation": 40000,
+      "other_goal_hold": null
+    },
+    "reserves": [
+      {
+        "reserve_id": "R-LIV-09",
+        "reserve_kind": "LIVING",
+        "amount": 30000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-30",
+        "release_at_end": false
+      },
+      {
+        "reserve_id": "R-CON",
+        "reserve_kind": "CONTINGENCY",
+        "amount": 20000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-28",
+        "release_at_end": false
+      }
+    ],
+    "events": [
+      {
+        "event_id": "E-PAY",
+        "event_kind": "GOAL_PAYMENT",
+        "event_status": "EXPECTED",
+        "amount": 20000,
+        "expected_at": "2026-09-15",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "goal_id": "G1",
+        "cost_item_id": "LODGING",
+        "coverage": [],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY"
+      },
+      {
+        "event_id": "E-RF",
+        "event_kind": "RETURN",
+        "event_status": "EXPECTED",
+        "amount": 15000,
+        "expected_at": "2026-09-20",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "goal_id": "G1",
+        "cost_item_id": "TICKET",
+        "coverage": [],
+        "trigger_condition": "平台审核通过",
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY"
+      }
+    ],
+    "goal": {
+      "goal_id": "G1",
+      "budget_cap": 90000,
+      "show_start_at": "2026-09-27T19:30:00+08:00",
+      "show_end_at": "2026-09-27T22:00:00+08:00",
+      "venue_city": "上海",
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "arrive_before_show_min": null,
+      "return_after_show_min": null,
+      "lodging_nights_required": null,
+      "seat_tier_allowed": null,
+      "lodging_max_distance_m": null,
+      "refundable_required": null
+    },
+    "cost_items": [
+      {
+        "cost_item_id": "TICKET",
+        "category": "TICKET",
+        "necessary": true,
+        "amount_status": "CONFIRMED"
+      },
+      {
+        "cost_item_id": "LODGING",
+        "category": "LODGING",
+        "necessary": true,
+        "amount_status": "CONFIRMED"
+      }
+    ],
+    "candidates": [
+      {
+        "candidate_id": "C01",
+        "items": [],
+        "offers_used": [],
+        "returns": []
+      }
+    ],
+    "offers": [],
+    "price_series": [],
+    "consumption_records": [],
+    "planned_allocation": null,
+    "confirmed_plan": {
+      "candidate_id": "C01",
+      "plan_version": "C01@v1",
+      "input_version": "v1"
+    },
+    "forecast_confirmations": []
+  },
+  "ops": [
+    {
+      "type": "CANCEL"
+    }
+  ],
+  "expect": [
+    {
+      "checkpoint": "final",
+      "path": "snapshot.cash.value",
+      "op": "eq",
+      "value": 100000
+    },
+    {
+      "checkpoint": "final",
+      "path": "states.plan_state",
+      "op": "eq",
+      "value": "CANCELLED"
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-RF]",
+      "op": "absent"
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-PAY].trigger.event_ids",
+      "op": "includes",
+      "value": "E-PAY"
+    },
+    {
+      "checkpoint": "final",
+      "path": "cost.future_payments[event_id=E-PAY].amount.value",
+      "op": "eq",
+      "value": 20000
+    },
+    {
+      "checkpoint": "final",
+      "path": "cost.possible_refund.amount.value",
+      "op": "eq",
+      "value": 15000
+    },
+    {
+      "checkpoint": "final",
+      "path": "cost.possible_refund.condition",
+      "op": "eq",
+      "value": "平台审核通过"
+    }
+  ]
+}

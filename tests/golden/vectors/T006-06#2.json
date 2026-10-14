@@ -1,0 +1,164 @@
+{
+  "test_id": "T006-06#2",
+  "rule": "R006",
+  "layer": "ENGINE",
+  "needs_review": false,
+  "source_text": "初始：c01；9/10本目标付款200与不属于本目标的生活支出200先后未知，二者都声明由同一项生活预留（余额300）覆盖；①各声明覆盖100；②各声明覆盖200；操作：运行时间轴；预期：①覆盖合计200≤300，两笔各足额核销100；组末C=600、L=100、M=200、A=300，G=500、H=300、U=0，通过；交换event_id后结果相同；②覆盖合计400>300，按D38为输入冲突，计划状态＝暂无法完整判断，不报告该日的日级累计缺口",
+  "base": "c01",
+  "input": {
+    "meta": {
+      "case_id": "T006-06#2",
+      "purpose": "情形②：同情形①，但两笔各声明由 R-LIV-09 覆盖 200；候选 C01 无付款，只作计划对象。",
+      "data_version": "1",
+      "simulated": true,
+      "source_type": "HAND_WRITTEN",
+      "generator": "cursor-agent",
+      "batch": "vectors-2026-10-14",
+      "created_at_real": "2026-10-14T20:00:00+08:00",
+      "demo_points": []
+    },
+    "snapshot": {
+      "as_of": "2026-09-01T09:00:00+08:00",
+      "cash_as_of": "2026-09-01T09:00:00+08:00",
+      "snapshot_phase": "DAY_START",
+      "cash": 100000,
+      "goal_allocation": 40000,
+      "other_goal_hold": null
+    },
+    "reserves": [
+      {
+        "reserve_id": "R-LIV-09",
+        "reserve_kind": "LIVING",
+        "amount": 30000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-30",
+        "release_at_end": false
+      },
+      {
+        "reserve_id": "R-CON",
+        "reserve_kind": "CONTINGENCY",
+        "amount": 20000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-28",
+        "release_at_end": false
+      }
+    ],
+    "events": [
+      {
+        "event_id": "E1",
+        "event_kind": "GOAL_PAYMENT",
+        "event_status": "EXPECTED",
+        "amount": 20000,
+        "expected_at": "2026-09-10",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "goal_id": "G1",
+        "cost_item_id": "TICKET",
+        "coverage": [
+          {
+            "reserve_id": "R-LIV-09",
+            "covered_amount": 20000
+          }
+        ],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY"
+      },
+      {
+        "event_id": "E2",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "amount": 20000,
+        "expected_at": "2026-09-10",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [
+          {
+            "reserve_id": "R-LIV-09",
+            "covered_amount": 20000
+          }
+        ],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY",
+        "category": "MEALS"
+      }
+    ],
+    "goal": {
+      "goal_id": "G1",
+      "budget_cap": 90000,
+      "show_start_at": "2026-09-27T19:30:00+08:00",
+      "show_end_at": "2026-09-27T22:00:00+08:00",
+      "venue_city": "上海",
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "arrive_before_show_min": null,
+      "return_after_show_min": null,
+      "lodging_nights_required": null,
+      "seat_tier_allowed": null,
+      "lodging_max_distance_m": null,
+      "refundable_required": null
+    },
+    "cost_items": [
+      {
+        "cost_item_id": "TICKET",
+        "category": "TICKET",
+        "necessary": true,
+        "amount_status": "CONFIRMED"
+      }
+    ],
+    "candidates": [
+      {
+        "candidate_id": "C01",
+        "items": [],
+        "offers_used": [],
+        "returns": []
+      }
+    ],
+    "offers": [],
+    "price_series": [],
+    "consumption_records": [],
+    "planned_allocation": null,
+    "forecast_confirmations": []
+  },
+  "ops": [
+    {
+      "type": "SELECT_CANDIDATE",
+      "candidate_id": "C01"
+    }
+  ],
+  "expect": [
+    {
+      "checkpoint": "final",
+      "path": "input_issues",
+      "op": "includes",
+      "value": {
+        "code": "GROUP_COVERAGE_OVERSUBSCRIBED"
+      }
+    },
+    {
+      "checkpoint": "final",
+      "path": "states.plan_state",
+      "op": "eq",
+      "value": "INCOMPLETE"
+    },
+    {
+      "checkpoint": "final",
+      "path": "gap_list[related=E1]",
+      "op": "absent"
+    },
+    {
+      "checkpoint": "final",
+      "path": "gap_list[related=E2]",
+      "op": "absent"
+    }
+  ]
+}

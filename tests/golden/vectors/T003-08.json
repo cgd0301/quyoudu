@@ -1,0 +1,406 @@
+{
+  "test_id": "T003-08",
+  "rule": "R003",
+  "layer": "ENGINE",
+  "needs_review": false,
+  "source_text": "初始：as_of=cash_as_of=2026-10-01T09:00:00+08:00，DAY_START；C0=2000、L0=M0=N0=O0=A0=0、B=900、P=0；生活费收入1500原定10/1，延期到10/6，已确认；生活预留原定1500，挂在该收入上，覆盖10/1—10/31，release_at_end=false；10/1—10/6每日OTHER_EXPENSE 50，各声明由该预留覆盖50，无known_order；不列10/7—10/31的支出。独立测试数据，不与9/1快照勾稽；操作：运行时间轴；预期：10/6支出按D10排在收入之前。六笔支出q=0，合计300无预留覆盖。支出后C/L/U：10/1为1950/0/1950，10/2为1900/0/1900，10/3为1850/0/1850，10/4为1800/0/1800，10/5为1750/0/1750，10/6支出后为1700/0/1700。10/6收入节点C=3200、L=1200、U=2000。各节点通过，计划状态＝按当前假设可行（D40）（A4-0 参考实现核对一致）",
+  "base": null,
+  "input": {
+    "meta": {
+      "case_id": "T003-08",
+      "purpose": "独立测试数据：as_of=cash_as_of=2026-10-01T09:00:00+08:00，DAY_START，C0=2000，L0=M0=N0=O0=A0=0，B=900，P=0；生活费收入 1500（E-INC）已确认延期到 10/6；生活预留 R-LIV-10 原定 1500，挂在 E-INC 上，覆盖 10/1—10/31；10/1—10/6 每日 OTHER_EXPENSE 50，各声明由 R-LIV-10 覆盖 50，无 known_order；候选 C01 无付款，只作计划对象。",
+      "data_version": "1",
+      "simulated": true,
+      "source_type": "HAND_WRITTEN",
+      "generator": "cursor-agent",
+      "batch": "vectors-2026-10-14",
+      "created_at_real": "2026-10-14T20:00:00+08:00",
+      "demo_points": []
+    },
+    "snapshot": {
+      "as_of": "2026-10-01T09:00:00+08:00",
+      "cash_as_of": "2026-10-01T09:00:00+08:00",
+      "snapshot_phase": "DAY_START",
+      "cash": 200000,
+      "goal_allocation": 0,
+      "other_goal_hold": null
+    },
+    "reserves": [
+      {
+        "reserve_id": "R-LIV-10",
+        "reserve_kind": "LIVING",
+        "amount": 150000,
+        "coverage_start": "2026-10-01",
+        "coverage_end": "2026-10-31",
+        "release_at_end": false,
+        "funding_event_id": "E-INC"
+      }
+    ],
+    "events": [
+      {
+        "event_id": "E-INC",
+        "event_kind": "INCOME",
+        "event_status": "EXPECTED",
+        "amount": 150000,
+        "expected_at": "2026-10-06",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY"
+      },
+      {
+        "event_id": "E-1001",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "amount": 5000,
+        "expected_at": "2026-10-01",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [
+          {
+            "reserve_id": "R-LIV-10",
+            "covered_amount": 5000
+          }
+        ],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY",
+        "category": "MEALS"
+      },
+      {
+        "event_id": "E-1002",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "amount": 5000,
+        "expected_at": "2026-10-02",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [
+          {
+            "reserve_id": "R-LIV-10",
+            "covered_amount": 5000
+          }
+        ],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY",
+        "category": "MEALS"
+      },
+      {
+        "event_id": "E-1003",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "amount": 5000,
+        "expected_at": "2026-10-03",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [
+          {
+            "reserve_id": "R-LIV-10",
+            "covered_amount": 5000
+          }
+        ],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY",
+        "category": "MEALS"
+      },
+      {
+        "event_id": "E-1004",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "amount": 5000,
+        "expected_at": "2026-10-04",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [
+          {
+            "reserve_id": "R-LIV-10",
+            "covered_amount": 5000
+          }
+        ],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY",
+        "category": "MEALS"
+      },
+      {
+        "event_id": "E-1005",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "amount": 5000,
+        "expected_at": "2026-10-05",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [
+          {
+            "reserve_id": "R-LIV-10",
+            "covered_amount": 5000
+          }
+        ],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY",
+        "category": "MEALS"
+      },
+      {
+        "event_id": "E-1006",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "amount": 5000,
+        "expected_at": "2026-10-06",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [
+          {
+            "reserve_id": "R-LIV-10",
+            "covered_amount": 5000
+          }
+        ],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY",
+        "category": "MEALS"
+      }
+    ],
+    "goal": {
+      "goal_id": "G1",
+      "budget_cap": 90000,
+      "show_start_at": "2026-10-27T19:30:00+08:00",
+      "show_end_at": "2026-10-27T22:00:00+08:00",
+      "venue_city": "上海",
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "arrive_before_show_min": null,
+      "return_after_show_min": null,
+      "lodging_nights_required": null,
+      "seat_tier_allowed": null,
+      "lodging_max_distance_m": null,
+      "refundable_required": null
+    },
+    "cost_items": [],
+    "candidates": [
+      {
+        "candidate_id": "C01",
+        "items": [],
+        "offers_used": [],
+        "returns": []
+      }
+    ],
+    "offers": [],
+    "price_series": [],
+    "consumption_records": [],
+    "planned_allocation": null,
+    "forecast_confirmations": []
+  },
+  "ops": [
+    {
+      "type": "SELECT_CANDIDATE",
+      "candidate_id": "C01"
+    }
+  ],
+  "expect": [
+    {
+      "checkpoint": "final",
+      "path": "nodes[6].trigger.event_ids",
+      "op": "includes",
+      "value": "E-1006"
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[7].trigger.event_ids",
+      "op": "includes",
+      "value": "E-INC"
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[0].node_verdict",
+      "op": "eq",
+      "value": "PASS"
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-1001].cash.value",
+      "op": "eq",
+      "value": 195000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-1001].living_reserve.value",
+      "op": "eq",
+      "value": 0
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-1001].unallocated.value",
+      "op": "eq",
+      "value": 195000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-1001].node_verdict",
+      "op": "eq",
+      "value": "PASS"
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-1002].cash.value",
+      "op": "eq",
+      "value": 190000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-1002].living_reserve.value",
+      "op": "eq",
+      "value": 0
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-1002].unallocated.value",
+      "op": "eq",
+      "value": 190000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-1002].node_verdict",
+      "op": "eq",
+      "value": "PASS"
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-1003].cash.value",
+      "op": "eq",
+      "value": 185000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-1003].living_reserve.value",
+      "op": "eq",
+      "value": 0
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-1003].unallocated.value",
+      "op": "eq",
+      "value": 185000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-1003].node_verdict",
+      "op": "eq",
+      "value": "PASS"
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-1004].cash.value",
+      "op": "eq",
+      "value": 180000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-1004].living_reserve.value",
+      "op": "eq",
+      "value": 0
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-1004].unallocated.value",
+      "op": "eq",
+      "value": 180000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-1004].node_verdict",
+      "op": "eq",
+      "value": "PASS"
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-1005].cash.value",
+      "op": "eq",
+      "value": 175000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-1005].living_reserve.value",
+      "op": "eq",
+      "value": 0
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-1005].unallocated.value",
+      "op": "eq",
+      "value": 175000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-1005].node_verdict",
+      "op": "eq",
+      "value": "PASS"
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-1006].cash.value",
+      "op": "eq",
+      "value": 170000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-1006].living_reserve.value",
+      "op": "eq",
+      "value": 0
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-1006].unallocated.value",
+      "op": "eq",
+      "value": 170000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-1006].node_verdict",
+      "op": "eq",
+      "value": "PASS"
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-INC].cash.value",
+      "op": "eq",
+      "value": 320000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-INC].living_reserve.value",
+      "op": "eq",
+      "value": 120000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-INC].unallocated.value",
+      "op": "eq",
+      "value": 200000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-INC].node_verdict",
+      "op": "eq",
+      "value": "PASS"
+    },
+    {
+      "checkpoint": "final",
+      "path": "states.plan_state",
+      "op": "eq",
+      "value": "FEASIBLE_UNDER_ASSUMPTIONS"
+    }
+  ]
+}

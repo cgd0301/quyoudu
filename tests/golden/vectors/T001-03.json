@@ -1,0 +1,122 @@
+{
+  "test_id": "T001-03",
+  "rule": "R001",
+  "layer": "ENGINE",
+  "needs_review": false,
+  "source_text": "初始：9月1日快照c01，另有10月1日固定快照（as_of=cash_as_of=2026-10-01T09:00:00+08:00，DAY_START，C0=2000（测试数据））；操作：用“切换案例／模拟日期”切换到10月1日；预期：使用10月1日快照自带的C0=2000，不沿用9月1日的C0=1000；该快照中的9月记录均为已计入快照，不再改变C0；界面不提供任意日期推进（D28）；不与9/1快照勾稽；本行是独立测试数据，不是演示案例（V-06）",
+  "base": null,
+  "input": {
+    "meta": {
+      "case_id": "T001-03",
+      "purpose": "10月1日独立固定快照：as_of=cash_as_of=2026-10-01T09:00:00+08:00，DAY_START，C0=2000（测试数据），A0=0，无预留；9月的两笔记录已实际发生并计入快照；演出移到 10/27（SG-39 ⑥）。",
+      "data_version": "1",
+      "simulated": true,
+      "source_type": "HAND_WRITTEN",
+      "generator": "cursor-agent",
+      "batch": "vectors-2026-10-14",
+      "created_at_real": "2026-10-14T20:00:00+08:00",
+      "demo_points": []
+    },
+    "snapshot": {
+      "as_of": "2026-10-01T09:00:00+08:00",
+      "cash_as_of": "2026-10-01T09:00:00+08:00",
+      "snapshot_phase": "DAY_START",
+      "cash": 200000,
+      "goal_allocation": 0,
+      "other_goal_hold": null
+    },
+    "reserves": [],
+    "events": [
+      {
+        "event_id": "E-0915",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "ACTUAL",
+        "amount": 20000,
+        "expected_at": "2026-09-15",
+        "actual_at": "2026-09-15T12:00:00+08:00",
+        "time_precision": "DATE",
+        "in_snapshot": true,
+        "coverage": [],
+        "recorded_at": "2026-09-15T12:00:00+08:00",
+        "available_at": "2026-09-15T12:00:00+08:00",
+        "currency": "CNY",
+        "category": "MEALS"
+      },
+      {
+        "event_id": "E-0920",
+        "event_kind": "INCOME",
+        "event_status": "ACTUAL",
+        "amount": 150000,
+        "expected_at": "2026-09-20",
+        "actual_at": "2026-09-20T10:00:00+08:00",
+        "time_precision": "DATE",
+        "in_snapshot": true,
+        "coverage": [],
+        "recorded_at": "2026-09-20T10:00:00+08:00",
+        "available_at": "2026-09-20T10:00:00+08:00",
+        "currency": "CNY"
+      }
+    ],
+    "goal": {
+      "goal_id": "G1",
+      "budget_cap": 90000,
+      "show_start_at": "2026-10-27T19:30:00+08:00",
+      "show_end_at": "2026-10-27T22:00:00+08:00",
+      "venue_city": "上海",
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "arrive_before_show_min": null,
+      "return_after_show_min": null,
+      "lodging_nights_required": null,
+      "seat_tier_allowed": null,
+      "lodging_max_distance_m": null,
+      "refundable_required": null
+    },
+    "cost_items": [],
+    "candidates": [],
+    "offers": [],
+    "price_series": [],
+    "consumption_records": [],
+    "planned_allocation": null,
+    "forecast_confirmations": []
+  },
+  "ops": [],
+  "expect": [
+    {
+      "checkpoint": "final",
+      "path": "as_of",
+      "op": "includes",
+      "value": "2026-10-01"
+    },
+    {
+      "checkpoint": "final",
+      "path": "snapshot.cash.value",
+      "op": "eq",
+      "value": 200000
+    },
+    {
+      "checkpoint": "final",
+      "path": "snapshot.cash.value",
+      "op": "not_eq",
+      "value": 100000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-0915]",
+      "op": "absent"
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-0920]",
+      "op": "absent"
+    }
+  ]
+}

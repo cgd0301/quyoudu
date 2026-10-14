@@ -1,0 +1,252 @@
+{
+  "test_id": "T009-03#3",
+  "rule": "R009",
+  "layer": "ENGINE",
+  "needs_review": false,
+  "source_text": "初始：①优惠Y1的valid_to=2026-09-05、applies_at=PAYMENT，实际付款日为9/10；②Y2与Y3同时使用，Y2的stackable_with不含Y3；③Y4的max_uses=1，候选C03在两笔订单中各用一次；操作：比较；预期：①Y1按付款时点已过期，依赖Y1的组合排除；②Y2与Y3违规叠加，排除；③Y4超出使用次数，排除；三者都列明排除原因；优惠字段按D45",
+  "base": null,
+  "input": {
+    "meta": {
+      "case_id": "T009-03#3",
+      "purpose": "情形③：资金取 c01 的数值；候选 C01、C02 不用优惠；C03 在住宿、高铁两笔订单上各用一次 Y4（max_uses=1）。",
+      "data_version": "1",
+      "simulated": true,
+      "source_type": "HAND_WRITTEN",
+      "generator": "cursor-agent",
+      "batch": "vectors-2026-10-14",
+      "created_at_real": "2026-10-14T20:00:00+08:00",
+      "demo_points": []
+    },
+    "snapshot": {
+      "as_of": "2026-09-01T09:00:00+08:00",
+      "cash_as_of": "2026-09-01T09:00:00+08:00",
+      "snapshot_phase": "DAY_START",
+      "cash": 100000,
+      "goal_allocation": 40000,
+      "other_goal_hold": null
+    },
+    "reserves": [
+      {
+        "reserve_id": "R-LIV-09",
+        "reserve_kind": "LIVING",
+        "amount": 30000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-30",
+        "release_at_end": false
+      },
+      {
+        "reserve_id": "R-CON",
+        "reserve_kind": "CONTINGENCY",
+        "amount": 20000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-28",
+        "release_at_end": false
+      }
+    ],
+    "events": [],
+    "goal": {
+      "goal_id": "G1",
+      "budget_cap": 90000,
+      "show_start_at": "2026-09-27T19:30:00+08:00",
+      "show_end_at": "2026-09-27T22:00:00+08:00",
+      "venue_city": "上海",
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "arrive_before_show_min": null,
+      "return_after_show_min": null,
+      "lodging_nights_required": null,
+      "seat_tier_allowed": null,
+      "lodging_max_distance_m": null,
+      "refundable_required": null
+    },
+    "cost_items": [
+      {
+        "cost_item_id": "LODGING",
+        "category": "LODGING",
+        "necessary": true,
+        "amount_status": "CONFIRMED"
+      },
+      {
+        "cost_item_id": "TRAIN-OUT",
+        "category": "OUTBOUND_TRANSPORT",
+        "necessary": true,
+        "amount_status": "CONFIRMED"
+      }
+    ],
+    "candidates": [
+      {
+        "candidate_id": "C01",
+        "items": [
+          {
+            "cost_item_id": "LODGING",
+            "channel": "渠道乙",
+            "spec": "大床房",
+            "price": 30000,
+            "currency": "CNY",
+            "price_basis": "QUOTE",
+            "order_id": "O1",
+            "purchase_date": "2026-09-10",
+            "payment_at": "2026-09-10",
+            "quote": {
+              "valid_from": "2026-09-01",
+              "valid_to": "2026-09-30",
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "available_at": "2026-09-01T08:00:00+08:00"
+            }
+          },
+          {
+            "cost_item_id": "TRAIN-OUT",
+            "channel": "渠道丙",
+            "spec": "二等座",
+            "price": 30000,
+            "currency": "CNY",
+            "price_basis": "QUOTE",
+            "order_id": "O2",
+            "purchase_date": "2026-09-10",
+            "payment_at": "2026-09-10",
+            "quote": {
+              "valid_from": "2026-09-01",
+              "valid_to": "2026-09-30",
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "available_at": "2026-09-01T08:00:00+08:00"
+            }
+          }
+        ],
+        "offers_used": [],
+        "returns": []
+      },
+      {
+        "candidate_id": "C02",
+        "items": [
+          {
+            "cost_item_id": "LODGING",
+            "channel": "渠道乙",
+            "spec": "大床房",
+            "price": 31000,
+            "currency": "CNY",
+            "price_basis": "QUOTE",
+            "order_id": "O1",
+            "purchase_date": "2026-09-10",
+            "payment_at": "2026-09-10",
+            "quote": {
+              "valid_from": "2026-09-01",
+              "valid_to": "2026-09-30",
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "available_at": "2026-09-01T08:00:00+08:00"
+            }
+          },
+          {
+            "cost_item_id": "TRAIN-OUT",
+            "channel": "渠道丙",
+            "spec": "二等座",
+            "price": 30000,
+            "currency": "CNY",
+            "price_basis": "QUOTE",
+            "order_id": "O2",
+            "purchase_date": "2026-09-10",
+            "payment_at": "2026-09-10",
+            "quote": {
+              "valid_from": "2026-09-01",
+              "valid_to": "2026-09-30",
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "available_at": "2026-09-01T08:00:00+08:00"
+            }
+          }
+        ],
+        "offers_used": [],
+        "returns": []
+      },
+      {
+        "candidate_id": "C03",
+        "items": [
+          {
+            "cost_item_id": "LODGING",
+            "channel": "渠道乙",
+            "spec": "大床房",
+            "price": 30000,
+            "currency": "CNY",
+            "price_basis": "QUOTE",
+            "order_id": "O1",
+            "purchase_date": "2026-09-10",
+            "payment_at": "2026-09-10",
+            "quote": {
+              "valid_from": "2026-09-01",
+              "valid_to": "2026-09-30",
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "available_at": "2026-09-01T08:00:00+08:00"
+            }
+          },
+          {
+            "cost_item_id": "TRAIN-OUT",
+            "channel": "渠道丙",
+            "spec": "二等座",
+            "price": 30000,
+            "currency": "CNY",
+            "price_basis": "QUOTE",
+            "order_id": "O2",
+            "purchase_date": "2026-09-10",
+            "payment_at": "2026-09-10",
+            "quote": {
+              "valid_from": "2026-09-01",
+              "valid_to": "2026-09-30",
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "available_at": "2026-09-01T08:00:00+08:00"
+            }
+          }
+        ],
+        "offers_used": [
+          {
+            "offer_id": "Y4",
+            "order_id": "O1"
+          },
+          {
+            "offer_id": "Y4",
+            "order_id": "O2"
+          }
+        ],
+        "returns": []
+      }
+    ],
+    "offers": [
+      {
+        "offer_id": "Y4",
+        "type": "INSTANT_OFF",
+        "value": 2000,
+        "scope": [
+          "LODGING",
+          "OUTBOUND_TRANSPORT"
+        ],
+        "threshold": null,
+        "valid_from": "2026-09-01",
+        "valid_to": "2026-09-30",
+        "applies_at": "ORDER",
+        "max_uses": 1,
+        "stackable_with": [],
+        "rounding": "FLOOR"
+      }
+    ],
+    "price_series": [],
+    "consumption_records": [],
+    "planned_allocation": null,
+    "forecast_confirmations": []
+  },
+  "ops": [],
+  "expect": [
+    {
+      "checkpoint": "final",
+      "path": "candidates[candidate_id=C03].excluded_reasons",
+      "op": "includes",
+      "value": {
+        "code": "OFFER_MAX_USES_EXCEEDED"
+      }
+    }
+  ]
+}

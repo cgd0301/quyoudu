@@ -1,0 +1,134 @@
+{
+  "test_id": "T002-03",
+  "rule": "R002",
+  "layer": "ENGINE",
+  "needs_review": false,
+  "source_text": "初始：c01的资金数值，但as_of=cash_as_of=2026-10-01T09:00:00+08:00，DAY_START；9/20已到账的本目标退款150（ACTUAL，已计入快照）；操作：运行时间轴并计算净支出；预期：时间轴不出现该150流入，C0仍为1000；该150在R中只扣一次；本行退款在9/20，位于范围内（D57）",
+  "base": "c01",
+  "input": {
+    "meta": {
+      "case_id": "T002-03",
+      "purpose": "c01 的资金数值，as_of=cash_as_of=2026-10-01T09:00:00+08:00，DAY_START；9/20 已到账的本目标退款 150（E-RF，已计入快照）；演出移到 10/27；候选 C01 无付款，只作计划对象。",
+      "data_version": "1",
+      "simulated": true,
+      "source_type": "HAND_WRITTEN",
+      "generator": "cursor-agent",
+      "batch": "vectors-2026-10-14",
+      "created_at_real": "2026-10-14T20:00:00+08:00",
+      "demo_points": []
+    },
+    "snapshot": {
+      "as_of": "2026-10-01T09:00:00+08:00",
+      "cash_as_of": "2026-10-01T09:00:00+08:00",
+      "snapshot_phase": "DAY_START",
+      "cash": 100000,
+      "goal_allocation": 40000,
+      "other_goal_hold": null
+    },
+    "reserves": [
+      {
+        "reserve_id": "R-LIV-09",
+        "reserve_kind": "LIVING",
+        "amount": 30000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-30",
+        "release_at_end": false
+      },
+      {
+        "reserve_id": "R-CON",
+        "reserve_kind": "CONTINGENCY",
+        "amount": 20000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-10-28",
+        "release_at_end": false
+      }
+    ],
+    "events": [
+      {
+        "event_id": "E-RF",
+        "event_kind": "RETURN",
+        "event_status": "ACTUAL",
+        "amount": 15000,
+        "expected_at": "2026-09-20",
+        "actual_at": "2026-09-20T12:00:00+08:00",
+        "time_precision": "DATE",
+        "in_snapshot": true,
+        "goal_id": "G1",
+        "cost_item_id": "TICKET",
+        "coverage": [],
+        "recorded_at": "2026-09-20T12:00:00+08:00",
+        "available_at": "2026-09-20T12:00:00+08:00",
+        "currency": "CNY"
+      }
+    ],
+    "goal": {
+      "goal_id": "G1",
+      "budget_cap": 90000,
+      "show_start_at": "2026-10-27T19:30:00+08:00",
+      "show_end_at": "2026-10-27T22:00:00+08:00",
+      "venue_city": "上海",
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "arrive_before_show_min": null,
+      "return_after_show_min": null,
+      "lodging_nights_required": null,
+      "seat_tier_allowed": null,
+      "lodging_max_distance_m": null,
+      "refundable_required": null
+    },
+    "cost_items": [
+      {
+        "cost_item_id": "TICKET",
+        "category": "TICKET",
+        "necessary": true,
+        "amount_status": "CONFIRMED"
+      }
+    ],
+    "candidates": [
+      {
+        "candidate_id": "C01",
+        "items": [],
+        "offers_used": [],
+        "returns": []
+      }
+    ],
+    "offers": [],
+    "price_series": [],
+    "consumption_records": [],
+    "planned_allocation": null,
+    "forecast_confirmations": []
+  },
+  "ops": [
+    {
+      "type": "SELECT_CANDIDATE",
+      "candidate_id": "C01"
+    }
+  ],
+  "expect": [
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-RF]",
+      "op": "absent"
+    },
+    {
+      "checkpoint": "final",
+      "path": "snapshot.cash.value",
+      "op": "eq",
+      "value": 100000
+    },
+    {
+      "checkpoint": "final",
+      "path": "cost.eligible_return.value",
+      "op": "eq",
+      "value": 15000
+    }
+  ]
+}

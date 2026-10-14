@@ -1,0 +1,228 @@
+{
+  "test_id": "T017-07",
+  "rule": "R017",
+  "layer": "ENGINE",
+  "needs_review": false,
+  "source_text": "初始：已确认方案C02；新预测显示9/12在渠道乙购买住宿便宜30；随后又发生收入延期导致缺口；操作：重算；预期：显示待确认差异和风险；渠道、购买日、付款日和优惠安排不变；不自动暂停或取消",
+  "base": null,
+  "input": {
+    "meta": {
+      "case_id": "T017-07",
+      "purpose": "资金取 c01 的数值；已确认方案 C02 的住宿 700 于 9/10 在渠道甲购买并付款；新预测显示 9/12 在渠道乙购买便宜 30，写成候选 C03（未确认的预测）；9/8 的已确认预计收入 500（E-INC）延期到 9/12 导致缺口。",
+      "data_version": "1",
+      "simulated": true,
+      "source_type": "HAND_WRITTEN",
+      "generator": "cursor-agent",
+      "batch": "vectors-2026-10-14",
+      "created_at_real": "2026-10-14T20:00:00+08:00",
+      "demo_points": []
+    },
+    "snapshot": {
+      "as_of": "2026-09-01T09:00:00+08:00",
+      "cash_as_of": "2026-09-01T09:00:00+08:00",
+      "snapshot_phase": "DAY_START",
+      "cash": 100000,
+      "goal_allocation": 40000,
+      "other_goal_hold": null
+    },
+    "reserves": [
+      {
+        "reserve_id": "R-LIV-09",
+        "reserve_kind": "LIVING",
+        "amount": 30000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-30",
+        "release_at_end": false
+      },
+      {
+        "reserve_id": "R-CON",
+        "reserve_kind": "CONTINGENCY",
+        "amount": 20000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-28",
+        "release_at_end": false
+      }
+    ],
+    "events": [
+      {
+        "event_id": "E-INC",
+        "event_kind": "INCOME",
+        "event_status": "EXPECTED",
+        "amount": 50000,
+        "expected_at": "2026-09-08",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY"
+      }
+    ],
+    "goal": {
+      "goal_id": "G1",
+      "budget_cap": 90000,
+      "show_start_at": "2026-09-27T19:30:00+08:00",
+      "show_end_at": "2026-09-27T22:00:00+08:00",
+      "venue_city": "上海",
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "arrive_before_show_min": null,
+      "return_after_show_min": null,
+      "lodging_nights_required": null,
+      "seat_tier_allowed": null,
+      "lodging_max_distance_m": null,
+      "refundable_required": null
+    },
+    "cost_items": [
+      {
+        "cost_item_id": "LODGING",
+        "category": "LODGING",
+        "necessary": true,
+        "amount_status": "CONFIRMED"
+      }
+    ],
+    "candidates": [
+      {
+        "candidate_id": "C01",
+        "items": [
+          {
+            "cost_item_id": "LODGING",
+            "channel": "渠道丙",
+            "spec": "大床房",
+            "price": 72000,
+            "currency": "CNY",
+            "price_basis": "QUOTE",
+            "order_id": "O1",
+            "purchase_date": "2026-09-10",
+            "payment_at": "2026-09-10",
+            "quote": {
+              "valid_from": "2026-09-01",
+              "valid_to": "2026-09-30",
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "available_at": "2026-09-01T08:00:00+08:00"
+            }
+          }
+        ],
+        "offers_used": [],
+        "returns": []
+      },
+      {
+        "candidate_id": "C02",
+        "items": [
+          {
+            "cost_item_id": "LODGING",
+            "channel": "渠道甲",
+            "spec": "大床房",
+            "price": 70000,
+            "currency": "CNY",
+            "price_basis": "QUOTE",
+            "order_id": "O1",
+            "purchase_date": "2026-09-10",
+            "payment_at": "2026-09-10",
+            "quote": {
+              "valid_from": "2026-09-01",
+              "valid_to": "2026-09-30",
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "available_at": "2026-09-01T08:00:00+08:00"
+            }
+          }
+        ],
+        "offers_used": [],
+        "returns": []
+      },
+      {
+        "candidate_id": "C03",
+        "items": [
+          {
+            "cost_item_id": "LODGING",
+            "channel": "渠道乙",
+            "spec": "大床房",
+            "price": 67000,
+            "currency": "CNY",
+            "price_basis": "FORECAST",
+            "order_id": "O1",
+            "purchase_date": "2026-09-12",
+            "payment_at": "2026-09-12",
+            "quote": {
+              "valid_from": "2026-09-01",
+              "valid_to": "2026-09-30",
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "available_at": "2026-09-01T08:00:00+08:00"
+            }
+          }
+        ],
+        "offers_used": [],
+        "returns": []
+      }
+    ],
+    "offers": [],
+    "price_series": [],
+    "consumption_records": [],
+    "planned_allocation": null,
+    "confirmed_plan": {
+      "candidate_id": "C02",
+      "plan_version": "C02@v1",
+      "input_version": "v1"
+    },
+    "forecast_confirmations": []
+  },
+  "ops": [
+    {
+      "type": "DELAY_INCOME",
+      "event_id": "E-INC",
+      "expected_at": "2026-09-12"
+    }
+  ],
+  "expect": [
+    {
+      "checkpoint": "final",
+      "path": "action_list[cost_item_id=LODGING].channel",
+      "op": "eq",
+      "value": "渠道甲"
+    },
+    {
+      "checkpoint": "final",
+      "path": "action_list[cost_item_id=LODGING].purchase_date",
+      "op": "eq",
+      "value": "2026-09-10"
+    },
+    {
+      "checkpoint": "final",
+      "path": "action_list[cost_item_id=LODGING].payment_at",
+      "op": "eq",
+      "value": "2026-09-10"
+    },
+    {
+      "checkpoint": "final",
+      "path": "action_list[cost_item_id=LODGING].offer_ids",
+      "op": "eq",
+      "value": []
+    },
+    {
+      "checkpoint": "final",
+      "path": "states.plan_state",
+      "op": "eq",
+      "value": "PAYMENT_GAP"
+    },
+    {
+      "checkpoint": "final",
+      "path": "states.plan_state",
+      "op": "not_eq",
+      "value": "PAUSED"
+    },
+    {
+      "checkpoint": "final",
+      "path": "states.plan_state",
+      "op": "not_eq",
+      "value": "CANCELLED"
+    }
+  ]
+}

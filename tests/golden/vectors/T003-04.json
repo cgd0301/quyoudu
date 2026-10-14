@@ -1,0 +1,214 @@
+{
+  "test_id": "T003-04",
+  "rule": "R003",
+  "layer": "ENGINE",
+  "needs_review": false,
+  "source_text": "初始：c01，另设N0=100（医疗预留），于是G0=600、H0=400、U0=0；操作：①9/3医疗支出120，由N覆盖70、L覆盖50；②把覆盖关系改为N覆盖70、L覆盖80；预期：①q=120，C=880、L=250、N=30，G=600、H=400、U=0均不变；②覆盖合计150>支出120，按R003为输入冲突，计划状态＝暂无法完整判断，不执行核销",
+  "base": "c01",
+  "input": {
+    "meta": {
+      "case_id": "T003-04",
+      "purpose": "c01 另设 N0=100（医疗预留 R-MED）；9/3 医疗支出 120（E1），①由 N 覆盖 70、L 覆盖 50；②用 PATCH 把覆盖改为 N 70、L 80。候选 C01 无付款，只作计划对象。",
+      "data_version": "1",
+      "simulated": true,
+      "source_type": "HAND_WRITTEN",
+      "generator": "cursor-agent",
+      "batch": "vectors-2026-10-14",
+      "created_at_real": "2026-10-14T20:00:00+08:00",
+      "demo_points": []
+    },
+    "snapshot": {
+      "as_of": "2026-09-01T09:00:00+08:00",
+      "cash_as_of": "2026-09-01T09:00:00+08:00",
+      "snapshot_phase": "DAY_START",
+      "cash": 100000,
+      "goal_allocation": 40000,
+      "other_goal_hold": null
+    },
+    "reserves": [
+      {
+        "reserve_id": "R-LIV-09",
+        "reserve_kind": "LIVING",
+        "amount": 30000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-30",
+        "release_at_end": false
+      },
+      {
+        "reserve_id": "R-CON",
+        "reserve_kind": "CONTINGENCY",
+        "amount": 20000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-28",
+        "release_at_end": false
+      },
+      {
+        "reserve_id": "R-MED",
+        "reserve_kind": "OTHER_PROTECTED",
+        "amount": 10000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2027-01-01",
+        "release_at_end": false
+      }
+    ],
+    "events": [
+      {
+        "event_id": "E1",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "amount": 12000,
+        "expected_at": "2026-09-03",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [
+          {
+            "reserve_id": "R-MED",
+            "covered_amount": 7000
+          },
+          {
+            "reserve_id": "R-LIV-09",
+            "covered_amount": 5000
+          }
+        ],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY"
+      }
+    ],
+    "goal": {
+      "goal_id": "G1",
+      "budget_cap": 90000,
+      "show_start_at": "2026-09-27T19:30:00+08:00",
+      "show_end_at": "2026-09-27T22:00:00+08:00",
+      "venue_city": "上海",
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "arrive_before_show_min": null,
+      "return_after_show_min": null,
+      "lodging_nights_required": null,
+      "seat_tier_allowed": null,
+      "lodging_max_distance_m": null,
+      "refundable_required": null
+    },
+    "cost_items": [],
+    "candidates": [
+      {
+        "candidate_id": "C01",
+        "items": [],
+        "offers_used": [],
+        "returns": []
+      }
+    ],
+    "offers": [],
+    "price_series": [],
+    "consumption_records": [],
+    "planned_allocation": null,
+    "forecast_confirmations": []
+  },
+  "ops": [
+    {
+      "type": "SELECT_CANDIDATE",
+      "candidate_id": "C01"
+    },
+    {
+      "type": "EVALUATE",
+      "label": "①"
+    },
+    {
+      "type": "PATCH",
+      "path": "/events/0/coverage",
+      "value": [
+        {
+          "reserve_id": "R-MED",
+          "covered_amount": 7000
+        },
+        {
+          "reserve_id": "R-LIV-09",
+          "covered_amount": 8000
+        }
+      ]
+    },
+    {
+      "type": "EVALUATE",
+      "label": "②"
+    }
+  ],
+  "expect": [
+    {
+      "checkpoint": "①",
+      "path": "snapshot.goal_available.value",
+      "op": "eq",
+      "value": 60000
+    },
+    {
+      "checkpoint": "①",
+      "path": "snapshot.payment_headroom.value",
+      "op": "eq",
+      "value": 40000
+    },
+    {
+      "checkpoint": "①",
+      "path": "snapshot.unallocated.value",
+      "op": "eq",
+      "value": 0
+    },
+    {
+      "checkpoint": "①",
+      "path": "nodes[trigger.event_ids=E1].cash.value",
+      "op": "eq",
+      "value": 88000
+    },
+    {
+      "checkpoint": "①",
+      "path": "nodes[trigger.event_ids=E1].living_reserve.value",
+      "op": "eq",
+      "value": 25000
+    },
+    {
+      "checkpoint": "①",
+      "path": "nodes[trigger.event_ids=E1].other_protected_reserve.value",
+      "op": "eq",
+      "value": 3000
+    },
+    {
+      "checkpoint": "①",
+      "path": "nodes[trigger.event_ids=E1].goal_available.value",
+      "op": "eq",
+      "value": 60000
+    },
+    {
+      "checkpoint": "①",
+      "path": "nodes[trigger.event_ids=E1].payment_headroom.value",
+      "op": "eq",
+      "value": 40000
+    },
+    {
+      "checkpoint": "①",
+      "path": "nodes[trigger.event_ids=E1].unallocated.value",
+      "op": "eq",
+      "value": 0
+    },
+    {
+      "checkpoint": "②",
+      "path": "input_issues",
+      "op": "includes",
+      "value": {
+        "code": "COVERAGE_EXCEEDS_AMOUNT"
+      }
+    },
+    {
+      "checkpoint": "②",
+      "path": "states.plan_state",
+      "op": "eq",
+      "value": "INCOMPLETE"
+    }
+  ]
+}

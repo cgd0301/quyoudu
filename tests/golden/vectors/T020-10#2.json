@@ -1,0 +1,516 @@
+{
+  "test_id": "T020-10#2",
+  "rule": "R020",
+  "layer": "ENGINE",
+  "needs_review": false,
+  "source_text": "初始：as_of=2026-10-01T09:00:00+08:00；①9月样本缺9/20；②9月样本缺9/11；操作：取样本并计算可用步长；预期：①最近连续段为9/21—9/30共10个，少于14，显示“历史不足”；②最近连续段为9/12—9/30共19个，h=1的有效回测误差数=19-1-13=5，可以使用；h=2为4个，回测不足",
+  "base": null,
+  "input": {
+    "meta": {
+      "case_id": "T020-10#2",
+      "purpose": "情形②：10月1日独立测试数据；9月住宿样本缺 9/11；候选 C01、C02 的住宿分别在 10/1、10/2 购买（h=1、2）。",
+      "data_version": "1",
+      "simulated": true,
+      "source_type": "HAND_WRITTEN",
+      "generator": "cursor-agent",
+      "batch": "vectors-2026-10-14",
+      "created_at_real": "2026-10-14T20:00:00+08:00",
+      "demo_points": []
+    },
+    "snapshot": {
+      "as_of": "2026-10-01T09:00:00+08:00",
+      "cash_as_of": "2026-10-01T09:00:00+08:00",
+      "snapshot_phase": "DAY_START",
+      "cash": 300000,
+      "goal_allocation": 0,
+      "other_goal_hold": null
+    },
+    "reserves": [
+      {
+        "reserve_id": "R-LIV-09",
+        "reserve_kind": "LIVING",
+        "amount": 30000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-30",
+        "release_at_end": false
+      },
+      {
+        "reserve_id": "R-CON",
+        "reserve_kind": "CONTINGENCY",
+        "amount": 20000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-10-28",
+        "release_at_end": false
+      }
+    ],
+    "events": [],
+    "goal": {
+      "goal_id": "G1",
+      "budget_cap": 100000,
+      "show_start_at": "2026-10-27T19:30:00+08:00",
+      "show_end_at": "2026-10-27T22:00:00+08:00",
+      "venue_city": "上海",
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "arrive_before_show_min": null,
+      "return_after_show_min": null,
+      "lodging_nights_required": null,
+      "seat_tier_allowed": null,
+      "lodging_max_distance_m": null,
+      "refundable_required": null
+    },
+    "cost_items": [
+      {
+        "cost_item_id": "LODGING",
+        "category": "LODGING",
+        "necessary": true,
+        "amount_status": "ESTIMATE"
+      }
+    ],
+    "candidates": [
+      {
+        "candidate_id": "C01",
+        "items": [
+          {
+            "cost_item_id": "LODGING",
+            "channel": "渠道乙",
+            "spec": "大床房",
+            "price": 58000,
+            "currency": "CNY",
+            "price_basis": "REFERENCE",
+            "order_id": "O1",
+            "purchase_date": "2026-10-01",
+            "payment_at": "2026-10-01",
+            "quote": {
+              "valid_from": "2026-10-01",
+              "valid_to": "2026-10-31",
+              "recorded_at": "2026-10-01T08:00:00+08:00",
+              "available_at": "2026-10-01T08:00:00+08:00"
+            }
+          }
+        ],
+        "offers_used": [],
+        "returns": []
+      },
+      {
+        "candidate_id": "C02",
+        "items": [
+          {
+            "cost_item_id": "LODGING",
+            "channel": "渠道乙",
+            "spec": "大床房",
+            "price": 58000,
+            "currency": "CNY",
+            "price_basis": "REFERENCE",
+            "order_id": "O1",
+            "purchase_date": "2026-10-02",
+            "payment_at": "2026-10-02",
+            "quote": {
+              "valid_from": "2026-10-01",
+              "valid_to": "2026-10-31",
+              "recorded_at": "2026-10-01T08:00:00+08:00",
+              "available_at": "2026-10-01T08:00:00+08:00"
+            }
+          }
+        ],
+        "offers_used": [],
+        "returns": []
+      }
+    ],
+    "offers": [],
+    "price_series": [
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-01",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-01T20:00:00+08:00",
+        "available_at": "2026-09-01T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-02",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-02T20:00:00+08:00",
+        "available_at": "2026-09-02T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-03",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-03T20:00:00+08:00",
+        "available_at": "2026-09-03T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-04",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-04T20:00:00+08:00",
+        "available_at": "2026-09-04T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-05",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-05T20:00:00+08:00",
+        "available_at": "2026-09-05T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-06",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-06T20:00:00+08:00",
+        "available_at": "2026-09-06T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-07",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-07T20:00:00+08:00",
+        "available_at": "2026-09-07T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-08",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-08T20:00:00+08:00",
+        "available_at": "2026-09-08T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-09",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-09T20:00:00+08:00",
+        "available_at": "2026-09-09T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-10",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-10T20:00:00+08:00",
+        "available_at": "2026-09-10T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-12",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-12T20:00:00+08:00",
+        "available_at": "2026-09-12T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-13",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-13T20:00:00+08:00",
+        "available_at": "2026-09-13T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-14",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-14T20:00:00+08:00",
+        "available_at": "2026-09-14T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-15",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-15T20:00:00+08:00",
+        "available_at": "2026-09-15T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-16",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-16T20:00:00+08:00",
+        "available_at": "2026-09-16T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-17",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-17T20:00:00+08:00",
+        "available_at": "2026-09-17T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-18",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-18T20:00:00+08:00",
+        "available_at": "2026-09-18T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-19",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-19T20:00:00+08:00",
+        "available_at": "2026-09-19T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-20",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-20T20:00:00+08:00",
+        "available_at": "2026-09-20T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-21",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-21T20:00:00+08:00",
+        "available_at": "2026-09-21T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-22",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-22T20:00:00+08:00",
+        "available_at": "2026-09-22T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-23",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-23T20:00:00+08:00",
+        "available_at": "2026-09-23T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-24",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-24T20:00:00+08:00",
+        "available_at": "2026-09-24T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-25",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-25T20:00:00+08:00",
+        "available_at": "2026-09-25T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-26",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-26T20:00:00+08:00",
+        "available_at": "2026-09-26T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-27",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-27T20:00:00+08:00",
+        "available_at": "2026-09-27T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-28",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-28T20:00:00+08:00",
+        "available_at": "2026-09-28T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-29",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-29T20:00:00+08:00",
+        "available_at": "2026-09-29T20:00:00+08:00"
+      },
+      {
+        "series_id": "S-LODGING",
+        "cost_item_id": "LODGING",
+        "channel": "渠道乙",
+        "spec": "大床房",
+        "service_date": "2026-10-27",
+        "observed_on": "2026-09-30",
+        "price": 58000,
+        "currency": "CNY",
+        "recorded_at": "2026-09-30T20:00:00+08:00",
+        "available_at": "2026-09-30T20:00:00+08:00"
+      }
+    ],
+    "consumption_records": [],
+    "planned_allocation": null,
+    "forecast_confirmations": []
+  },
+  "ops": [],
+  "expect": [
+    {
+      "checkpoint": "final",
+      "path": "forecasts[purchase_date=2026-10-01].sample_count",
+      "op": "eq",
+      "value": 19
+    },
+    {
+      "checkpoint": "final",
+      "path": "forecasts[purchase_date=2026-10-01].backtest_count",
+      "op": "eq",
+      "value": 5
+    },
+    {
+      "checkpoint": "final",
+      "path": "forecasts[purchase_date=2026-10-01].status",
+      "op": "eq",
+      "value": "AVAILABLE"
+    },
+    {
+      "checkpoint": "final",
+      "path": "forecasts[purchase_date=2026-10-02].backtest_count",
+      "op": "eq",
+      "value": 4
+    },
+    {
+      "checkpoint": "final",
+      "path": "forecasts[purchase_date=2026-10-02].status",
+      "op": "eq",
+      "value": "BACKTEST_INSUFFICIENT"
+    }
+  ]
+}
