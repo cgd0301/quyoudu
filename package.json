@@ -21,7 +21,17 @@
     "count:chars": "node scripts/not-implemented.mjs",
     "lint": "oxlint",
     "spec:lint": "tsx scripts/spec-lint.ts",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check": "pnpm typecheck && pnpm lint && pnpm test",
+    "check:all": "pnpm check && pnpm spec:lint && pnpm golden:check",
+    "mmd": "tsx scripts/mmd.ts",
+    "schema:export": "node scripts/not-implemented.mjs",
+    "oracle:export": "node scripts/not-implemented.mjs",
+    "oracle:import": "node scripts/not-implemented.mjs",
+    "golden:write": "node scripts/not-implemented.mjs",
+    "export:results": "node scripts/not-implemented.mjs",
+    "doc:lint": "node scripts/not-implemented.mjs",
+    "presubmit": "node scripts/not-implemented.mjs"
   },
   "dependencies": {
     "decimal.js": "^10.6.0",
