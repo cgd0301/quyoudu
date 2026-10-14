@@ -153,6 +153,13 @@ const costSchema = z.strictObject({
   }),
   contingencyReserve: moneySchema,
   pendingCostItemIds: z.array(z.string()),
+  // §11.1：没有可能退回时为 null，不入账
+  possibleRefund: z
+    .strictObject({
+      amount: moneySchema,
+      condition: z.string(),
+    })
+    .nullable(),
 })
 
 const dependencySchema = z.strictObject({
@@ -320,6 +327,13 @@ export const resultCoreSchema = z
     actionList: z.array(actionItemSchema),
     dailyReference: dailyReferenceSchema,
     // D60：早于当前输入版本的确认 status 为 NEEDS_RECONFIRM，不用于该版本的判断
+    // R017 第10条：新估算与已确认金额的差额，不改正式行动清单
+    pendingDifferences: z.array(
+      z.strictObject({
+        costItemId: z.string(),
+        delta: moneySchema,
+      }),
+    ),
     userConfirmations: z.array(
       z.strictObject({
         field: confirmationFieldSchema,

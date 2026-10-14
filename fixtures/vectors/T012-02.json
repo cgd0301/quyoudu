@@ -3,7 +3,7 @@
   "rule": "R012",
   "layer": "ENGINE",
   "needs_review": false,
-  "source_text": "初始：c01；用户取消计划，可能退款150，条件为平台审核通过；本行没有 cancellable=true 的预计付款（D61，省略视为仍有效义务）；操作：确认取消；预期：C0仍为1000；150显示为可能退回及其条件，不入账；计划状态＝已取消；尚未发生且 cancellable 不为 true 的付款仍计入义务",
+  "source_text": "初始：c01；用户取消计划，可能退款150，条件为平台审核通过；本行没有 cancellable=true 的预计付款（D61，省略视为仍有效义务）；操作：确认取消；预期：C0仍为1000；150写入 cost.possible_refund（金额150、条件为平台审核通过），不入账；计划状态＝已取消；尚未发生且 cancellable 不为 true 的付款仍计入义务",
   "base": "c01",
   "input": {
     "meta": {
@@ -166,6 +166,18 @@
       "path": "cost.future_payments[event_id=E-PAY].amount.value",
       "op": "eq",
       "value": 20000
+    },
+    {
+      "checkpoint": "final",
+      "path": "cost.possible_refund.amount.value",
+      "op": "eq",
+      "value": 15000
+    },
+    {
+      "checkpoint": "final",
+      "path": "cost.possible_refund.condition",
+      "op": "eq",
+      "value": "平台审核通过"
     }
   ]
 }

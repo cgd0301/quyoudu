@@ -3,7 +3,7 @@
   "rule": "R017",
   "layer": "ENGINE",
   "needs_review": false,
-  "source_text": "初始：同T017-01，C02的比较结果基于v1；之后用户新增生活支出形成v2；操作：用户确认C02（v1结果）；预期：先按v2重新检查，不把v1结论直接写入主记录；重新检查通过后才进入确认",
+  "source_text": "初始：同T017-01，C02的比较结果基于v1；之后用户新增生活支出形成v2；操作：用户确认C02（v1结果）；预期：先按v2重新检查，不把v1的分配结论写入主记录；重新检查通过且可以写入正式安排时，直接确认并按v2写入，确认记录的输入版本为v2，确认状态＝已确认，不退回待用户确认（D63）",
   "base": null,
   "input": {
     "meta": {
@@ -195,8 +195,14 @@
     {
       "checkpoint": "确认",
       "path": "confirmation.input_version",
-      "op": "not_eq",
-      "value": "v1"
+      "op": "eq",
+      "value": "v2"
+    },
+    {
+      "checkpoint": "确认",
+      "path": "states.confirmation_state",
+      "op": "eq",
+      "value": "CONFIRMED"
     }
   ]
 }

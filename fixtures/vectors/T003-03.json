@@ -3,7 +3,7 @@
   "rule": "R003",
   "layer": "ENGINE",
   "needs_review": false,
-  "source_text": "初始：c01；操作：9/20本目标当地交通支出80，由机动预留覆盖（q=80）；预期：C=920、M=120、A=400；H=920-300-120=500、U=100均不变；该80计入P，M同步减少80",
+  "source_text": "初始：c01；操作：9/20本目标当地交通支出80，由机动预留覆盖（q=80）；预期：C=920、M=120、A=400；H=920-300-120=500、U=100均不变；该80计入后续应付F、不计入已付P（§3，9/20尚未发生），M同步减少80",
   "base": "c01",
   "input": {
     "meta": {
@@ -134,6 +134,17 @@
       "path": "nodes[trigger.event_ids=E1].unallocated.value",
       "op": "eq",
       "value": 10000
+    },
+    {
+      "checkpoint": "final",
+      "path": "cost.future_payments[event_id=E1].amount.value",
+      "op": "eq",
+      "value": 8000
+    },
+    {
+      "checkpoint": "final",
+      "path": "cost.paid_payments[event_id=E1]",
+      "op": "absent"
     }
   ]
 }

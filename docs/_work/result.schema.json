@@ -488,6 +488,29 @@
           "items": {
             "type": "string"
           }
+        },
+        "possible_refund": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "$ref": "#/$defs/Money"
+                },
+                "condition": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "amount",
+                "condition"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -501,7 +524,8 @@
         "future_payments",
         "protected_reserves",
         "contingency_reserve",
-        "pending_cost_item_ids"
+        "pending_cost_item_ids",
+        "possible_refund"
       ],
       "additionalProperties": false
     },
@@ -1037,6 +1061,25 @@
         "missing_reasons"
       ],
       "additionalProperties": false
+    },
+    "pending_differences": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "cost_item_id": {
+            "type": "string"
+          },
+          "delta": {
+            "$ref": "#/$defs/Money"
+          }
+        },
+        "required": [
+          "cost_item_id",
+          "delta"
+        ],
+        "additionalProperties": false
+      }
     },
     "user_confirmations": {
       "type": "array",
@@ -1598,6 +1641,7 @@
     "confirmation",
     "action_list",
     "daily_reference",
+    "pending_differences",
     "user_confirmations",
     "states",
     "labels"

@@ -107,6 +107,7 @@ function shapeSample(): ResultCore {
       protectedReserves: { livingReserve: money(30000), otherProtectedReserve: money(0), otherGoalHold: money(0) },
       contingencyReserve: money(20000),
       pendingCostItemIds: [],
+      possibleRefund: { amount: money(15000, ['R012']), condition: '平台审核通过' },
     },
     dependencies: [{ kind: 'EXPECTED_INCOME', refs: ['E-INC'], amount: money(50000), at: '2026-09-20' }],
     candidates: [
@@ -158,6 +159,7 @@ function shapeSample(): ResultCore {
       unavailable: [{ scenario: 'RECENT_MONTH', reason: 'HISTORY_INSUFFICIENT' }],
       missingReasons: [],
     },
+    pendingDifferences: [{ costItemId: 'LODGING', delta: money(5000, ['R017']) }],
     userConfirmations: [],
     states: {
       planState: 'PAYMENT_GAP',
