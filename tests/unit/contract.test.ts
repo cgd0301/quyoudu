@@ -16,7 +16,7 @@ import {
   ensureCheckpoint,
   opSchema,
   type Op,
-} from '../../src/engine/ops.ts'
+} from '../../src/engine/ops/index.ts'
 import { LABEL_TEXT, moneySchema, resultCoreSchema, type Money, type ResultCore } from '../../src/engine/result.ts'
 import { caseFileSchema } from '../../src/engine/schema.ts'
 import { toSnakeKey, toWire } from '../../src/engine/wire.ts'
@@ -479,8 +479,10 @@ describe('导出与占位', () => {
     }
   })
 
-  test('evaluate 尚未实现', () => {
-    expect(() => evaluate(c01(), [], DEMO_CFG_1)).toThrow('未实现')
+  test('evaluate 返回通过 resultCoreSchema 的检查点', () => {
+    const output = evaluate(c01(), [], DEMO_CFG_1)
+    expect(output.checkpoints.map((checkpoint) => checkpoint.label)).toEqual(['final'])
+    expect(resultCoreSchema.safeParse(output.checkpoints[0]?.result).success).toBe(true)
   })
 
   test('doneModules 都在 MODULES 中且不重复', () => {

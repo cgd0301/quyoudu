@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { moneySchema, resultCoreSchema } from './result.ts'
+import { moneySchema, resultCoreSchema, type Money } from './result.ts'
 
 function collect(schema: z.core.$ZodType, path: string, out: string[]): void {
   if (schema === moneySchema) {
@@ -27,4 +27,20 @@ const MONEY_PATHS: readonly string[] = (() => {
  */
 export function moneyPaths(): string[] {
   return [...MONEY_PATHS]
+}
+
+export function makeMoney(
+  value: number,
+  rules: readonly string[] = [],
+  reserveIds: readonly string[] = [],
+  eventIds: readonly string[] = [],
+): Money {
+  return {
+    value,
+    basis: {
+      eventIds: [...eventIds],
+      reserveIds: [...reserveIds],
+      rules: [...rules],
+    },
+  }
 }

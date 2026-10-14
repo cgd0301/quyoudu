@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { opSchema, opsSchema, type Op } from '../../src/engine/ops.ts'
+import { opSchema, opsSchema, type Op } from '../../src/engine/ops/index.ts'
 import { caseFileSchema, type CaseFile } from '../../src/engine/schema.ts'
 import { RECORDED, c01, expense, withCase } from './samples.ts'
 

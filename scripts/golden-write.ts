@@ -13,7 +13,7 @@ import { fileURLToPath } from 'node:url'
 import { z } from 'zod'
 import { DEMO_CFG_1 } from '../src/engine/config.ts'
 import { evaluate } from '../src/engine/evaluate.ts'
-import { opsSchema } from '../src/engine/ops.ts'
+import { opsSchema } from '../src/engine/ops/index.ts'
 import { caseFileSchema } from '../src/engine/schema.ts'
 import { toWire } from '../src/engine/wire.ts'
 

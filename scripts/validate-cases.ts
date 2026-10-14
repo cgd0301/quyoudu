@@ -8,7 +8,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { z } from 'zod'
 import type { EventKind, OfferType } from '../src/engine/enums.ts'
-import { opsSchema } from '../src/engine/ops.ts'
+import { opsSchema } from '../src/engine/ops/index.ts'
 import { caseFileSchema, dateSchema, type CaseFile } from '../src/engine/schema.ts'
 import { findBannedNames } from './lib/banned.ts'
 

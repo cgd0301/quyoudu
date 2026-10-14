@@ -1,6 +1,6 @@
 import { z } from 'zod'
-import { consumptionCategorySchema, coverModeSchema } from './enums.ts'
-import { amountSchema, coverageSchema, dateSchema, inputVersionSchema, instantSchema } from './schema.ts'
+import { consumptionCategorySchema, coverModeSchema } from '../enums.ts'
+import { amountSchema, coverageSchema, dateSchema, inputVersionSchema, instantSchema } from '../schema.ts'
 
 // D29 白名单
 const delayIncomeOp = z.strictObject({
