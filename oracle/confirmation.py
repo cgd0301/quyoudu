@@ -212,7 +212,7 @@ def apply_confirmation(
     if op["plan_version"] != f"{op['candidate_id']}@v1":
         runtime.draft_candidate_id = op["candidate_id"]
         return False
-    if op["input_version"] != runtime.input_version:
+    if int(op["input_version"][1:]) > runtime.input_version_number:
         runtime.draft_candidate_id = op["candidate_id"]
         return False
     suggestion = suggest_confirmation(runtime.case, candidate, runtime.input_version)
@@ -244,7 +244,7 @@ def apply_confirmation(
     runtime.case["confirmed_plan"] = {
         "candidate_id": op["candidate_id"],
         "plan_version": op["plan_version"],
-        "input_version": op["input_version"],
+        "input_version": runtime.input_version,
     }
     frozen = deepcopy(candidate.candidate)
     for index, item in enumerate(frozen["items"]):

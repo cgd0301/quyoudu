@@ -118,7 +118,7 @@ def holt_formula(
 
 
 def _series_targets(
-    case: dict[str, Any], series_id: str, rows: list[dict[str, Any]]
+    case: dict[str, Any], rows: list[dict[str, Any]]
 ) -> list[str]:
     keys = {
         (row["cost_item_id"], row["channel"], row["spec"]) for row in rows
@@ -129,11 +129,6 @@ def _series_targets(
         for item in candidate["items"]
         if (item["cost_item_id"], item["channel"], item["spec"]) in keys
     }
-    targets.update(
-        confirmation["purchase_date"]
-        for confirmation in case["forecast_confirmations"]
-        if confirmation["series_id"] == series_id
-    )
     return sorted(targets)
 
 
@@ -161,8 +156,7 @@ def _usable_rows(
         )
         <= 1
     )
-    # AMBIGUOUS: §7.2｜同日“最后一条”按 recorded_at｜按 available_at｜
-    # 采用 available_at、recorded_at、输入顺序的稳定末项，且绝不读取 as_of 后数据。
+    # D66: latest available_at, then recorded_at, then input position.
     by_day: dict[str, tuple[int, dict[str, Any]]] = {}
     for index, row in available:
         day = row["observed_on"]
@@ -288,7 +282,7 @@ def compute_forecasts(
         source_rows = grouped[series_id]
         rows, comparable = _usable_rows(source_rows, case["snapshot"]["as_of"])
         metadata = source_rows[0]
-        targets = _series_targets(case, series_id, source_rows)
+        targets = _series_targets(case, source_rows)
         for purchase_date in targets:
             history_end = rows[-1]["observed_on"] if rows else None
             horizon = (

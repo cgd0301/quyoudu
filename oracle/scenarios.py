@@ -271,10 +271,6 @@ def recent_month_scenario(
         if historical_total == 0:
             continue
         covered, same_scope = CATEGORY_RULES[category]
-        with localcontext(DECIMAL_CONTEXT):
-            daily_average = Decimal(historical_total) / Decimal(
-                SCENARIO_WINDOW_DAYS
-            )
         if covered:
             periods = _split_living_periods(case, future_start, future_end)
             if periods is None:
@@ -289,11 +285,14 @@ def recent_month_scenario(
 
         for group_index, (group_start, group_end, reserve_id) in enumerate(periods):
             days = days_inclusive(group_start, group_end)
-            # AMBIGUOUS: §7.1/§5｜Pg只展示日均｜Pg为日均乘组覆盖日数｜
-            # 采用后者，才能形成D23要求的组总额并覆盖完整检查期间。
+            # D67: multiply before the single ROUND_HALF_UP conversion to fen.
             with localcontext(DECIMAL_CONTEXT):
                 pg = int(
-                    (daily_average * Decimal(len(days))).quantize(
+                    (
+                        Decimal(historical_total)
+                        * Decimal(len(days))
+                        / Decimal(SCENARIO_WINDOW_DAYS)
+                    ).quantize(
                         Decimal("1"), rounding=ROUND_HALF_UP
                     )
                 )

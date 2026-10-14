@@ -292,11 +292,10 @@ def _apply_reduction(
     reduction: int,
     items: list[dict[str, Any]],
 ) -> None:
-    # AMBIGUOUS: D45｜订单优惠应按何比例落到多笔不同付款日｜
-    # 读法A按比例拆分｜读法B从较晚付款倒序抵扣｜采用B，以保留较早节点的较高现金需求。
+    # D65: reduce the latest scoped payment first; ties use reverse item order.
     ordered = sorted(
         indexes,
-        key=lambda index: (as_date(items[index]["payment_at"]), index),
+        key=lambda index: (parse_time(items[index]["payment_at"]), index),
         reverse=True,
     )
     remaining = reduction

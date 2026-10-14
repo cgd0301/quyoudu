@@ -5,10 +5,13 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from decimal import Decimal, localcontext
 from pathlib import Path
 from typing import Any
 
+from .config import DECIMAL_CONTEXT
 from .engine import evaluate_payload
+from .holt import dstr, forecast_amount, holt_formula, q12
 
 
 def _load(path: Path) -> dict[str, Any]:
@@ -39,6 +42,58 @@ def run_command(path: Path) -> int:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", newline="\n")
     sys.stdout.write(_serialized(result))
+    return 0
+
+
+def _rounding_results() -> list[dict[str, Any]]:
+    inputs = ("4999.500000000000", "4999.499999999999")
+    results: list[dict[str, Any]] = []
+    for text in inputs:
+        rounded = q12(Decimal(text))
+        results.append(
+            {
+                "input": text,
+                "rounded_12": dstr(rounded),
+                "integer_cents": forecast_amount(rounded),
+            }
+        )
+    return results
+
+
+def unit_results() -> dict[str, Any]:
+    alpha = Decimal("0.2")
+    beta = Decimal("0.2")
+    phi = Decimal("0.80")
+    prices = [10000, 11000, 11500]
+    fit, predicted, amount = holt_formula(
+        prices,
+        alpha=alpha,
+        beta=beta,
+        phi=phi,
+        horizon=2,
+    )
+    with localcontext(DECIMAL_CONTEXT):
+        level2 = q12(Decimal(prices[1]))
+        trend2 = q12(Decimal(prices[1]) - Decimal(prices[0]))
+        third_one_step = q12(level2 + phi * trend2)
+        third_error = q12(Decimal(prices[2]) - third_one_step)
+    return {
+        "T007-05": _rounding_results(),
+        "T020-01": {
+            "l3": dstr(fit.level),
+            "b3": dstr(fit.trend),
+            "forecast_h2": dstr(predicted),
+            "integer_cents": amount,
+            "third_one_step_error": dstr(third_error),
+        },
+        "T020-11": _rounding_results(),
+    }
+
+
+def unit_command() -> int:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", newline="\n")
+    sys.stdout.write(_serialized(unit_results()))
     return 0
 
 
@@ -73,6 +128,7 @@ def parser() -> argparse.ArgumentParser:
     batch.add_argument("--cases", type=Path, required=True)
     batch.add_argument("--vectors", type=Path, required=True)
     batch.add_argument("--out", type=Path, required=True)
+    commands.add_parser("unit")
     return result
 
 
@@ -80,6 +136,8 @@ def main(argv: list[str] | None = None) -> int:
     args = parser().parse_args(argv)
     if args.command == "run":
         return run_command(args.input_json)
+    if args.command == "unit":
+        return unit_command()
     return batch_command(args.cases, args.vectors, args.out)
 
 

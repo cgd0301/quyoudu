@@ -57,6 +57,7 @@ def empty_cost() -> dict[str, Any]:
         },
         "contingency_reserve": money(0, rules=["§1"]),
         "pending_cost_item_ids": [],
+        "possible_refund": None,
     }
 
 
@@ -98,6 +99,7 @@ def result_skeleton(as_of: str, input_version: str) -> dict[str, Any]:
         },
         "confirmation": None,
         "action_list": [],
+        "pending_differences": [],
         "daily_reference": unavailable_daily(),
         "user_confirmations": [],
         "states": {

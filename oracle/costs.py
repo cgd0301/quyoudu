@@ -232,6 +232,7 @@ def compute_cost(
             contingency, reserve_ids=contingency_ids, rules=["R003", "D09", "§1"]
         ),
         "pending_cost_item_ids": list(dict.fromkeys(pending_cost_item_ids)),
+        "possible_refund": None,
     }
     return CostComputation(
         paid_total=paid_total,

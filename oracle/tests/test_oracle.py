@@ -6,7 +6,7 @@ from decimal import Decimal, ROUND_DOWN, localcontext
 from pathlib import Path
 
 from oracle import evaluate, evaluate_payload
-from oracle.__main__ import _serialized
+from oracle.__main__ import _serialized, main
 from oracle.holt import holt_formula
 from oracle.schema import validate_result
 
@@ -196,8 +196,7 @@ def test_rules_10_8_every_fixed_number():
     assert t006_result["states"]["plan_state"] == "PAYMENT_GAP"
 
 
-def test_t020_01_formula_is_12875_cents():
-    # AMBIGUOUS: T020-01｜原向量缺失｜按 §6 构造网格内最小公式复算｜采用后者。
+def test_holt_formula_constructed():
     fit, predicted, amount = holt_formula(
         [10000, 11000, 13675],
         alpha=Decimal("0.2"),
@@ -209,6 +208,25 @@ def test_t020_01_formula_is_12875_cents():
     assert fit.trend == Decimal("875.000000000000")
     assert predicted == Decimal("12875.000000000000")
     assert amount == 12875
+
+
+def test_unit_command_outputs_requested_keys(capsys):
+    assert main(["unit"]) == 0
+    output = json.loads(capsys.readouterr().out)
+    assert set(output) == {"T007-05", "T020-01", "T020-11"}
+
+
+def test_stale_confirmation_rechecks_current_version_and_preview_labels():
+    checkpoints = evaluate_payload(load(VECTORS / "T017-02.json"))["checkpoints"]
+    preview = checkpoints[0]["result"]
+    confirmed = checkpoints[-1]["result"]
+
+    preview_labels = {"DRAFT_PREVIEW", "PREVIEW_UNCONFIRMED"}
+    assert preview_labels <= set(preview["labels"])
+    assert confirmed["input_version"] == "v3"
+    assert confirmed["confirmation"]["input_version"] == "v2"
+    assert confirmed["states"]["confirmation_state"] == "CONFIRMED"
+    assert preview_labels.isdisjoint(confirmed["labels"])
 
 
 def test_top_k_is_stable_and_never_breaks_tie_limit():

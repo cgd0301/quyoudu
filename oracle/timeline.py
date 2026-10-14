@@ -59,13 +59,12 @@ def _event_at(event: dict[str, Any]) -> str | None:
 
 
 def _confirmed_income(event: dict[str, Any]) -> bool:
-    # AMBIGUOUS: D41｜仅 confirmations 明确关联的收入才算已确认｜
-    # CaseFile 未定义确认记录到 event_id 的关联且 fixtures 以完整无条件 INCOME 表示确认｜
-    # 采用金额日期完整且无 trigger_condition 的 INCOME 为已确认，避免补入条件资金。
+    # D64: a complete, unconditional EXPECTED INCOME is already user-confirmed.
     return (
         event.get("event_kind") == "INCOME"
+        and event.get("event_status") == "EXPECTED"
         and event.get("amount") is not None
-        and _event_at(event) is not None
+        and event.get("expected_at") is not None
         and not event.get("trigger_condition")
     )
 
