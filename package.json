@@ -20,6 +20,7 @@
     "book:build": "node scripts/not-implemented.mjs",
     "count:chars": "node scripts/not-implemented.mjs",
     "lint": "oxlint",
+    "spec:lint": "tsx scripts/spec-lint.ts",
     "preview": "vite preview"
   },
   "dependencies": {
