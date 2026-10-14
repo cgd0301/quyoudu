@@ -614,7 +614,7 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 - C7 “产品建议”按“面向工行（含工银亚洲）的产品落地建议”撰写。
 - C8 作品名称为品牌名加一句话定位，不超过25字。
 
-#### 8.8 本轮裁决（D34—D63）
+#### 8.8 本轮裁决（D34—D69）
 
 以下条目接在D33之后。与上文D01—D33或R001—R020冲突时，以本小节为准。每条均为DEMO-CFG-1。
 
@@ -648,6 +648,11 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 - D61 取消后仍有效的付款：events[] 与 candidates[].items[] 增加可选字段 cancellable。省略或 false 表示取消后仍是有效义务；true 表示取消后不再计入仍有效义务，可列为可避免的后续支出。已取消的底层检查从释放未使用的 A 之后的快照开始，只计入 cancellable 不为 true 的尚未发生付款，以及生活安排；已计入快照的实际收付款不删除（D47、R012）。暂停不因 cancellable 移除任何义务（T012-04）。不从 refundable 推断 cancellable。可能退款仍不入账（T012-02）。（DEMO-CFG-1｜依 SG-33 裁决）
 - D62 未确认方案的日历文案：不是已确认方案时，结果 labels 同时包含 DRAFT_PREVIEW 与 PREVIEW_UNCONFIRMED。界面同时显示“草案预览”和“预览，未确认”，不单选其中一句。（DEMO-CFG-1｜依 SG-40 裁决）
 - D63 过期确认的复查：CONFIRM 引用的输入版本早于当前版本时，先按当前版本重新检查，不把旧版本的分配结论写入主记录。复查后的计划状态为“按当前假设可行”、且按 D46 可以写入正式安排时，本次确认直接写入；确认记录的 input_version 取当前版本，确认状态为“已确认”，不退回“待用户确认”。复查后不能写入正式安排时，只保存为“草案”，不写入正式分配（D46）。（DEMO-CFG-1｜依 SG-41 裁决）
+- D64 已确认的预计收入：events[] 中 event_kind=INCOME、event_status=EXPECTED、amount 与 expected_at 都不为 null、且没有 trigger_condition 的事件，就是 D04、D41、D46 所说的“已确认的预计收入”。用户未确认的收入不写进 events[]（如 cB_v2_zero_feasible）。带 trigger_condition 的 INCOME 是条件收入，只进入对应的条件模拟（R005），不参与确定检查期间，也不能挂计划分配。（DEMO-CFG-1｜依 SG-42 裁决）
+- D65 订单优惠落到付款：按 D45 算出一张即时类优惠在该订单内的减免额后，只冲减该订单中 scope 内价格项的付款。这些价格项付款时刻不同时，从付款时刻最晚的一笔开始依次冲减，每笔最多减到 0；付款时刻相同的，按价格项在 items[] 中的顺序从后往前。返现、返券不冲减付款（D12）。（DEMO-CFG-1｜依 SG-42 裁决）
+- D66 同日多条价格观测：同一 series_id、同一 observed_on 有多条在预测起点已可获得的观测时只取一条：available_at 最晚者；相同则取 recorded_at 最晚者；仍相同则取在 price_series 中位置靠后者（R020 第3条）。（DEMO-CFG-1｜依 SG-42 裁决）
+- D67 情景组总额：Pg = 该类别观察窗口内的金额合计 × 组内天数 ÷ 30，精确算出后按 ROUND_HALF_UP 一次取整到分，不先把日均取整（D23）。组按 §5 为同一类别、同一覆盖期间：由生活预留覆盖的类别，按对应生活预留的覆盖期间切分；不由预留覆盖的类别，整个检查期间为一组。组内天数为该组覆盖期间与检查期间交集的自然日数，含首尾，含 as_of 当日。例：T018-04 为 100000×10÷30=33333.33…，取 33333 分。（DEMO-CFG-1｜依 SG-42 裁决）
+- D69 PATCH 只做替换：path 必须指向案例中已存在的位置，用 value 整体替换，不做新增或删除；替换后的案例必须仍通过 caseFileSchema，否则 evaluate 直接抛错（这是测试输入写错了，不是输入冲突）。（DEMO-CFG-1｜依 SG-43 裁决）
 
 #### 8.9 提交版数据约束
 
@@ -811,14 +816,14 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 
 - C：Ct、C0为现金；“C类建议”指§7的技术配置建议；C1—C8为§8.7的比赛对齐裁决；C01、C02……为候选完整组合编号（D15）；小写c01为案例编号，指§10.8的基础资金数据。
 - R：符号R为符合规则的返还；R001—R020为规则编号。
-- D：符号D为每日非计划支出参考金额；D01—D63为§8的默认裁决编号；注记“V2.1 依 D-xx 修订”中的D-xx即Dxx。V-01—V-06为§8.9的提交版数据约束。
+- D：符号D为每日非计划支出参考金额；D01—D69为§8的默认裁决编号；注记“V2.1 依 D-xx 修订”中的D-xx即Dxx。V-01—V-06为§8.9的提交版数据约束。
 - G：Gt为本目标可用金额；spec_gaps.md的条目编号写作SG-xx，以免混淆。
 - T与t：T001、T004-02为测试编号；t为节点下标。
 - K：推荐数量；DEMO-CFG-1中K = 3。
 
 ### 10.未来节点检查与预留生命周期
 
-本节把D04—D11、D27和D34—D63写成逐事件的计算步骤。符号和字段名见§1、§9；金额按整数分计算，例子以元书写。本节未写到的情形按spec_gaps.md中的SG编号处理，不自行补全。
+本节把D04—D11、D27和D34—D69写成逐事件的计算步骤。符号和字段名见§1、§9；金额按整数分计算，例子以元书写。本节未写到的情形按spec_gaps.md中的SG编号处理，不自行补全。
 
 #### 10.1 检查期间（D04、D41、D56）
 
@@ -1140,7 +1145,7 @@ c01是本节和traceability.csv使用的基础资金数据：
 
 ### 12.数据结构摘要
 
-本节只列对象、关键字段、枚举和操作。完整定义以src/engine/schema.ts（案例输入CaseFile）、src/engine/ops.ts（操作Op）、src/engine/result.ts（输出ResultCore）和src/engine/enums.ts（枚举）为准；JSON Schema由pnpm schema:export导出到docs/_work/schema.json、result.schema.json、ops.schema.json。字段名与§9冲突时以§9为准（SG-30 已按 D09、D45、D46 裁决）。§9没有给出的取值和结构以本节与 enums.ts 为准（SG-31 已裁决）。操作语义见§12.4（SG-32 已按 D29、D58 裁决）。生活安排、确认记录和取消后义务见 D59—D61。
+本节只列对象、关键字段、枚举和操作。完整定义以src/engine/schema.ts（案例输入CaseFile）、src/engine/ops.ts（操作Op）、src/engine/result.ts（输出ResultCore）和src/engine/enums.ts（枚举）为准；JSON Schema由pnpm schema:export导出到docs/_work/schema.json、result.schema.json、ops.schema.json。字段名与§9冲突时以§9为准（SG-30 已按 D09、D45、D46 裁决）。§9没有给出的取值和结构以本节与 enums.ts 为准（SG-31 已裁决）。操作语义见§12.4（SG-32 已按 D29、D58 裁决）。生活安排、确认记录和取消后义务见 D59—D61。案例建模与输出约定见§12.7。
 
 #### 12.1 约定
 
@@ -1238,3 +1243,10 @@ ResultCore另用的代码（节点触发、方案来源、情景、每日参考�
 #### 12.6 evaluate
 
 evaluate(caseData, ops, config)返回{checkpoints: [{label, result}]}。每个EVALUATE产生一个检查点；ops中没有EVALUATE时在末尾自动补一个，label为final。config取src/engine/config.ts的DEMO_CFG_1（DEMO-CFG-1）。
+
+#### 12.7 案例建模与输出约定
+
+- events[] 中的收付款是所有候选共同的；candidates[].items[] 是该候选特有的价格项，每项在 payment_at 形成一笔本目标付款；candidates[].returns[] 是该候选特有的返还。计划对象（D47）的时间轴＝全部共同事件＋该候选的价格项与返还＋引擎生成的机动预留释放。没有计划对象时，时间轴只含共同事件，仍逐节点计算和输出，计划状态按 D47 为“暂无法完整判断”。
+- 节点的 at：起始节点取 as_of 原文；事件触发的节点取该事件 expected_at 原文（实际发生的取 actual_at 原文）；价格项触发的节点取其 payment_at 原文；不做格式转换。
+- forecasts[]：price_series 按 series_id 成序列；序列中有观测与候选价格项的 cost_item_id、channel、spec 都相同时，按该价格项的 purchase_date 为该序列生成一条 forecasts[] 条目，同一序列、同一购买日只生成一条；序列混有不同规格时为不可比（R020 第1条）。
+- scenarios[]：总列出 CONFIRMED_ONLY 与 RECENT_MONTH 两项，不可用的带原因。
