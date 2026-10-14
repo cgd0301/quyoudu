@@ -10,7 +10,7 @@ export type Mutation = {
 
 const PAYMENT_KINDS = new Set(['GOAL_PAYMENT', 'OTHER_EXPENSE', 'INCOME', 'RETURN'])
 
-// SPEC-GAP SG-46：新建事件的记录时间、币种、精度和预留覆盖期未写
+// D71：新建事件的记录时间、币种、精度和预留覆盖期
 function timePrecisionOf(instant: string): 'DATE' | 'DATETIME' {
   return instant.includes('T') ? 'DATETIME' : 'DATE'
 }
@@ -27,9 +27,9 @@ function eventDay(event: CaseFile['events'][number]): string | null {
   return null
 }
 
-function uncoveredIssue(refs: string[]): InputIssue {
-  // SPEC-GAP SG-45
-  return { code: 'SPEC_NOT_COVERED', rule: '§12.4', refs }
+function referenceIssue(refs: string[]): InputIssue {
+  // SPEC-GAP SG-45：引用的窗口、预留或预计收付款不存在时不改案例，版本仍加 1
+  return { code: 'REFERENCE_INVALID', rule: '§12.4', refs }
 }
 
 function decodeToken(token: string): string {
@@ -122,9 +122,34 @@ function settleSpend(data: CaseFile, event: CaseFile['events'][number]): void {
   data.snapshot.goal_allocation -= reduce
 }
 
+type Coverage = CaseFile['events'][number]['coverage']
+
+function coveredBy(coverage: Coverage, reserveId: string): number {
+  return coverage.reduce((sum, item) => (item.reserve_id === reserveId ? sum + item.covered_amount : sum), 0)
+}
+
+/** D71：已计入快照的事件再次提交时，按金额和各项覆盖额的差额调整现金、预留和 A；都不变时只计一次 */
+function resettleSpend(data: CaseFile, before: { amount: number | null; coverage: Coverage }, event: CaseFile['events'][number]): void {
+  const delta = (event.amount ?? 0) - (before.amount ?? 0)
+  if (data.snapshot.cash != null) data.snapshot.cash -= delta
+  let writtenOff = 0
+  for (const reserveId of new Set([...before.coverage, ...event.coverage].map((item) => item.reserve_id))) {
+    const reserve = data.reserves.find((item) => item.reserve_id === reserveId)
+    if (reserve == null) continue
+    const change = coveredBy(event.coverage, reserveId) - coveredBy(before.coverage, reserveId)
+    const moved = change > 0 ? Math.min(Math.max(reserve.amount, 0), change) : change
+    reserve.amount -= moved
+    writtenOff += moved
+  }
+  if (event.event_kind !== 'GOAL_PAYMENT' && event.goal_id === undefined) return
+  const uncovered = delta - writtenOff
+  data.snapshot.goal_allocation -= uncovered > 0 ? Math.min(uncovered, Math.max(0, data.snapshot.goal_allocation)) : uncovered
+}
+
 function applyTodaySpend(data: CaseFile, op: Extract<Op, { type: 'ADD_TODAY_SPEND' }>): void {
   const existing = data.events.find((event) => event.event_id === op.event_id)
   const wasInSnapshot = existing?.in_snapshot ?? false
+  const before = existing === undefined ? null : { amount: existing.amount, coverage: existing.coverage.map((item) => ({ ...item })) }
   const coverage = op.coverage.map((item) => ({ reserve_id: item.reserve_id, covered_amount: item.covered_amount }))
   let event = existing
   if (event == null) {
@@ -158,6 +183,7 @@ function applyTodaySpend(data: CaseFile, op: Extract<Op, { type: 'ADD_TODAY_SPEN
     if (op.category !== undefined) event.category = op.category
   }
   if (!wasInSnapshot) settleSpend(data, event)
+  else if (before !== null) resettleSpend(data, before, event)
   markPhase(data)
 }
 
@@ -185,7 +211,7 @@ function applyLivingExpense(
     })
     created.set(op.event_id, op.reserve_id)
   } else if (!data.reserves.some((reserve) => reserve.reserve_id === op.reserve_id)) {
-    issue = uncoveredIssue([op.reserve_id])
+    issue = referenceIssue([op.reserve_id])
   }
   const coverage = [{ reserve_id: op.reserve_id, covered_amount: op.amount }]
   const existing = data.events.find((event) => event.event_id === op.event_id)
@@ -222,7 +248,7 @@ function applyDelay(data: CaseFile, op: Extract<Op, { type: 'DELAY_INCOME' }>): 
   const event = data.events.find((item) => item.event_id === op.event_id)
   const applicable =
     event != null && (event.event_kind === 'INCOME' || event.event_kind === 'RETURN') && event.event_status === 'EXPECTED'
-  if (!applicable || event == null) return uncoveredIssue([op.event_id])
+  if (!applicable || event == null) return referenceIssue([op.event_id])
   event.expected_at = op.expected_at
   event.time_precision = timePrecisionOf(op.expected_at)
   return null
@@ -245,7 +271,7 @@ function applyPaymentDate(data: CaseFile, op: Extract<Op, { type: 'CHANGE_PAYMEN
       found = true
     }
   }
-  if (!found) return uncoveredIssue([op.window_id])
+  if (!found) return referenceIssue([op.window_id])
   return null
 }
 

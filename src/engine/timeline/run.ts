@@ -261,7 +261,10 @@ export function runTimeline(input: TimelineInput): TimelineResult {
   const state = initialState(input, input.start)
   const nodes: NodeRecord[] = [judge(state, { kind: 'START', eventIds: [], related: [], at: input.asOf }, null)]
   const conflicted: string[] = []
-  for (const step of steps) {
+  // D74：局部检查在第一笔金额或日期未知的流出处截断，同组的流出一并不执行；日期未知的无法定位，在起始节点之后截断
+  const undated = events.some((event) => event.unknown === 'DATE')
+  for (const step of undated ? [] : steps) {
+    if ((step.group ? step.events : [step.event]).some((event) => event.unknown !== undefined)) break
     const prev = nodes.at(-1) ?? null
     if (!step.group) {
       const established = apply(state, step.event, input.plannedAllocation)

@@ -943,19 +943,45 @@ describe('快照与已计入事件（R002、D03、D29）', () => {
   })
 })
 
-describe('输入问题（SG-55）', () => {
-  test('金额未知的流出不进入时间轴并报 MISSING_KEY_INFO；金额和日期未知的流入不计入，也不报', () => {
+describe('金额或日期未知与引用失效（D74）', () => {
+  test('金额未知的流出报 MISSING_KEY_INFO，局部检查在该笔处截断；金额和日期未知的流入不计入，也不报', () => {
     const result = run(
       withCase((draft) => {
         draft.events.push(
+          expense({ event_id: 'E-BEFORE', amount: 1000, expected_at: '2026-09-02' }),
           expense({ event_id: 'E-OUT', amount: null }),
+          expense({ event_id: 'E-AFTER', amount: 1000, expected_at: '2026-09-05' }),
           expense({ event_id: 'E-DEP', event_kind: 'RETURN', amount: null, expected_at: null }),
         )
       }),
     )
     expect(refsOf(result, 'MISSING_KEY_INFO')).toEqual(['E-OUT'])
-    expect(triggered(result)).not.toContain('E-OUT')
-    expect(triggered(result)).not.toContain('E-DEP')
+    expect(result.nodes.map((node) => node.trigger.eventIds)).toEqual([[], ['E-BEFORE']])
+  })
+
+  test('日期未知的流出无法定位，局部检查在起始节点之后截断', () => {
+    const result = run(
+      withCase((draft) => {
+        draft.events.push(
+          expense({ event_id: 'E-UNDATED', amount: 1000, expected_at: null }),
+          expense({ event_id: 'E-LATER', amount: 1000, expected_at: '2026-09-05' }),
+        )
+      }),
+    )
+    expect(refsOf(result, 'MISSING_KEY_INFO')).toEqual(['E-UNDATED'])
+    expect(result.nodes.map((node) => node.trigger.eventIds)).toEqual([[]])
+  })
+
+  test('T010-03 住宿待填时附已确认的局部缺口：9/10 后 C=400、A=0、H=U=-100，保护性资金缺口 100；局部检查截至待填的住宿付款', () => {
+    const { input, ops } = loadVector('T010-03')
+    const result = run(input, ops)
+    const lodging = planItemId('C01', 1, 'LODGING')
+    expect(refsOf(result, 'MISSING_KEY_INFO')).toContain(lodging)
+    const node = nodeAt(result, '2026-09-10')
+    expect(figures(node)).toMatchObject({ C: 40000, A: 0, H: -10000, U: -10000 })
+    expect([node.nodeVerdict, node.amount?.value]).toEqual(['PROTECTED_SHORTFALL', 10000])
+    expect(result.earliestGap).toMatchObject({ nodeVerdict: 'PROTECTED_SHORTFALL', amount: { value: 10000 } })
+    expect(result.nodes.map((entry) => entry.at)).toEqual([input.snapshot.as_of, '2026-09-10'])
   })
 
   test('现金未知时不逐节点计算，报 MISSING_KEY_INFO', () => {

@@ -7,12 +7,12 @@ import type { PlanContext, TimelineEvent, TimelineInput, TimelineReserve } from 
 type CaseEvent = NormalizedCase['events'][number]
 type Candidate = NormalizedCase['candidates'][number]
 
-// SPEC-GAP SG-52：引擎生成的机动预留释放没有 event_id
+// D72：引擎生成的机动预留释放没有 event_id
 export const RELEASE_ID = 'AUTO:CONTINGENCY_RELEASE'
 
 const OUTFLOWS: ReadonlySet<CaseEvent['eventKind']> = new Set(['GOAL_PAYMENT', 'OTHER_EXPENSE'])
 
-// SPEC-GAP SG-52：价格项没有 event_id，按候选、序号和项目编号标识它形成的本目标付款
+// D72：价格项没有 event_id，按候选、序号和项目编号标识它形成的本目标付款
 export function planItemId(candidateId: string, index: number, costItemId: string): string {
   return `PLAN:${candidateId}:${index}:${costItemId}`
 }
@@ -83,7 +83,7 @@ function releaseEvent(id: string, at: string, day: string): TimelineEvent {
   return { id, kind: 'CONTINGENCY_RELEASE', amount: 0, at, day, coverage: [], goalRelated: false, confirmedIncome: false }
 }
 
-// SPEC-GAP SG-54：没有机动预留、返程到达未知或案例自带释放事件时不生成
+// D73：没有机动预留、返程到达未知或案例自带释放事件时不生成
 function releaseDay(data: NormalizedCase, candidate: Candidate): string | null {
   if (data.events.some((event) => event.eventKind === 'CONTINGENCY_RELEASE')) return null
   if (!data.reserves.some((reserve) => reserve.reserveKind === 'CONTINGENCY')) return null
@@ -108,7 +108,7 @@ function commonEvents(data: NormalizedCase, cancelled: boolean, asOfDay: string 
     // R002、D03：已计入快照的事件不再改变未来现金
     if (event.inSnapshot) continue
     for (const cover of event.coverage) {
-      // SPEC-GAP SG-55
+      // D74
       if (!reserveIds.has(cover.reserveId)) issues.add('REFERENCE_INVALID', '§12.1', cover.reserveId)
     }
     // R005、D64：依赖后续条件的只进对应条件模拟；R008：非人民币已由输入冲突报告
@@ -125,14 +125,13 @@ function commonEvents(data: NormalizedCase, cancelled: boolean, asOfDay: string 
       continue
     }
     const amount = event.amount
-    if (when === null || amount == null || amount < 0) {
-      // SPEC-GAP SG-55：金额或日期未知的流出不能执行；流入不计入
-      if (outflow) issues.add('MISSING_KEY_INFO', 'R010', event.eventId)
-      continue
-    }
-    if (amount === 0) continue
-    let day = when.day
-    if (when.past) {
+    const unknown = when === null ? 'DATE' : amount == null || amount < 0 ? 'AMOUNT' : undefined
+    // D74：金额或日期未知的流入不计入，也不报问题；这样的流出报缺失，局部检查在它的位置截断
+    if (unknown !== undefined && !outflow) continue
+    if (unknown === undefined && amount === 0) continue
+    if (unknown !== undefined) issues.add('MISSING_KEY_INFO', 'R010', event.eventId)
+    let day = when?.day ?? asOfDay ?? ''
+    if (when?.past === true) {
       // D54；SPEC-GAP SG-58：逾期流入不计入，逾期流出在 as_of 当日按先后未知执行
       if (event.eventStatus === 'EXPECTED') issues.add('OVERDUE_EVENT', 'D54', event.eventId)
       if (!outflow || asOfDay === null) continue
@@ -141,13 +140,14 @@ function commonEvents(data: NormalizedCase, cancelled: boolean, asOfDay: string 
     events.push({
       id: event.eventId,
       kind: event.eventKind,
-      amount,
-      at: when.at,
+      amount: unknown === undefined ? (amount ?? 0) : 0,
+      at: when?.at ?? raw ?? '',
       day,
-      ...(when.past || event.knownOrder === undefined ? {} : { knownOrder: event.knownOrder }),
+      ...(when === null || when.past || event.knownOrder === undefined ? {} : { knownOrder: event.knownOrder }),
       coverage: event.coverage.map((cover) => ({ reserveId: cover.reserveId, coveredAmount: cover.coveredAmount })),
       goalRelated: event.eventKind === 'GOAL_PAYMENT' || goalReturn,
       confirmedIncome: isConfirmedIncome(event),
+      ...(unknown === undefined ? {} : { unknown }),
     })
   }
   return events
@@ -169,18 +169,27 @@ function planEvents(
     const id = planItemId(candidate.candidateId, index, item.costItemId)
     const payment = plan.priced?.items.find((row) => row.index === index)?.payment?.value ?? null
     const when = whenOf(item.paymentAt, isInstant(item.paymentAt), asOfDay, cashAsOf)
-    if (when === null || payment === null || payment < 0) {
-      issues.add('MISSING_KEY_INFO', 'R010', id)
-      return
-    }
-    if (payment === 0) return
-    let day = when.day
-    if (when.past) {
+    const unknown = when === null ? 'DATE' : payment === null || payment < 0 ? 'AMOUNT' : undefined
+    if (unknown === undefined && payment === 0) return
+    // D74
+    if (unknown !== undefined) issues.add('MISSING_KEY_INFO', 'R010', id)
+    let day = when?.day ?? asOfDay ?? ''
+    if (when?.past === true) {
       issues.add('OVERDUE_EVENT', 'D54', id)
       if (asOfDay === null) return
       day = asOfDay
     }
-    events.push({ id, kind: 'GOAL_PAYMENT', amount: payment, at: when.at, day, coverage: [], goalRelated: true, confirmedIncome: false })
+    events.push({
+      id,
+      kind: 'GOAL_PAYMENT',
+      amount: unknown === undefined ? (payment ?? 0) : 0,
+      at: when?.at ?? item.paymentAt,
+      day,
+      coverage: [],
+      goalRelated: true,
+      confirmedIncome: false,
+      ...(unknown === undefined ? {} : { unknown }),
+    })
   })
   if (!cancelled) {
     for (const item of candidate.returns) {
@@ -245,7 +254,7 @@ export function timelineInput(data: NormalizedCase, plan: PlanContext): Timeline
   const snapshot = data.snapshot
   const asOfDay = dayOf(snapshot.asOf)
   const cancelled = plan.lifecycle === 'CANCELLED'
-  // SPEC-GAP SG-55：现金未知时不逐节点计算
+  // D74：现金未知时不逐节点计算
   if (snapshot.cash == null) issues.add('MISSING_KEY_INFO', 'R010', 'snapshot.cash')
   const candidate = planCandidate(data, plan, issues)
   const events = commonEvents(data, cancelled, asOfDay, issues)

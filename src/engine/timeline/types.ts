@@ -38,6 +38,8 @@ export type TimelineEvent = {
   scenario?: boolean
   /** §10.6 的待测流出 x：插在时间轴最前 */
   leading?: boolean
+  /** D74：金额或日期未知的流出，局部检查在它的位置截断；日期未知的不参与确定检查期间 */
+  unknown?: 'AMOUNT' | 'DATE'
 }
 
 export type TimelineReserve = {

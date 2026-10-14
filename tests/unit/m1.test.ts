@@ -450,6 +450,24 @@ describe('操作', () => {
     expect(snap?.cash.value).toBe(96000)
   })
 
+  test('已计入快照的支出改金额或覆盖后再次提交：按差额调整现金、覆盖预留和 A（D71）', () => {
+    const spend = (amount: number, covered = 0, goal = false): Op => ({
+      type: 'ADD_TODAY_SPEND',
+      event_id: 'E-TODAY',
+      amount,
+      actual_at: AS_OF,
+      coverage: covered > 0 ? [{ reserve_id: 'R-LIV-09', covered_amount: covered }] : [],
+      ...(goal ? { goal_id: 'G1' } : {}),
+    })
+    expect(run(c01(), [spend(4000), spend(6000)]).snapshot?.cash.value).toBe(100000 - 6000)
+    const raised = run(c01(), [spend(20000, 20000), spend(25000, 25000)]).snapshot
+    expect([raised?.cash.value, raised?.livingReserve.value]).toEqual([100000 - 25000, 30000 - 25000])
+    const lowered = run(c01(), [spend(20000, 20000), spend(15000, 15000)]).snapshot
+    expect([lowered?.cash.value, lowered?.livingReserve.value]).toEqual([100000 - 15000, 30000 - 15000])
+    const goal = run(c01(), [spend(40000, 0, true), spend(30000, 0, true)]).snapshot
+    expect([goal?.cash.value, goal?.goalAllocation.value]).toEqual([100000 - 30000, 40000 - 30000])
+  })
+
   test('延期预计收入不改变现金（R005）；目标不符则不改时间', () => {
     const data = withCase((draft) => {
       draft.events.push(
@@ -462,7 +480,7 @@ describe('操作', () => {
     expect(delayed.data.events.find((event) => event.event_id === 'E-INC')?.expected_at).toBe('2026-09-20')
     expect(delayed.data.snapshot.cash).toBe(100000)
     const rejected = applyMutation(data, { type: 'DELAY_INCOME', event_id: 'E-PAY', expected_at: '2026-09-20' }, new Map())
-    expect(rejected.issue?.code).toBe('SPEC_NOT_COVERED')
+    expect(rejected.issue?.code).toBe('REFERENCE_INVALID')
     expect(rejected.data.events.find((event) => event.event_id === 'E-PAY')?.expected_at).toBe('2026-09-12')
     expect(run(data, [{ type: 'DELAY_INCOME', event_id: 'E-PAY', expected_at: '2026-09-20' }]).inputVersion).toBe('v2')
   })
@@ -480,7 +498,7 @@ describe('操作', () => {
     const moved = applyMutation(data, { type: 'CHANGE_PAYMENT_DATE', window_id: 'W1' }, new Map())
     expect(moved.data.events[0]?.expected_at).toBe('2026-09-20')
     const missing = applyMutation(data, { type: 'CHANGE_PAYMENT_DATE', window_id: 'W-NONE' }, new Map())
-    expect(missing.issue?.code).toBe('SPEC_NOT_COVERED')
+    expect(missing.issue?.code).toBe('REFERENCE_INVALID')
     expect(missing.data.events[0]?.expected_at).toBe('2026-09-15')
   })
 
