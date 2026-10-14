@@ -105,6 +105,11 @@ def compute_cost(
         for returned in merged_returns
         if returned.get("amount") is not None and returned.get("expected_at") is not None
     ]
+    conditional_future_returns = [
+        returned
+        for returned in merged_returns
+        if returned.get("amount") is not None and returned.get("trigger_condition")
+    ]
     eligible_return = sum(event["amount"] for event in historical_returns) + sum(
         item["amount"] for item in eligible_future_returns
     )
@@ -232,7 +237,25 @@ def compute_cost(
             contingency, reserve_ids=contingency_ids, rules=["R003", "D09", "§1"]
         ),
         "pending_cost_item_ids": list(dict.fromkeys(pending_cost_item_ids)),
-        "possible_refund": None,
+        "possible_refund": (
+            None
+            if not conditional_future_returns
+            else {
+                "amount": money(
+                    sum(item["amount"] for item in conditional_future_returns),
+                    event_ids=[
+                        item["event_id"] for item in conditional_future_returns
+                    ],
+                    rules=["R005", "R012", "D61", "§9.4", "§11.1"],
+                ),
+                "condition": "；".join(
+                    dict.fromkeys(
+                        item["trigger_condition"]
+                        for item in conditional_future_returns
+                    )
+                ),
+            }
+        ),
     }
     return CostComputation(
         paid_total=paid_total,

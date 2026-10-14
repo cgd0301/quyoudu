@@ -29,6 +29,7 @@
     "oracle:export": "tsx scripts/oracle-export.ts",
     "oracle:import": "tsx scripts/oracle-import.ts",
     "vec": "tsx scripts/vec.ts",
+    "precheck": "tsx scripts/precheck-report.ts",
     "vector:modules": "tsx scripts/vector-modules.ts",
     "slice": "tsx scripts/spec-slice.ts",
     "golden:write": "tsx scripts/golden-write.ts",

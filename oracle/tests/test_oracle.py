@@ -343,6 +343,51 @@ def test_holt_backtest_respects_origin_availability_and_decimal_context():
         assert amount == 12875
 
 
+def test_precheck_o_group_rulings():
+    cancelled = result_for(VECTORS / "T012-02.json")
+    assert cancelled["cost"]["possible_refund"]["amount"]["value"] == 15000
+    assert cancelled["cost"]["possible_refund"]["condition"] == "平台审核通过"
+
+    bounded = result_for(VECTORS / "T008-05.json")["forecasts"][0]
+    assert bounded["sample_count"] == 0
+    assert bounded["history_end"] is None
+
+    conflict = result_for(VECTORS / "T004-07.json")
+    assert conflict["constraint_issues"]["allocation_conflicts"][0]["related"] == [
+        "E-INC",
+        "R-LIV-0908",
+    ]
+
+    unknown_return = result_for(VECTORS / "T005-03.json")
+    assert unknown_return["states"]["plan_state"] == "FEASIBLE_UNDER_ASSUMPTIONS"
+
+
+def test_a4_zero_labels_and_recent_history_reason():
+    tied = result_for(VECTORS / "T016-07.json")
+    by_id = {item["candidate_id"]: item for item in tied["candidates"]}
+    assert by_id["C03"]["tie_group"] == by_id["C04"]["tie_group"]
+    assert by_id["C03"]["rank"] == 3
+    assert by_id["C04"]["rank"] is None
+    assert {"SAME_PRICE", "HISTORY_INSUFFICIENT"} <= set(tied["labels"])
+
+    short_history = result_for(VECTORS / "T018-02.json")
+    recent = next(
+        item for item in short_history["scenarios"] if item["kind"] == "RECENT_MONTH"
+    )
+    assert recent["complete_days"] == 29
+    assert recent["unavailable_reason"] == "HISTORY_INSUFFICIENT"
+    assert "HISTORY_INSUFFICIENT" in short_history["labels"]
+
+
+def test_confirmed_forecast_action_rechecks_price_and_conditions():
+    result = result_for(VECTORS / "T020-09.json")
+    assert result["action_list"][0]["offer_ids"] == []
+    assert result["action_list"][0]["pending_checks"] == [
+        "RECHECK_PRICE",
+        "RECHECK_OFFER_CONDITIONS",
+    ]
+
+
 def test_all_fixture_inputs_produce_schema_valid_results():
     paths = sorted(CASES.glob("*.json")) + sorted(VECTORS.glob("*.json"))
     assert len(list(CASES.glob("*.json"))) == 10

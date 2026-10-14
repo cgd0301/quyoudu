@@ -382,9 +382,10 @@ def _apply(
     event: dict[str, Any],
     applied: list[dict[str, Any]],
     planned_allocation: dict[str, Any] | None,
-) -> None:
+) -> list[str]:
     kind = event["event_kind"]
     amount = event["amount"]
+    established_reserve_ids: list[str] = []
     if kind == "GOAL_PAYMENT":
         state.cash -= amount
         uncovered = amount - _write_off(state, event)
@@ -404,6 +405,7 @@ def _apply(
                 )
                 reserve.remaining = max(0, reserve.original_amount - earlier_declared)
                 reserve.established = True
+                established_reserve_ids.append(reserve.reserve_id)
         if (
             planned_allocation is not None
             and planned_allocation["funding_event_id"] == event["event_id"]
@@ -417,6 +419,7 @@ def _apply(
             if reserve.kind == "CONTINGENCY" and reserve.established:
                 reserve.remaining = 0
     applied.append(event)
+    return established_reserve_ids
 
 
 def _trigger(step: dict[str, Any]) -> tuple[str, list[str]]:
@@ -437,6 +440,7 @@ def _node(
     at: str,
     trigger_kind: str,
     event_ids: list[str],
+    related_ids: list[str],
     prev_u: int | None,
     prev_verdict: str | None,
 ) -> dict[str, Any]:
@@ -510,7 +514,7 @@ def _node(
             if allocation_unsupported is None
             else m(allocation_unsupported, ["D34"])
         ),
-        "related": event_ids,
+        "related": list(dict.fromkeys(related_ids)),
     }
 
 
@@ -559,6 +563,7 @@ def run_timeline(
             case["snapshot"]["as_of"],
             "START",
             [],
+            [],
             None,
             None,
         )
@@ -582,14 +587,16 @@ def run_timeline(
                 )
             )
             continue
+        related_ids = list(event_ids)
         for event in step["events"]:
-            _apply(state, event, applied, planned_allocation)
+            related_ids.extend(_apply(state, event, applied, planned_allocation))
         nodes.append(
             _node(
                 state,
                 step["at"],
                 trigger_kind,
                 event_ids,
+                related_ids,
                 previous["unallocated"]["value"],
                 previous["node_verdict"],
             )

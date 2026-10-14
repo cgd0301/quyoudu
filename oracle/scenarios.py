@@ -183,7 +183,7 @@ def recent_month_scenario(
         for record in records.values()
     )
     required_days = days_inclusive(observation_start, observation_end)
-    if len(records) < SCENARIO_WINDOW_DAYS:
+    if complete_days < SCENARIO_WINDOW_DAYS:
         return _unavailable(
             "HISTORY_INSUFFICIENT",
             observation_start,

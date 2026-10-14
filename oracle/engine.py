@@ -17,7 +17,7 @@ from .holt import compute_forecasts
 from .ops import Runtime, apply_direct_operation, schema_safe_case
 from .result import money, result_skeleton
 from .schema import validate_case, validate_ops, validate_result
-from .scenarios import build_scenarios
+from .scenarios import ScenarioComputation, build_scenarios
 from .snapshot import initial_state, snapshot_wire
 from .states import state_wire, underlying_plan_state
 from .timeline import TimelineRun, run_timeline
@@ -41,19 +41,46 @@ def _candidate_local_issue(case: dict[str, Any], item: dict[str, Any]) -> bool:
     return bool(refs & (candidate_ids | series_ids))
 
 
+def _nonblocking_unknown_inflow_issue(
+    case: dict[str, Any], item: dict[str, Any]
+) -> bool:
+    if item["code"] != "MISSING_KEY_INFO":
+        return False
+    refs = set(item["refs"])
+    return any(
+        event["event_id"] in refs
+        and event["event_kind"] in {"INCOME", "RETURN"}
+        and event["event_status"] == "EXPECTED"
+        and not event.get("in_snapshot")
+        and (
+            event.get("amount") is None
+            or event.get("expected_at") is None
+        )
+        for event in case["events"]
+    )
+
+
 def _relevant_input_issues(
     case: dict[str, Any],
     items: list[dict[str, Any]],
     candidate: CandidateEvaluation | None,
 ) -> list[dict[str, Any]]:
     if candidate is None:
-        return [item for item in items if not _candidate_local_issue(case, item)]
-    candidate_id = candidate.candidate["candidate_id"]
+        relevant = [
+            item for item in items if not _candidate_local_issue(case, item)
+        ]
+    else:
+        candidate_id = candidate.candidate["candidate_id"]
+        relevant = [
+            item
+            for item in items
+            if not _candidate_local_issue(case, item)
+            or candidate_id in item["refs"]
+        ]
     return [
         item
-        for item in items
-        if not _candidate_local_issue(case, item)
-        or candidate_id in item["refs"]
+        for item in relevant
+        if not _nonblocking_unknown_inflow_issue(case, item)
     ]
 
 
@@ -250,14 +277,18 @@ def _action_list(
             continue
         kind = candidate.price_kinds[index]
         pending_checks: list[str] = []
-        if kind in {"FORECAST", "REFERENCE", "UNDATED_QUOTE"}:
+        if kind == "FORECAST":
+            pending_checks.extend(
+                ["RECHECK_PRICE", "RECHECK_OFFER_CONDITIONS"]
+            )
+        elif kind in {"REFERENCE", "UNDATED_QUOTE"}:
             pending_checks.append("RECHECK_PRICE")
         offer_ids = [
             use["offer_id"]
             for use in candidate.candidate["offers_used"]
             if use["order_id"] == item["order_id"]
         ]
-        if offer_ids:
+        if offer_ids and "RECHECK_OFFER_CONDITIONS" not in pending_checks:
             pending_checks.append("RECHECK_OFFER_CONDITIONS")
         actions.append(
             {
@@ -290,13 +321,19 @@ def _labels(
     candidate: CandidateEvaluation | None,
     optimization: OptimizationResult,
     forecasts: list[dict[str, Any]],
+    scenarios: list[ScenarioComputation],
     daily: dict[str, Any],
     nodes: list[dict[str, Any]],
 ) -> list[str]:
     labels = ["SIMULATED_DATA", "TOP_K_DEMO"]
     if runtime.case.get("confirmed_plan") is None:
         labels.extend(["DRAFT_PREVIEW", "PREVIEW_UNCONFIRMED"])
-    if any(item["status"] == "HISTORY_INSUFFICIENT" for item in forecasts):
+    if any(
+        item["status"] == "HISTORY_INSUFFICIENT" for item in forecasts
+    ) or any(
+        item.wire["unavailable_reason"] == "HISTORY_INSUFFICIENT"
+        for item in scenarios
+    ):
         labels.append("HISTORY_INSUFFICIENT")
     if forecasts:
         labels.append("FORECAST_DISCLAIMER")
@@ -306,15 +343,12 @@ def _labels(
         labels.append("FORECAST_UNAVAILABLE")
     if candidate is not None and candidate.cost.net_spend_if_received != candidate.cost.net_spend:
         labels.append("IF_RECEIVED")
-    if (
-        candidate is not None
-        and candidate.tie_group is not None
-        and sum(
-            item.tie_group == candidate.tie_group
-            for item in optimization.evaluations
-        )
-        > 1
-    ):
+    tie_groups = [
+        item.tie_group
+        for item in optimization.evaluations
+        if item.tie_group is not None
+    ]
+    if len(tie_groups) != len(set(tie_groups)):
         labels.append("SAME_PRICE")
     if any(
         event["event_status"] == "ACTUAL"
@@ -371,6 +405,7 @@ def build_result(runtime: Runtime) -> dict[str, Any]:
         }
         for item in input_issues
         if not _candidate_local_issue(raw_case, item)
+        and not _nonblocking_unknown_inflow_issue(raw_case, item)
     )
     optimization = evaluate_candidates(
         case,
@@ -448,7 +483,13 @@ def build_result(runtime: Runtime) -> dict[str, Any]:
     result["forecasts"] = forecasts
     result["scenarios"] = [scenario.wire for scenario in scenarios]
     result["labels"] = _labels(
-        runtime, candidate, optimization, forecasts, daily, timeline.nodes
+        runtime,
+        candidate,
+        optimization,
+        forecasts,
+        scenarios,
+        daily,
+        timeline.nodes,
     )
     validate_result(result)
     return result

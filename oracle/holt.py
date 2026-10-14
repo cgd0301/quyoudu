@@ -15,6 +15,7 @@ from .config import (
     HOLT_MIN_BACKTEST_COUNT,
     HOLT_MIN_SAMPLES,
     HOLT_PHIS,
+    SUPPORTED_START,
     TWELVE_PLACES,
 )
 from .dates import as_date, parse_date, parse_time
@@ -140,6 +141,9 @@ def _usable_rows(
         (index, row)
         for index, row in enumerate(rows)
         if parse_time(row["available_at"]) <= as_of_time
+        and parse_date(SUPPORTED_START)
+        <= parse_date(row["observed_on"])
+        <= as_of_time.date()
     ]
     comparable = (
         len(
