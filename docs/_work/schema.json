@@ -1,0 +1,1225 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "meta": {
+      "type": "object",
+      "properties": {
+        "case_id": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "data_version": {
+          "type": "string"
+        },
+        "simulated": {
+          "type": "boolean",
+          "const": true
+        },
+        "source_type": {
+          "type": "string",
+          "enum": [
+            "LLM_GENERATED",
+            "HAND_WRITTEN"
+          ]
+        },
+        "generator": {
+          "type": "string"
+        },
+        "batch": {
+          "type": "string"
+        },
+        "created_at_real": {
+          "type": "string",
+          "description": "真实生成时间，只作管理元数据，不进入计算（R008）"
+        },
+        "demo_points": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boundary_test": {
+          "type": "boolean"
+        },
+        "continuation_of": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "case_id",
+        "purpose",
+        "data_version",
+        "simulated",
+        "source_type",
+        "generator",
+        "batch",
+        "created_at_real",
+        "demo_points"
+      ],
+      "additionalProperties": false
+    },
+    "snapshot": {
+      "type": "object",
+      "properties": {
+        "as_of": {
+          "type": "string",
+          "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+        },
+        "cash_as_of": {
+          "type": "string",
+          "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+        },
+        "snapshot_phase": {
+          "anyOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "DAY_START",
+                    "DAY_END"
+                  ]
+                },
+                {
+                  "type": "string",
+                  "pattern": "^AFTER_EVENT\\([1-9][0-9]*\\)$",
+                  "description": "已计入至当日第 n 笔收付款（D03、D51）"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cash": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991,
+              "description": "金额，整数分（R007、§9.1）"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "goal_allocation": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991,
+          "description": "金额，整数分（R007、§9.1）"
+        },
+        "other_goal_hold": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991,
+                  "description": "金额，整数分（R007、§9.1）"
+                }
+              },
+              "required": [
+                "name",
+                "amount"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "as_of",
+        "cash_as_of",
+        "snapshot_phase",
+        "cash",
+        "goal_allocation",
+        "other_goal_hold"
+      ],
+      "additionalProperties": false
+    },
+    "reserves": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "reserve_id": {
+            "type": "string"
+          },
+          "reserve_kind": {
+            "type": "string",
+            "enum": [
+              "LIVING",
+              "OTHER_PROTECTED",
+              "CONTINGENCY"
+            ]
+          },
+          "amount": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "金额，整数分（R007、§9.1）"
+          },
+          "coverage_start": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "coverage_end": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "release_at_end": {
+            "type": "boolean"
+          },
+          "funding_event_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "reserve_id",
+          "reserve_kind",
+          "amount",
+          "coverage_start",
+          "coverage_end",
+          "release_at_end"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "event_id": {
+            "type": "string"
+          },
+          "event_kind": {
+            "type": "string",
+            "enum": [
+              "GOAL_PAYMENT",
+              "OTHER_EXPENSE",
+              "INCOME",
+              "RETURN",
+              "CONTINGENCY_RELEASE"
+            ]
+          },
+          "event_status": {
+            "type": "string",
+            "enum": [
+              "EXPECTED",
+              "ACTUAL"
+            ]
+          },
+          "amount": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991,
+                "description": "金额，整数分（R007、§9.1）"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "expected_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "actual_at": {
+            "type": "string",
+            "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+          },
+          "time_precision": {
+            "type": "string",
+            "enum": [
+              "DATE",
+              "DATETIME"
+            ]
+          },
+          "known_order": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "in_snapshot": {
+            "type": "boolean"
+          },
+          "goal_id": {
+            "type": "string"
+          },
+          "cost_item_id": {
+            "type": "string"
+          },
+          "task_id": {
+            "type": "string"
+          },
+          "coverage": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "reserve_id": {
+                  "type": "string"
+                },
+                "covered_amount": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991,
+                  "description": "金额，整数分（R007、§9.1）"
+                }
+              },
+              "required": [
+                "reserve_id",
+                "covered_amount"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "trigger_condition": {
+            "type": "string"
+          },
+          "recorded_at": {
+            "type": "string",
+            "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+          },
+          "available_at": {
+            "type": "string",
+            "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "MEALS",
+              "LOCAL_TRANSPORT",
+              "DAILY_GOODS",
+              "ENTERTAINMENT",
+              "GOAL_RELATED",
+              "INCOME",
+              "REFUND",
+              "TRANSFER"
+            ]
+          },
+          "payment_windows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "window_id": {
+                  "type": "string"
+                },
+                "expected_at": {
+                  "type": "string",
+                  "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+                }
+              },
+              "required": [
+                "window_id",
+                "expected_at"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "event_id",
+          "event_kind",
+          "event_status",
+          "amount",
+          "expected_at",
+          "time_precision",
+          "in_snapshot",
+          "coverage",
+          "recorded_at",
+          "available_at",
+          "currency"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "goal": {
+      "type": "object",
+      "properties": {
+        "goal_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "budget_cap": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991,
+              "description": "金额，整数分（R007、§9.1）"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "show_start_at": {
+          "type": "string",
+          "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+        },
+        "show_end_at": {
+          "type": "string",
+          "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+        },
+        "venue_city": {
+          "type": "string"
+        },
+        "seat_tiers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "name"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "arrive_before_show_min": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "return_after_show_min": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lodging_nights_required": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "seat_tier_allowed": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lodging_max_distance_m": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "refundable_required": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "TICKET",
+                  "OUTBOUND_TRANSPORT",
+                  "RETURN_TRANSPORT",
+                  "LODGING",
+                  "MEALS",
+                  "LOCAL_TRANSPORT",
+                  "SERVICE_FEE",
+                  "OPTIONAL_PURCHASE"
+                ]
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "goal_id",
+        "budget_cap",
+        "show_start_at",
+        "show_end_at",
+        "venue_city",
+        "seat_tiers",
+        "arrive_before_show_min",
+        "return_after_show_min",
+        "lodging_nights_required",
+        "seat_tier_allowed",
+        "lodging_max_distance_m",
+        "refundable_required"
+      ],
+      "additionalProperties": false
+    },
+    "cost_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "cost_item_id": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "TICKET",
+              "OUTBOUND_TRANSPORT",
+              "RETURN_TRANSPORT",
+              "LODGING",
+              "MEALS",
+              "LOCAL_TRANSPORT",
+              "SERVICE_FEE",
+              "OPTIONAL_PURCHASE"
+            ]
+          },
+          "necessary": {
+            "type": "boolean"
+          },
+          "amount_status": {
+            "type": "string",
+            "enum": [
+              "CONFIRMED",
+              "ESTIMATE",
+              "PENDING",
+              "CONFIRMED_FREE",
+              "NOT_APPLICABLE"
+            ]
+          },
+          "confirm_basis": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cost_item_id",
+          "category",
+          "necessary",
+          "amount_status"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "candidate_id": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "cost_item_id": {
+                  "type": "string"
+                },
+                "channel": {
+                  "type": "string"
+                },
+                "spec": {
+                  "type": "string"
+                },
+                "price": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991,
+                      "description": "金额，整数分（R007、§9.1）"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "currency": {
+                  "type": "string"
+                },
+                "price_basis": {
+                  "type": "string",
+                  "enum": [
+                    "QUOTE",
+                    "FORECAST",
+                    "REFERENCE",
+                    "UNDATED_QUOTE",
+                    "PENDING"
+                  ]
+                },
+                "order_id": {
+                  "type": "string"
+                },
+                "purchase_date": {
+                  "type": "string",
+                  "format": "date",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                },
+                "payment_at": {
+                  "type": "string",
+                  "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+                },
+                "arrive_at": {
+                  "type": "string",
+                  "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+                },
+                "depart_at": {
+                  "type": "string",
+                  "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+                },
+                "lodging_distance_m": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                "lodging_nights": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                  }
+                },
+                "refundable": {
+                  "type": "boolean"
+                },
+                "quote": {
+                  "type": "object",
+                  "properties": {
+                    "valid_from": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "valid_to": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "recorded_at": {
+                      "type": "string",
+                      "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+                    },
+                    "available_at": {
+                      "type": "string",
+                      "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+                    }
+                  },
+                  "required": [
+                    "valid_from",
+                    "valid_to",
+                    "recorded_at",
+                    "available_at"
+                  ],
+                  "additionalProperties": false
+                },
+                "payment_windows": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "window_id": {
+                        "type": "string"
+                      },
+                      "payment_at": {
+                        "type": "string",
+                        "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+                      }
+                    },
+                    "required": [
+                      "window_id",
+                      "payment_at"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "cost_item_id",
+                "channel",
+                "spec",
+                "price",
+                "currency",
+                "price_basis",
+                "order_id",
+                "purchase_date",
+                "payment_at",
+                "quote"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "offers_used": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "offer_id": {
+                  "type": "string"
+                },
+                "order_id": {
+                  "type": "string"
+                },
+                "sequence": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": [
+                "offer_id",
+                "order_id"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "returns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "event_id": {
+                  "type": "string"
+                },
+                "amount": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991,
+                      "description": "金额，整数分（R007、§9.1）"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "expected_at": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "time_precision": {
+                  "type": "string",
+                  "enum": [
+                    "DATE",
+                    "DATETIME"
+                  ]
+                },
+                "trigger_condition": {
+                  "type": "string"
+                },
+                "cost_item_id": {
+                  "type": "string"
+                },
+                "currency": {
+                  "type": "string"
+                },
+                "recorded_at": {
+                  "type": "string",
+                  "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+                },
+                "available_at": {
+                  "type": "string",
+                  "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+                }
+              },
+              "required": [
+                "event_id",
+                "amount",
+                "expected_at",
+                "time_precision",
+                "currency",
+                "recorded_at",
+                "available_at"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "candidate_id",
+          "items",
+          "offers_used",
+          "returns"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "offers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "offer_id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "INSTANT_OFF",
+              "THRESHOLD_OFF",
+              "PERCENT_OFF",
+              "CASHBACK",
+              "VOUCHER"
+            ]
+          },
+          "value": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "立减、满减、返现、返券为整数分；折扣为万分比，9500 即 9.5 折（D45）"
+          },
+          "scope": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "TICKET",
+                "OUTBOUND_TRANSPORT",
+                "RETURN_TRANSPORT",
+                "LODGING",
+                "MEALS",
+                "LOCAL_TRANSPORT",
+                "SERVICE_FEE",
+                "OPTIONAL_PURCHASE"
+              ]
+            }
+          },
+          "threshold": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991,
+                "description": "金额，整数分（R007、§9.1）"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "valid_from": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "valid_to": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "applies_at": {
+            "type": "string",
+            "enum": [
+              "ORDER",
+              "PAYMENT"
+            ]
+          },
+          "max_uses": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "stackable_with": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rounding": {
+            "type": "string",
+            "enum": [
+              "FLOOR",
+              "HALF_UP",
+              "CEIL",
+              "UNKNOWN"
+            ]
+          },
+          "expected_at": {
+            "type": "string",
+            "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+          },
+          "trigger_condition": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "offer_id",
+          "type",
+          "value",
+          "scope",
+          "threshold",
+          "valid_from",
+          "valid_to",
+          "applies_at",
+          "max_uses",
+          "stackable_with",
+          "rounding"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "price_series": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "series_id": {
+            "type": "string"
+          },
+          "cost_item_id": {
+            "type": "string"
+          },
+          "channel": {
+            "type": "string"
+          },
+          "spec": {
+            "type": "string"
+          },
+          "service_date": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "observed_on": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "price": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "金额，整数分（R007、§9.1）"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "recorded_at": {
+            "type": "string",
+            "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+          },
+          "available_at": {
+            "type": "string",
+            "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+          }
+        },
+        "required": [
+          "series_id",
+          "cost_item_id",
+          "channel",
+          "spec",
+          "service_date",
+          "observed_on",
+          "price",
+          "currency",
+          "recorded_at",
+          "available_at"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "consumption_records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "observed_on": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "day_coverage": {
+            "type": "string",
+            "enum": [
+              "COMPLETE",
+              "NO_SPEND",
+              "MISSING"
+            ]
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "event_id": {
+                  "type": "string"
+                },
+                "category": {
+                  "type": "string",
+                  "enum": [
+                    "MEALS",
+                    "LOCAL_TRANSPORT",
+                    "DAILY_GOODS",
+                    "ENTERTAINMENT",
+                    "GOAL_RELATED",
+                    "INCOME",
+                    "REFUND",
+                    "TRANSFER"
+                  ]
+                },
+                "amount": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991,
+                  "description": "金额，整数分（R007、§9.1）"
+                },
+                "currency": {
+                  "type": "string"
+                },
+                "in_snapshot": {
+                  "type": "boolean"
+                },
+                "recorded_at": {
+                  "type": "string",
+                  "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+                },
+                "available_at": {
+                  "type": "string",
+                  "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+                },
+                "covered_by_living_reserve": {
+                  "type": "boolean"
+                },
+                "same_scope_as_discretionary": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "event_id",
+                "category",
+                "amount",
+                "currency",
+                "in_snapshot",
+                "recorded_at",
+                "available_at"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "observed_on",
+          "day_coverage",
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "planned_allocation": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "funding_event_id": {
+              "type": "string"
+            },
+            "amount": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991,
+              "description": "金额，整数分（R007、§9.1）"
+            }
+          },
+          "required": [
+            "funding_event_id",
+            "amount"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "confirmed_plan": {
+      "type": "object",
+      "properties": {
+        "candidate_id": {
+          "type": "string"
+        },
+        "plan_version": {
+          "type": "string"
+        },
+        "input_version": {
+          "type": "string",
+          "pattern": "^v[1-9][0-9]*$",
+          "description": "输入版本 v1、v2……（R013）"
+        }
+      },
+      "required": [
+        "candidate_id",
+        "plan_version",
+        "input_version"
+      ],
+      "additionalProperties": false
+    },
+    "forecast_confirmations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "series_id": {
+            "type": "string"
+          },
+          "purchase_date": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "price": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "金额，整数分（R007、§9.1）"
+          },
+          "config_version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "series_id",
+          "purchase_date",
+          "price",
+          "config_version"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "nl_script": {
+      "type": "object",
+      "properties": {
+        "script_id": {
+          "type": "string"
+        },
+        "utterances": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "script_id",
+        "utterances"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "meta",
+    "snapshot",
+    "reserves",
+    "events",
+    "goal",
+    "cost_items",
+    "candidates",
+    "offers",
+    "price_series",
+    "consumption_records",
+    "planned_allocation",
+    "forecast_confirmations"
+  ],
+  "additionalProperties": false,
+  "title": "CaseFile",
+  "description": "案例输入（rules.md §12.2）"
+}

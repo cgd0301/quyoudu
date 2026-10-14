@@ -25,7 +25,7 @@
     "check": "pnpm typecheck && pnpm lint && pnpm test",
     "check:all": "pnpm check && pnpm spec:lint && pnpm golden:check",
     "mmd": "tsx scripts/mmd.ts",
-    "schema:export": "node scripts/not-implemented.mjs",
+    "schema:export": "tsx scripts/export-schemas.ts",
     "oracle:export": "node scripts/not-implemented.mjs",
     "oracle:import": "node scripts/not-implemented.mjs",
     "golden:write": "node scripts/not-implemented.mjs",

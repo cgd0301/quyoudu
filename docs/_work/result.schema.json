@@ -1,0 +1,1618 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "as_of": {
+      "type": "string"
+    },
+    "input_version": {
+      "type": "string",
+      "pattern": "^v[1-9][0-9]*$",
+      "description": "输入版本 v1、v2……（R013）"
+    },
+    "config_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "top_k_label": {
+      "type": "string"
+    },
+    "check_period": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "string"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "out_of_range": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "start",
+        "end",
+        "out_of_range"
+      ],
+      "additionalProperties": false
+    },
+    "input_issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "MISSING_KEY_INFO",
+              "CASH_AS_OF_MISMATCH",
+              "AS_OF_FORMAT",
+              "SNAPSHOT_PHASE_MISSING",
+              "SNAPSHOT_PHASE_MISMATCH",
+              "COVERAGE_EXCEEDS_AMOUNT",
+              "GROUP_COVERAGE_OVERSUBSCRIBED",
+              "OVERDUE_EVENT",
+              "QUOTE_EXPIRED",
+              "OUT_OF_RANGE",
+              "NON_CNY",
+              "REFERENCE_INVALID",
+              "NO_PLAN",
+              "SPEC_NOT_COVERED"
+            ]
+          },
+          "rule": {
+            "type": "string"
+          },
+          "refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "code",
+          "rule",
+          "refs"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "snapshot": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "cash": {
+              "$ref": "#/$defs/Money"
+            },
+            "living_reserve": {
+              "$ref": "#/$defs/Money"
+            },
+            "other_protected_reserve": {
+              "$ref": "#/$defs/Money"
+            },
+            "other_goal_hold": {
+              "$ref": "#/$defs/Money"
+            },
+            "contingency_reserve": {
+              "$ref": "#/$defs/Money"
+            },
+            "goal_allocation": {
+              "$ref": "#/$defs/Money"
+            },
+            "goal_available": {
+              "$ref": "#/$defs/Money"
+            },
+            "payment_headroom": {
+              "$ref": "#/$defs/Money"
+            },
+            "unallocated": {
+              "$ref": "#/$defs/Money"
+            },
+            "protected_total": {
+              "$ref": "#/$defs/Money"
+            },
+            "issues": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "node_verdict": {
+                    "type": "string",
+                    "enum": [
+                      "PROTECTED_SHORTFALL",
+                      "ALLOCATION_CONFLICT"
+                    ]
+                  },
+                  "amount": {
+                    "$ref": "#/$defs/Money"
+                  }
+                },
+                "required": [
+                  "node_verdict",
+                  "amount"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "cash",
+            "living_reserve",
+            "other_protected_reserve",
+            "other_goal_hold",
+            "contingency_reserve",
+            "goal_allocation",
+            "goal_available",
+            "payment_headroom",
+            "unallocated",
+            "protected_total",
+            "issues"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "at": {
+            "type": "string"
+          },
+          "trigger": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "START",
+                  "OUTFLOW",
+                  "OUTFLOW_GROUP",
+                  "INCOME",
+                  "OTHER"
+                ]
+              },
+              "event_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "kind",
+              "event_ids"
+            ],
+            "additionalProperties": false
+          },
+          "cash": {
+            "$ref": "#/$defs/Money"
+          },
+          "living_reserve": {
+            "$ref": "#/$defs/Money"
+          },
+          "other_protected_reserve": {
+            "$ref": "#/$defs/Money"
+          },
+          "other_goal_hold": {
+            "$ref": "#/$defs/Money"
+          },
+          "contingency_reserve": {
+            "$ref": "#/$defs/Money"
+          },
+          "goal_allocation": {
+            "$ref": "#/$defs/Money"
+          },
+          "goal_available": {
+            "$ref": "#/$defs/Money"
+          },
+          "payment_headroom": {
+            "$ref": "#/$defs/Money"
+          },
+          "unallocated": {
+            "$ref": "#/$defs/Money"
+          },
+          "protected_total": {
+            "$ref": "#/$defs/Money"
+          },
+          "node_verdict": {
+            "type": "string",
+            "enum": [
+              "PASS",
+              "PROTECTED_SHORTFALL",
+              "ALLOCATION_CONFLICT",
+              "PAYMENT_SHORTFALL",
+              "GAP_CONTINUED",
+              "CONFLICT_CONTINUED"
+            ]
+          },
+          "amount": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "protected_over_cash": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "allocation_unsupported": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "related": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "at",
+          "trigger",
+          "cash",
+          "living_reserve",
+          "other_protected_reserve",
+          "other_goal_hold",
+          "contingency_reserve",
+          "goal_allocation",
+          "goal_available",
+          "payment_headroom",
+          "unallocated",
+          "protected_total",
+          "node_verdict",
+          "amount",
+          "protected_over_cash",
+          "allocation_unsupported",
+          "related"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "earliest_gap": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GapRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "gap_list": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/GapRef"
+      }
+    },
+    "constraint_issues": {
+      "type": "object",
+      "properties": {
+        "budget_overrun": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "allocation_conflicts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/GapRef"
+          }
+        }
+      },
+      "required": [
+        "budget_overrun",
+        "allocation_conflicts"
+      ],
+      "additionalProperties": false
+    },
+    "cost": {
+      "type": "object",
+      "properties": {
+        "paid_total": {
+          "$ref": "#/$defs/Money"
+        },
+        "future_payable": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "eligible_return": {
+          "$ref": "#/$defs/Money"
+        },
+        "net_spend": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "net_spend_if_received": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "budget_overrun": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "paid_payments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "event_id": {
+                "type": "string"
+              },
+              "cost_item_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "at": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "amount": {
+                "$ref": "#/$defs/Money"
+              }
+            },
+            "required": [
+              "event_id",
+              "cost_item_id",
+              "at",
+              "amount"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "future_payments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "event_id": {
+                "type": "string"
+              },
+              "cost_item_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "at": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "amount": {
+                "$ref": "#/$defs/Money"
+              }
+            },
+            "required": [
+              "event_id",
+              "cost_item_id",
+              "at",
+              "amount"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "protected_reserves": {
+          "type": "object",
+          "properties": {
+            "living_reserve": {
+              "$ref": "#/$defs/Money"
+            },
+            "other_protected_reserve": {
+              "$ref": "#/$defs/Money"
+            },
+            "other_goal_hold": {
+              "$ref": "#/$defs/Money"
+            }
+          },
+          "required": [
+            "living_reserve",
+            "other_protected_reserve",
+            "other_goal_hold"
+          ],
+          "additionalProperties": false
+        },
+        "contingency_reserve": {
+          "$ref": "#/$defs/Money"
+        },
+        "pending_cost_item_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "paid_total",
+        "future_payable",
+        "eligible_return",
+        "net_spend",
+        "net_spend_if_received",
+        "budget_overrun",
+        "paid_payments",
+        "future_payments",
+        "protected_reserves",
+        "contingency_reserve",
+        "pending_cost_item_ids"
+      ],
+      "additionalProperties": false
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "EXPECTED_INCOME",
+              "EXPECTED_RETURN",
+              "CONFIRMED_FORECAST",
+              "ESTIMATE"
+            ]
+          },
+          "refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "amount": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "kind",
+          "refs",
+          "amount",
+          "at"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "candidate_id": {
+            "type": "string"
+          },
+          "plan_version": {
+            "type": "string"
+          },
+          "evaluable": {
+            "type": "boolean"
+          },
+          "pending_reasons": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "PRICE_PENDING",
+                    "QUOTE_EXPIRED",
+                    "NON_CNY",
+                    "ROUNDING_UNKNOWN",
+                    "OFFER_ORDER_MISSING",
+                    "OFFER_CONDITION_UNKNOWN",
+                    "COMPARISON_FIELD_MISSING",
+                    "PAYMENT_TIME_MISSING",
+                    "SHARED_INPUT_INCOMPLETE"
+                  ]
+                },
+                "rule": {
+                  "type": "string"
+                },
+                "refs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "code",
+                "rule",
+                "refs"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "excluded_reasons": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "BUDGET_EXCEEDED",
+                    "PAYMENT_GAP",
+                    "ALLOCATION_CONFLICT",
+                    "ARRIVAL_TOO_LATE",
+                    "RETURN_TOO_EARLY",
+                    "LODGING_NIGHTS_NOT_COVERED",
+                    "SEAT_TIER_NOT_ALLOWED",
+                    "LODGING_TOO_FAR",
+                    "NOT_REFUNDABLE",
+                    "OFFER_EXPIRED",
+                    "OFFER_NOT_STACKABLE",
+                    "OFFER_MAX_USES_EXCEEDED",
+                    "OFFER_THRESHOLD_NOT_MET",
+                    "OFFER_SCOPE_MISMATCH",
+                    "DUPLICATE_CANDIDATE"
+                  ]
+                },
+                "rule": {
+                  "type": "string"
+                },
+                "refs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "code",
+                "rule",
+                "refs"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "feasible": {
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "net_spend": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "net_spend_if_received": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tie_group": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rank": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "candidate_id",
+          "plan_version",
+          "evaluable",
+          "pending_reasons",
+          "excluded_reasons",
+          "feasible",
+          "net_spend",
+          "net_spend_if_received",
+          "tie_group",
+          "rank"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "optimization": {
+      "type": "object",
+      "properties": {
+        "scope": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evaluated_count": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "pending_count": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "excluded_count": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "top_k": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "scope",
+        "evaluated_count",
+        "pending_count",
+        "excluded_count",
+        "top_k"
+      ],
+      "additionalProperties": false
+    },
+    "confirmation": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "candidate_id": {
+              "type": "string"
+            },
+            "plan_version": {
+              "type": "string"
+            },
+            "input_version": {
+              "type": "string",
+              "pattern": "^v[1-9][0-9]*$",
+              "description": "输入版本 v1、v2……（R013）"
+            },
+            "w": {
+              "$ref": "#/$defs/Money"
+            },
+            "m": {
+              "$ref": "#/$defs/Money"
+            },
+            "delta_a": {
+              "$ref": "#/$defs/Money"
+            },
+            "planned_allocation": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "funding_event_id": {
+                      "type": "string"
+                    },
+                    "amount": {
+                      "$ref": "#/$defs/Money"
+                    }
+                  },
+                  "required": [
+                    "funding_event_id",
+                    "amount"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "unallocated_note": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Money"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "candidate_id",
+            "plan_version",
+            "input_version",
+            "w",
+            "m",
+            "delta_a",
+            "planned_allocation",
+            "unallocated_note"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "action_list": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string"
+          },
+          "cost_item_id": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "TICKET",
+              "OUTBOUND_TRANSPORT",
+              "RETURN_TRANSPORT",
+              "LODGING",
+              "MEALS",
+              "LOCAL_TRANSPORT",
+              "SERVICE_FEE",
+              "OPTIONAL_PURCHASE"
+            ]
+          },
+          "spec": {
+            "type": "string"
+          },
+          "purchase_date": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "channel": {
+            "type": "string"
+          },
+          "offer_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "amount": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "payment_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pending_checks": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "RECHECK_PRICE",
+                "RECHECK_OFFER_CONDITIONS"
+              ]
+            }
+          },
+          "task_state": {
+            "type": "string",
+            "enum": [
+              "PENDING_PURCHASE",
+              "PURCHASED",
+              "PAID"
+            ]
+          },
+          "plan_version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "task_id",
+          "cost_item_id",
+          "category",
+          "spec",
+          "purchase_date",
+          "channel",
+          "offer_ids",
+          "amount",
+          "payment_at",
+          "pending_checks",
+          "task_state",
+          "plan_version"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "daily_reference": {
+      "type": "object",
+      "properties": {
+        "display": {
+          "type": "string",
+          "enum": [
+            "AMOUNT",
+            "NEED_CONFIRMED_PLAN",
+            "UNAVAILABLE",
+            "NOT_RECOMMENDED"
+          ]
+        },
+        "amount": {
+          "$ref": "#/$defs/Money"
+        },
+        "limited_by": {
+          "type": "object",
+          "properties": {
+            "scenario": {
+              "type": "string",
+              "enum": [
+                "CONFIRMED_ONLY",
+                "RECENT_MONTH"
+              ]
+            },
+            "node_index": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "scenario",
+            "node_index"
+          ],
+          "additionalProperties": false
+        },
+        "label": {
+          "type": "string",
+          "enum": [
+            "NEED_CONFIRMED_PLAN",
+            "UNAVAILABLE",
+            "NOT_RECOMMENDED",
+            "DAILY_DISCLAIMER",
+            "CONFIRMED_ONLY",
+            "FORECAST_CONFIG_NOT_FROZEN",
+            "HISTORY_INSUFFICIENT",
+            "FORECAST_UNAVAILABLE",
+            "FORECAST_DISCLAIMER",
+            "DRAFT_PREVIEW",
+            "PREVIEW_UNCONFIRMED",
+            "TOP_K_DEMO",
+            "IF_RECEIVED",
+            "SAME_PRICE",
+            "SPEC_NOT_COVERED",
+            "PRE_RANGE_PAID",
+            "PAID_BY_UNALLOCATED_LATER",
+            "PROTECTED_SQUEEZE",
+            "SIMULATED_DATA"
+          ]
+        },
+        "unavailable": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "scenario": {
+                "type": "string",
+                "enum": [
+                  "CONFIRMED_ONLY",
+                  "RECENT_MONTH"
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "enum": [
+                  "HISTORY_INSUFFICIENT",
+                  "RECORDS_INCOMPLETE",
+                  "CONFIG_VERSION_MISSING",
+                  "CATEGORY_FLAGS_MISSING",
+                  "COVERAGE_UNCLEAR"
+                ]
+              }
+            },
+            "required": [
+              "scenario",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "display",
+        "unavailable"
+      ],
+      "additionalProperties": false
+    },
+    "states": {
+      "type": "object",
+      "properties": {
+        "plan_state": {
+          "type": "string",
+          "enum": [
+            "INCOMPLETE",
+            "PAYMENT_GAP",
+            "CONSTRAINT_ISSUE",
+            "FEASIBLE_UNDER_ASSUMPTIONS",
+            "PAUSED",
+            "CANCELLED"
+          ]
+        },
+        "underlying_plan_state": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "INCOMPLETE",
+                "PAYMENT_GAP",
+                "CONSTRAINT_ISSUE",
+                "FEASIBLE_UNDER_ASSUMPTIONS"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "optimization_state": {
+          "type": "string",
+          "enum": [
+            "NOT_COMPARED",
+            "PARTIALLY_EVALUABLE",
+            "COMPLETED_FEASIBLE",
+            "NO_KNOWN_FEASIBLE"
+          ]
+        },
+        "confirmation_state": {
+          "type": "string",
+          "enum": [
+            "NOT_SELECTED",
+            "PENDING_CONFIRMATION",
+            "CONFIRMED",
+            "DRAFT"
+          ]
+        },
+        "plan_target": {
+          "type": "string",
+          "enum": [
+            "CONFIRMED_PLAN",
+            "SELECTED_CANDIDATE",
+            "INITIAL_DRAFT",
+            "NONE"
+          ]
+        }
+      },
+      "required": [
+        "plan_state",
+        "underlying_plan_state",
+        "optimization_state",
+        "confirmation_state",
+        "plan_target"
+      ],
+      "additionalProperties": false
+    },
+    "forecasts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "series_id": {
+            "type": "string"
+          },
+          "cost_item_id": {
+            "type": "string"
+          },
+          "purchase_date": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "horizon": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "AVAILABLE",
+              "HISTORY_INSUFFICIENT",
+              "BACKTEST_INSUFFICIENT",
+              "NOT_COMPARABLE",
+              "FIT_FAILED",
+              "INVALID_RESULT",
+              "CONFIG_NOT_FROZEN"
+            ]
+          },
+          "config_version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sample_count": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "history_end": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "alpha": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[0-9]+(\\.[0-9]+)?$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "beta": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[0-9]+(\\.[0-9]+)?$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "phi": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[0-9]+(\\.[0-9]+)?$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "level": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^-?[0-9]+\\.[0-9]{12}$",
+                "description": "保留 12 位小数的十进制串，单位为分（D25、D50）"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "trend": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^-?[0-9]+\\.[0-9]{12}$",
+                "description": "保留 12 位小数的十进制串，单位为分（D25、D50）"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "train_sse": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^-?[0-9]+\\.[0-9]{12}$",
+                "description": "保留 12 位小数的十进制串，单位为分（D25、D50）"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "predicted": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^-?[0-9]+\\.[0-9]{12}$",
+                "description": "保留 12 位小数的十进制串，单位为分（D25、D50）"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "amount": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "backtest_mae": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^-?[0-9]+\\.[0-9]{12}$",
+                "description": "保留 12 位小数的十进制串，单位为分（D25、D50）"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "baseline_mae": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^-?[0-9]+\\.[0-9]{12}$",
+                "description": "保留 12 位小数的十进制串，单位为分（D25、D50）"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "backtest_count": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "confirmed": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "series_id",
+          "cost_item_id",
+          "purchase_date",
+          "horizon",
+          "status",
+          "config_version",
+          "sample_count",
+          "history_end",
+          "alpha",
+          "beta",
+          "phi",
+          "level",
+          "trend",
+          "train_sse",
+          "predicted",
+          "amount",
+          "backtest_mae",
+          "baseline_mae",
+          "backtest_count",
+          "confirmed"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "scenarios": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "CONFIRMED_ONLY",
+              "RECENT_MONTH"
+            ]
+          },
+          "available": {
+            "type": "boolean"
+          },
+          "unavailable_reason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "HISTORY_INSUFFICIENT",
+                  "RECORDS_INCOMPLETE",
+                  "CONFIG_VERSION_MISSING",
+                  "CATEGORY_FLAGS_MISSING",
+                  "COVERAGE_UNCLEAR"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "config_version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "observation_start": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "observation_end": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "complete_days": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "category": {
+                  "type": "string",
+                  "enum": [
+                    "MEALS",
+                    "LOCAL_TRANSPORT",
+                    "DAILY_GOODS",
+                    "ENTERTAINMENT",
+                    "GOAL_RELATED",
+                    "INCOME",
+                    "REFUND",
+                    "TRANSFER"
+                  ]
+                },
+                "coverage_start": {
+                  "type": "string",
+                  "format": "date",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                },
+                "coverage_end": {
+                  "type": "string",
+                  "format": "date",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                },
+                "scenario_group_total": {
+                  "$ref": "#/$defs/Money"
+                },
+                "scheduled_group_total": {
+                  "$ref": "#/$defs/Money"
+                },
+                "scenario_increment": {
+                  "$ref": "#/$defs/Money"
+                },
+                "daily_amounts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "date": {
+                        "type": "string",
+                        "format": "date",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                      },
+                      "amount": {
+                        "$ref": "#/$defs/Money"
+                      }
+                    },
+                    "required": [
+                      "date",
+                      "amount"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "category",
+                "coverage_start",
+                "coverage_end",
+                "scenario_group_total",
+                "scheduled_group_total",
+                "scenario_increment",
+                "daily_amounts"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "today_replacement": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "daily_reference": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Money"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "kind",
+          "available",
+          "unavailable_reason",
+          "config_version",
+          "observation_start",
+          "observation_end",
+          "complete_days",
+          "groups",
+          "today_replacement",
+          "daily_reference"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "labels": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "NEED_CONFIRMED_PLAN",
+          "UNAVAILABLE",
+          "NOT_RECOMMENDED",
+          "DAILY_DISCLAIMER",
+          "CONFIRMED_ONLY",
+          "FORECAST_CONFIG_NOT_FROZEN",
+          "HISTORY_INSUFFICIENT",
+          "FORECAST_UNAVAILABLE",
+          "FORECAST_DISCLAIMER",
+          "DRAFT_PREVIEW",
+          "PREVIEW_UNCONFIRMED",
+          "TOP_K_DEMO",
+          "IF_RECEIVED",
+          "SAME_PRICE",
+          "SPEC_NOT_COVERED",
+          "PRE_RANGE_PAID",
+          "PAID_BY_UNALLOCATED_LATER",
+          "PROTECTED_SQUEEZE",
+          "SIMULATED_DATA"
+        ]
+      }
+    }
+  },
+  "required": [
+    "as_of",
+    "input_version",
+    "config_version",
+    "top_k_label",
+    "check_period",
+    "input_issues",
+    "snapshot",
+    "nodes",
+    "earliest_gap",
+    "gap_list",
+    "constraint_issues",
+    "cost",
+    "dependencies",
+    "candidates",
+    "optimization",
+    "confirmation",
+    "action_list",
+    "daily_reference",
+    "states",
+    "labels"
+  ],
+  "additionalProperties": false,
+  "title": "ResultCore",
+  "description": "输出（rules.md §12.5）；导出的 JSON Schema 键名为 toWire() 之后的 snake_case",
+  "$defs": {
+    "Money": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "basis": {
+          "type": "object",
+          "properties": {
+            "event_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "reserve_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "rules": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "event_ids",
+            "reserve_ids",
+            "rules"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "value",
+        "basis"
+      ],
+      "additionalProperties": false,
+      "description": "金额（整数分）及计算依据；全部位置由 moneyPaths() 列出"
+    },
+    "GapRef": {
+      "type": "object",
+      "properties": {
+        "node_index": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "at": {
+          "type": "string"
+        },
+        "node_verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "PROTECTED_SHORTFALL",
+            "ALLOCATION_CONFLICT",
+            "PAYMENT_SHORTFALL",
+            "GAP_CONTINUED",
+            "CONFLICT_CONTINUED"
+          ]
+        },
+        "amount": {
+          "$ref": "#/$defs/Money"
+        },
+        "related": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "node_index",
+        "at",
+        "node_verdict",
+        "amount",
+        "related"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

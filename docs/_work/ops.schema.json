@@ -1,0 +1,338 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array",
+  "items": {
+    "oneOf": [
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "DELAY_INCOME"
+          },
+          "event_id": {
+            "type": "string"
+          },
+          "expected_at": {
+            "type": "string",
+            "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+          }
+        },
+        "required": [
+          "type",
+          "event_id",
+          "expected_at"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "ADD_LIVING_EXPENSE"
+          },
+          "event_id": {
+            "type": "string"
+          },
+          "expected_at": {
+            "type": "string",
+            "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+          },
+          "amount": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "金额，整数分（R007、§9.1）"
+          },
+          "cover_mode": {
+            "type": "string",
+            "enum": [
+              "NEW_RESERVE",
+              "EXISTING_RESERVE"
+            ]
+          },
+          "reserve_id": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "MEALS",
+              "LOCAL_TRANSPORT",
+              "DAILY_GOODS",
+              "ENTERTAINMENT",
+              "GOAL_RELATED",
+              "INCOME",
+              "REFUND",
+              "TRANSFER"
+            ]
+          }
+        },
+        "required": [
+          "type",
+          "event_id",
+          "expected_at",
+          "amount",
+          "cover_mode",
+          "reserve_id"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "CHANGE_PAYMENT_DATE"
+          },
+          "window_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "window_id"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "SET_ALLOCATION"
+          },
+          "goal_allocation": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "金额，整数分（R007、§9.1）"
+          }
+        },
+        "required": [
+          "type",
+          "goal_allocation"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "ADD_TODAY_SPEND"
+          },
+          "event_id": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "金额，整数分（R007、§9.1）"
+          },
+          "actual_at": {
+            "type": "string",
+            "description": "时刻（应带 +08:00 偏移，D03）或只给日期的 YYYY-MM-DD；格式与范围由引擎检查"
+          },
+          "goal_id": {
+            "type": "string"
+          },
+          "cost_item_id": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "MEALS",
+              "LOCAL_TRANSPORT",
+              "DAILY_GOODS",
+              "ENTERTAINMENT",
+              "GOAL_RELATED",
+              "INCOME",
+              "REFUND",
+              "TRANSFER"
+            ]
+          },
+          "coverage": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "reserve_id": {
+                  "type": "string"
+                },
+                "covered_amount": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991,
+                  "description": "金额，整数分（R007、§9.1）"
+                }
+              },
+              "required": [
+                "reserve_id",
+                "covered_amount"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "type",
+          "event_id",
+          "amount",
+          "actual_at",
+          "coverage"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "PAUSE"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "CANCEL"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "SELECT_CANDIDATE"
+          },
+          "candidate_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "candidate_id"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "CONFIRM"
+          },
+          "candidate_id": {
+            "type": "string"
+          },
+          "plan_version": {
+            "type": "string"
+          },
+          "input_version": {
+            "type": "string",
+            "pattern": "^v[1-9][0-9]*$",
+            "description": "输入版本 v1、v2……（R013）"
+          }
+        },
+        "required": [
+          "type",
+          "candidate_id",
+          "plan_version",
+          "input_version"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "CONFIRM_FORECASTS"
+          },
+          "forecasts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "series_id": {
+                  "type": "string"
+                },
+                "purchase_date": {
+                  "type": "string",
+                  "format": "date",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                }
+              },
+              "required": [
+                "series_id",
+                "purchase_date"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "type",
+          "forecasts"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "PATCH"
+          },
+          "path": {
+            "type": "string",
+            "format": "starts_with",
+            "pattern": "^\\/.*",
+            "description": "指向 CaseFile 的 JSON Pointer（RFC 6901）"
+          },
+          "value": {}
+        },
+        "required": [
+          "type",
+          "path",
+          "value"
+        ],
+        "additionalProperties": false
+      },
+      {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "EVALUATE"
+          },
+          "label": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "label"
+        ],
+        "additionalProperties": false
+      }
+    ]
+  },
+  "title": "Ops",
+  "description": "操作序列（rules.md §12.4）"
+}

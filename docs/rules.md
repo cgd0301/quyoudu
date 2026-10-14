@@ -1119,3 +1119,98 @@ c01是本节和traceability.csv使用的基础资金数据：
 | 待用户确认 | 已选方案待确认，确认前不写入正式分配 |
 | 已确认 | 方案已确认，不表示已经付款 |
 | 草案 | 当前方案不能写入正式分配，只作预览 |
+
+### 12.数据结构摘要
+
+本节只列对象、关键字段、枚举和操作。完整定义以src/engine/schema.ts（案例输入CaseFile）、src/engine/ops.ts（操作Op）、src/engine/result.ts（输出ResultCore）和src/engine/enums.ts（枚举）为准；JSON Schema由pnpm schema:export导出到docs/_work/schema.json、result.schema.json、ops.schema.json。字段名与§9冲突时以§9为准，并记入spec_gaps.md（SG-30）；§9没有给出的取值和结构见SG-31，操作语义见SG-32，暂时无法表示的数据见SG-33。
+
+#### 12.1 约定
+
+- 案例JSON和操作用snake_case，字段名取自§9“数据字段”列。ResultCore在TS内用camelCase，对拍和导出前由toWire()只把键名转为snake_case，值和顺序不变；ResultCore不使用以数据为键的对象。引擎读入案例后按§9转为camelCase（§9.1）。
+- 金额为整数分（Number.isSafeInteger），字段名不加单位后缀。ResultCore中每个金额写作{value, basis{event_ids, reserve_ids, rules}}；src/engine/money.ts的moneyPaths()列出全部金额路径，D32、D52所说的“_cents值”即这些路径上的value。
+- 时刻为字符串，应带+08:00偏移（D03）；只给日期时写YYYY-MM-DD。纯日期字段（覆盖期间、购买日、观测日、服务日、入住日期）必须是YYYY-MM-DD。
+- schema只拒绝结构错误：缺字段、未知字段、类型错误、非整数金额、未知枚举。币种、日期范围、时区偏移、快照阶段与计入标记、金额正负、编号引用等由引擎报告输入冲突（§11.1）；演示案例另由validate:cases按§8.9检查。
+- null表示规格允许的“未知或未填写”：事件的金额与预计时间（R005）、报价金额（待填）、报价与优惠的有效期、优惠门槛、Goal的相容约束（D16、D44）、现金与预算（§11.1）、快照阶段（D03）。下表带?的字段可以省略，省略即没有该项。
+- 不带currency的金额（快照、预留、预算、优惠、计划分配、预测确认）按本契约为人民币；事件、候选价格项、返还、价格观测和消费记录另带currency，供R008检查。
+
+#### 12.2 案例输入CaseFile
+
+| 对象 | 关键字段 |
+|----|----|
+| meta | case_id、purpose、data_version、simulated（恒为true）、source_type、generator、batch、created_at_real（真实生成时间，不进入计算）、demo_points[]、boundary_test?、continuation_of? |
+| snapshot | as_of、cash_as_of、snapshot_phase、cash、goal_allocation、other_goal_hold{name, amount}或null（D09） |
+| reserves[] | reserve_id、reserve_kind、amount、coverage_start、coverage_end、release_at_end、funding_event_id? |
+| events[] | event_id、event_kind、event_status、amount、expected_at、actual_at?、time_precision、known_order?、in_snapshot、goal_id?、cost_item_id?、task_id?、coverage[]{reserve_id, covered_amount}、trigger_condition?、recorded_at、available_at、currency、category?、payment_windows?[]{window_id, expected_at} |
+| goal | goal_id、name?、budget_cap、show_start_at、show_end_at、venue_city、seat_tiers[]{code, name}、arrive_before_show_min、return_after_show_min、lodging_nights_required、seat_tier_allowed、lodging_max_distance_m、refundable_required（六项约束为null即未填写） |
+| cost_items[] | cost_item_id、category、necessary、amount_status、confirm_basis? |
+| candidates[] | candidate_id、items[]、offers_used[]{offer_id, order_id, sequence?}、returns[] |
+| candidates[].items[] | cost_item_id、channel、spec、price、currency、price_basis、order_id、purchase_date、payment_at、arrive_at?、depart_at?、lodging_distance_m?、lodging_nights?、refundable?、quote{valid_from, valid_to, recorded_at, available_at}、payment_windows?[]{window_id, payment_at} |
+| candidates[].returns[] | event_id、amount、expected_at、time_precision、trigger_condition?、cost_item_id?、currency、recorded_at、available_at |
+| offers[] | offer_id、type、value、scope、threshold、valid_from、valid_to、applies_at、max_uses、stackable_with、rounding、expected_at?、trigger_condition?（后两项为返现的到账日期和触发条件，D12） |
+| price_series[] | series_id、cost_item_id、channel、spec、service_date、observed_on、price、currency、recorded_at、available_at（每行一笔日级观测） |
+| consumption_records[] | observed_on、day_coverage、items[]{event_id, category, amount, currency, in_snapshot, recorded_at, available_at, covered_by_living_reserve?, same_scope_as_discretionary?} |
+| planned_allocation | {funding_event_id, amount}或null（D46只建一笔） |
+| confirmed_plan? | candidate_id、plan_version、input_version |
+| forecast_confirmations[] | series_id、purchase_date、price、config_version（D14按项目＋购买日确认） |
+| nl_script? | script_id、utterances[] |
+
+- 门票项的spec填goal.seat_tiers中的编码。offers.value对立减、满减、返现、返券为整数分，对折扣为万分比整数（D45）。
+- 价格项的order_id为其所属订单；offers_used的order_id为该次使用所作用的订单，同一订单叠加多张优惠时由sequence给出计算顺序，缺省即未给出（D45）。
+- input_version不存于案例文件：载入时为v1。
+
+#### 12.3 枚举
+
+| 字段 | 取值 |
+|----|----|
+| snapshot_phase | DAY_START、AFTER_EVENT(n)（n为正整数）、DAY_END（D03） |
+| reserve_kind、event_kind、event_status、node_verdict | 见§9.2、§9.3 |
+| 消费category、day_coverage | 见§9.5 |
+| offers.type、applies_at、rounding | 见§9.7 |
+| plan_state、optimization_state、confirmation_state | 见§11.1—§11.3 |
+| amount_status | CONFIRMED、ESTIMATE、PENDING、CONFIRMED_FREE、NOT_APPLICABLE（R010） |
+| cover_mode | NEW_RESERVE、EXISTING_RESERVE（D29） |
+| time_precision | DATE（只知日期）、DATETIME（有具体时刻） |
+| 项目category、offers.scope、refundable_required | TICKET、OUTBOUND_TRANSPORT、RETURN_TRANSPORT、LODGING、MEALS、LOCAL_TRANSPORT、SERVICE_FEE、OPTIONAL_PURCHASE |
+| price_basis | QUOTE、FORECAST、REFERENCE、UNDATED_QUOTE、PENDING（D13五档，按优先级排列） |
+| source_type | LLM_GENERATED、HAND_WRITTEN |
+
+ResultCore另用的代码（节点触发、方案来源、情景、每日参考展示、任务状态、依赖条件、待核价事项、预测状态、情景不可用原因、输入问题、待确认与排除原因、标签）见enums.ts。
+
+#### 12.4 操作Op
+
+| 类别 | 操作与字段 |
+|----|----|
+| D29白名单 | DELAY_INCOME{event_id, expected_at}；ADD_LIVING_EXPENSE{event_id, expected_at, amount, cover_mode, reserve_id, category?}；CHANGE_PAYMENT_DATE{window_id}；SET_ALLOCATION{goal_allocation}；ADD_TODAY_SPEND{event_id, amount, actual_at, goal_id?, cost_item_id?, category?, coverage[]}；PAUSE；CANCEL |
+| 流程操作 | SELECT_CANDIDATE{candidate_id}；CONFIRM{candidate_id, plan_version, input_version}；CONFIRM_FORECASTS{forecasts[]{series_id, purchase_date}} |
+| 引擎变异（D58，界面不得出现） | PATCH{path, value}，path为指向CaseFile的JSON Pointer |
+| 检查点 | EVALUATE{label} |
+
+- 改变输入的操作使input_version加1（v1、v2……）：D29白名单操作、PATCH、CONFIRM_FORECASTS，以及写入正式安排的CONFIRM；SELECT_CANDIDATE、EVALUATE和重复确认不加。
+- ADD_LIVING_EXPENSE的reserve_id在NEW_RESERVE时为新建预留的编号，在EXISTING_RESERVE时为已有预留的编号；同一event_id再次提交表示改写该笔新增支出的覆盖方式（T013-08）。DELAY_INCOME作用于预计的INCOME和RETURN。
+- window_id只能引用案例中events[]或candidates[].items[]的payment_windows；编号是否存在由引擎检查。
+
+#### 12.5 输出ResultCore
+
+| 键（toWire之后） | 内容 |
+|----|----|
+| as_of、input_version、config_version、top_k_label | 计算时点、输入版本、配置版本、“K=3（演示配置v1）” |
+| check_period | start、end、out_of_range（D04、D41、D56） |
+| input_issues[] | code、rule、refs（§11.1“暂无法完整判断”的原因） |
+| snapshot | C、L、N、O、M、A、G、H、U及protected_total，字段名取§9.2的TS列；issues[]；现金未知时为null |
+| nodes[] | at、trigger{kind, event_ids}、与snapshot相同的各项余额、node_verdict、amount（-U）、protected_over_cash与allocation_unsupported（D34）、related（§10.4第5步） |
+| earliest_gap、gap_list[] | node_index、at、node_verdict、amount、related（D11、D35） |
+| constraint_issues | budget_overrun、allocation_conflicts[] |
+| cost | paid_total、future_payable、eligible_return、net_spend、net_spend_if_received、budget_overrun、paid_payments[]、future_payments[]、protected_reserves、contingency_reserve、pending_cost_item_ids（§3、政策卡第四节） |
+| dependencies[] | kind、refs、amount、at（“按当前假设可行”的依赖条件） |
+| candidates[] | candidate_id、plan_version、evaluable、pending_reasons、excluded_reasons、feasible、net_spend、net_spend_if_received、tie_group、rank |
+| optimization | scope、evaluated_count、pending_count、excluded_count、top_k |
+| confirmation | candidate_id、plan_version、input_version、w、m、delta_a、planned_allocation、unallocated_note（D46） |
+| action_list[] | task_id、cost_item_id、category、spec、purchase_date、channel、offer_ids、amount、payment_at、pending_checks、task_state、plan_version（R017第7条） |
+| daily_reference | display、amount?、limited_by?、label?、unavailable[]（R019、D26、D27） |
+| states | plan_state、underlying_plan_state（只在已暂停、已取消时给出）、optimization_state、confirmation_state、plan_target（§11、D47） |
+| forecasts?、scenarios? | 预测与情景结果，字段名取§9.5、§9.6的TS列（R018、R020） |
+| labels | 标签代码；文字见result.ts的LABEL_TEXT，与§11.4原文一致 |
+
+#### 12.6 evaluate
+
+evaluate(caseData, ops, config)返回{checkpoints: [{label, result}]}。每个EVALUATE产生一个检查点；ops中没有EVALUATE时在末尾自动补一个，label为final。config取src/engine/config.ts的DEMO_CFG_1（DEMO-CFG-1）。
