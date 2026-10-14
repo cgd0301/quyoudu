@@ -43,7 +43,7 @@
 | SG-41 | rules.md §8 D46、R017；fixtures/vectors/T017-02.json | 确认引用的输入版本已经过期时，复查通过后是直接写入正式安排，还是退回待用户确认。 | 写入 D63。复查通过且可以写入正式安排时直接确认，确认记录使用当前输入版本；不能写入时只存草案。 | T017-02 | 已裁决（D63）。DEMO-CFG-1 新规则 |
 | SG-42 | oracle AMBIGUOUS.md 第2—5条 | 已确认收入的表示、订单优惠冲减哪笔付款、同日多条观测取哪条、Pg 口径 | 写入 D64—D67 | T009-03、T016-02、T018-04、T018-06、T018-12、T019-03、T020-02 | 已裁决（D64—D67）。DEMO-CFG-1 新规则 |
 | SG-43 | spec_gaps.md SG-39；rules.md §12.4 | SG-39 的约定只写在 spec_gaps.md，oracle 看不到；PATCH 语义未写 | 写入 §12.7、D69 | 全部向量 | 已裁决（§12.7、D69） |
-| SG-44 | AGENTS.md §3；rules.md §9.1 | formatCents 的显示字符串没有规定。 | 待团队裁决。A（推荐）：不带千分位、不带货币符号的两位小数，整数分用整数除法，100000 显示为 1000.00。B：带千分位和「元」。临时按 A。 | tests/unit/m1.test.ts | 待团队裁决 |
+| SG-44 | AGENTS.md §3；rules.md §9.1、§8 D70 | formatCents 的显示字符串没有规定。 | 写入 D70、§9.1：界面只用 formatCents，整数分按整数除法写成不带千分位、不带货币符号的两位小数，100000 分显示为 1000.00。 | tests/unit/m1.test.ts | 已裁决（D70） |
 | SG-45 | rules.md §12.4 | 窗口不存在，或 DELAY_INCOME 的目标不是预计 INCOME/RETURN 时，用哪个输入问题代码没有写。确认记录的 input_version 晚于当前版本也没有写。 | 待团队裁决。临时不改该字段，版本仍加 1，问题代码用 SPEC_NOT_COVERED。晚于当前版本的确认标 NEEDS_RECONFIRM，不用于判断。 | tests/unit/m1.test.ts | 待团队裁决 |
 | SG-46 | rules.md §12.4 D29 | ADD_LIVING_EXPENSE 与 ADD_TODAY_SPEND 没有给出 recorded_at、available_at、currency、time_precision，新建预留没有覆盖期间。已计入快照的事件再次 ADD_TODAY_SPEND 且金额变化时，现金差额没有写。 | AI暂定（保守）：currency 为 CNY；时刻含 T 则 DATETIME，否则 DATE；recorded_at 与 available_at 取 as_of；新建预留的覆盖起止都取支出日期，release_at_end 为 false，金额等于该笔支出。已计入的事件不再次扣现金。 | tests/unit/m1.test.ts | AI暂定（保守） |
 | SG-51 | D12、D42；candidates[].returns 与 offers CASHBACK | 同一笔返现可能同时写在 CASHBACK 优惠和返还记录里，条文没有写是否各计一次；金额、到账日或触发条件不一致时也没有写。 | AI暂定（保守）：三者都相同则只计一次。优惠返现与返还同时存在且不能逐笔配对时，该候选记 OFFER_CONDITION_UNKNOWN，未配对的两笔都不计入。只有一侧存在时按那一侧计入。 | tests/unit/pricing.test.ts | AI暂定（保守） |

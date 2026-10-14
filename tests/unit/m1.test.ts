@@ -692,7 +692,7 @@ describe('舍入与显示', () => {
     expect(roundToCents('12874.72')).toBe(12875)
   })
 
-  test('formatCents 用整数除法显示两位小数', () => {
+  test('formatCents 按 D70 用整数除法显示两位小数', () => {
     expect(formatCents(100000)).toBe('1000.00')
     expect(formatCents(1)).toBe('0.01')
     expect(formatCents(-10050)).toBe('-100.50')

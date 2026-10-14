@@ -15,7 +15,7 @@ docs/sources.md 原有内容只读，只允许在文末标题'外部公开资料
 编号用 SG-xx，代码注释 // SPEC-GAP SG-xx。"AI暂定"和"待团队裁决"由团队批量复核，代理不得自行改为"已裁决"。
 
 ## 3 硬性约束
-- 金额一律整数分（Number.isSafeInteger），禁止浮点金额运算；显示只用 formatCents。
+- 金额一律整数分（Number.isSafeInteger），禁止浮点金额运算；显示只用 formatCents（不带千分位和货币符号的两位小数，rules.md D70）。
 - 只用模拟时钟 as_of；禁止 Date.now()、无参 new Date()、Math.random()。
 - 金额、日期、约束、排序、预测只在 src/engine/ 中由确定性代码计算。src/nl/ 的 LLM 输出只能成为"待确认值"，不得直接进入计算，也不得改写任何数字、状态或排序。
 - 禁止修改：tests/golden/**、tests/golden.lock、oracle/**、fixtures/vectors/** 中的 expect 与 source_text 字段、docs/sources.md 原有内容。测试或向量断言不过就改实现；认为预期有误，记入 docs/_work/vector_disputes.md（向量编号｜断言路径｜预期｜实际｜依据条款｜理由），只把这一条断言登记到 tests/vector-disputes.json 跳过，不得跳过整个向量。团队在对话中明确授权的修改除外。

@@ -1,4 +1,4 @@
-// SPEC-GAP SG-44：显示字符串未写，临时为不带千分位和货币符号的两位小数
+// D70、§9.1：不带千分位、不带货币符号的两位小数
 
 /** 整数分显示为元，只用整数除法 */
 export function formatCents(cents: number): string {
