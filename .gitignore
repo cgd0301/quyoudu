@@ -30,3 +30,6 @@ playwright-report/
 test-results/
 blob-report/
 .cache/
+
+__pycache__/
+*.pyc

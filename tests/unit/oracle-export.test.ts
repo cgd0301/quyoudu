@@ -1,10 +1,11 @@
+import { createHash } from 'node:crypto'
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import { parseCsv, stringifyCsv } from '../../scripts/lib/csv.ts'
-import { exportOracle, stripExpectedColumn, stripVector } from '../../scripts/oracle-export.ts'
+import { contentFingerprint, exportOracle, stripExpectedColumn, stripVector } from '../../scripts/oracle-export.ts'
 
 const REPO_ROOT = fileURLToPath(new URL('../..', import.meta.url))
 
@@ -35,25 +36,58 @@ describe('CSV', () => {
     expect(stringifyCsv([['a,b', 'c"d', '中文']])).toBe('"a,b","c""d",中文')
   })
 
-  test('去掉“预期结果”列，其余列和行不变', () => {
+  test('子用例保留“预期：”之前的部分，父行置空，列名改为“初始与操作”', () => {
     const rows = parseCsv(stripExpectedColumn(CSV))
-    expect(rows[0]).toEqual(['规则编号', '规则描述', '最小数据字段', '拟建测试', '项目书章节', '状态'])
-    expect(rows[2]).toEqual(['R001', '统一计算时点｜设备日期无关', 'as_of, C0', 'T001-01', '开发期忽略，定稿后回填（D33）', '待执行'])
+    expect(rows[0]).toEqual(['规则编号', '规则描述', '最小数据字段', '拟建测试', '初始与操作', '项目书章节', '状态'])
+    expect(rows[1][4]).toBe('')
+    expect(rows[2]).toEqual(['R001', '统一计算时点｜设备日期无关', 'as_of, C0', 'T001-01', '初始：c01', '开发期忽略，定稿后回填（D33）', '待执行'])
+    expect(stripExpectedColumn(CSV)).not.toContain('G0=700')
   })
 
-  test('仓库中的 traceability.csv 去列后行数不变，且不再出现预期结果的文字', () => {
+  test('去掉“预期：”前末尾的分号，操作说明保留', () => {
+    const csv = '拟建测试,预期结果\nT001-01,初始：c01；操作：重算；预期：G0=700\nT001,父行整段\n'
+    const rows = parseCsv(stripExpectedColumn(csv))
+    expect(rows[1]).toEqual(['T001-01', '初始：c01；操作：重算'])
+    expect(rows[2]).toEqual(['T001', ''])
+  })
+
+  test('仓库追溯表列数不变，子用例不含“预期：”，父行该列为空', () => {
     const text = readFileSync(path.join(REPO_ROOT, 'docs/traceability.csv'), 'utf8')
     const original = parseCsv(text)
     const stripped = parseCsv(stripExpectedColumn(text))
     const expectedColumn = original[0].indexOf('预期结果')
+    const testColumn = original[0].indexOf('拟建测试')
     expect(stripped).toHaveLength(original.length)
-    expect(stripped[0]).not.toContain('预期结果')
-    expect(stripped.every((row) => row.length === original[0].length - 1)).toBe(true)
-    expect(stripExpectedColumn(text)).not.toContain(original[2][expectedColumn])
+    expect(stripped[0][expectedColumn]).toBe('初始与操作')
+    expect(stripped.every((row) => row.length === original[0].length)).toBe(true)
+    const problems: string[] = []
+    for (let index = 1; index < original.length; index += 1) {
+      const testId = original[index]?.[testColumn] ?? ''
+      const cell = stripped[index]?.[expectedColumn] ?? ''
+      if (!testId.includes('-')) {
+        if (cell !== '') problems.push(`${testId || `第${index}行`} 父行未置空`)
+      } else if (cell.includes('预期：')) {
+        problems.push(`${testId} 仍含预期`)
+      }
+    }
+    expect(problems).toEqual([])
   })
 
   test('没有“预期结果”列时报错', () => {
     expect(() => stripExpectedColumn('a,b\n1,2')).toThrow('预期结果')
+  })
+
+  test('子用例缺少“预期：”时报错', () => {
+    expect(() => stripExpectedColumn('拟建测试,预期结果\nT001-01,初始：c01\n')).toThrow('预期：')
+  })
+})
+
+describe('指纹', () => {
+  test('把 \\r\\n 换成 \\n 后取 SHA-256 前 12 位', () => {
+    const digest = createHash('sha256').update('a\nb', 'utf8').digest('hex').slice(0, 12)
+    expect(contentFingerprint('a\r\nb')).toBe(digest)
+    expect(contentFingerprint('a\nb')).toBe(digest)
+    expect(digest).toHaveLength(12)
   })
 })
 
@@ -116,6 +150,7 @@ describe('exportOracle', () => {
       'docs/traceability_noexpect.csv',
       'fixtures/cases/c01_base.json',
       'fixtures/vectors/T001-07#1.json',
+      'oracle_inputs.json',
     ])
   })
 
@@ -127,10 +162,20 @@ describe('exportOracle', () => {
     expect(read('AGENTS.md')).toBe('')
   })
 
-  test('追溯表去掉“预期结果”列，另存为 traceability_noexpect.csv', () => {
+  test('追溯表改为“初始与操作”，另存为 traceability_noexpect.csv', () => {
     expect(exists('docs/traceability.csv')).toBe(false)
-    expect(parseCsv(read('docs/traceability_noexpect.csv'))[0]).not.toContain('预期结果')
+    const rows = parseCsv(read('docs/traceability_noexpect.csv'))
+    expect(rows[0]).toContain('初始与操作')
+    expect(rows[0]).not.toContain('预期结果')
+    expect(rows[1][4]).toBe('')
+    expect(rows[2][4]).toBe('初始：c01')
     expect(read('docs/traceability_noexpect.csv')).not.toContain('G0=700')
+  })
+
+  test('oracle_inputs.json 记录每个导出文件的指纹，不含清单自身', () => {
+    const manifest = JSON.parse(read('oracle_inputs.json')) as Record<string, string>
+    expect(Object.keys(manifest)).toEqual(written.filter((file) => file !== 'oracle_inputs.json'))
+    for (const file of Object.keys(manifest)) expect(manifest[file]).toBe(contentFingerprint(read(file)))
   })
 
   test('向量去掉 expect 与 source_text', () => {

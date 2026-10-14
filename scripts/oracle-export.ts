@@ -2,11 +2,15 @@
  * 仅限人工运行
  *
  * 把独立对拍（oracle）需要的规格与数据复制到 ../quyoudu-oracle/，目录结构与本仓库相同：
- * docs/rules.md、policy_card.md、scope.md；traceability.csv 去掉“预期结果”列，存为 docs/traceability_noexpect.csv；
+ * docs/rules.md、policy_card.md、scope.md；
+ * traceability.csv 的“预期结果”列改名为“初始与操作”（子用例只保留“预期：”之前的部分，父行置空），
+ * 存为 docs/traceability_noexpect.csv；
  * docs/_work 下的 JSON Schema；fixtures/cases/*.json；fixtures/vectors/*.json（删去 expect 与 source_text）；
- * scripts/oracle-template/AGENTS.md 放到目标根目录。不复制 src/ 和 tests/。
+ * scripts/oracle-template/AGENTS.md 放到目标根目录。
+ * 每个导出文件的指纹写入目标根目录 oracle_inputs.json。不复制 src/ 和 tests/。
  * 目标中的 fixtures/cases、fixtures/vectors 先清空再写，其他目录不动。
  */
+import { createHash } from 'node:crypto'
 import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -23,14 +27,48 @@ const SCHEMA_DIR = 'docs/_work'
 const CASES_DIR = 'fixtures/cases'
 const VECTORS_DIR = 'fixtures/vectors'
 const TEMPLATE = 'scripts/oracle-template/AGENTS.md'
+const INPUTS_MANIFEST = 'oracle_inputs.json'
 const EXPECTED_COLUMN = '预期结果'
+const TEST_COLUMN = '拟建测试'
+const RENAMED_COLUMN = '初始与操作'
+const EXPECTED_MARK = '预期：'
 const HIDDEN_VECTOR_FIELDS = ['expect', 'source_text']
+
+/** 把 \r\n 换成 \n 后取 SHA-256 的前 12 位十六进制 */
+export function contentFingerprint(text: string): string {
+  const normalized = text.replaceAll('\r\n', '\n')
+  return createHash('sha256').update(normalized, 'utf8').digest('hex').slice(0, 12)
+}
 
 export function stripExpectedColumn(csvText: string): string {
   const rows = parseCsv(csvText)
-  const column = rows[0]?.indexOf(EXPECTED_COLUMN) ?? -1
+  const header = rows[0]
+  if (header === undefined) throw new Error(`${TRACEABILITY} 为空`)
+  const column = header.indexOf(EXPECTED_COLUMN)
   if (column < 0) throw new Error(`${TRACEABILITY} 没有“${EXPECTED_COLUMN}”列`)
-  return `${stringifyCsv(rows.map((row) => row.filter((_cell, index) => index !== column)))}\n`
+  const testColumn = header.indexOf(TEST_COLUMN)
+  if (testColumn < 0) throw new Error(`${TRACEABILITY} 没有“${TEST_COLUMN}”列`)
+  const next = rows.map((row, index) => {
+    const width = Math.max(header.length, row.length)
+    const cells = Array.from({ length: width }, (_, cellIndex) => row[cellIndex] ?? '')
+    if (index === 0) {
+      cells[column] = RENAMED_COLUMN
+      return cells
+    }
+    const testId = cells[testColumn] ?? ''
+    if (!testId.includes('-')) {
+      cells[column] = ''
+      return cells
+    }
+    const cell = cells[column] ?? ''
+    const mark = cell.indexOf(EXPECTED_MARK)
+    if (mark < 0) throw new Error(`子用例 ${testId} 的“${EXPECTED_COLUMN}”缺少“${EXPECTED_MARK}”`)
+    let kept = cell.slice(0, mark)
+    if (kept.endsWith('；')) kept = kept.slice(0, -1)
+    cells[column] = kept
+    return cells
+  })
+  return `${stringifyCsv(next)}\n`
 }
 
 export function stripVector(jsonText: string): string {
@@ -52,6 +90,12 @@ function isSchemaFile(name: string): boolean {
   return name === 'schema.json' || name.endsWith('.schema.json')
 }
 
+function fingerprintManifest(files: ReadonlyMap<string, string>): string {
+  const body: Record<string, string> = {}
+  for (const file of [...files.keys()].sort()) body[file] = contentFingerprint(files.get(file) ?? '')
+  return `${JSON.stringify(body, null, 2)}\n`
+}
+
 /** 返回写入目标目录的文件（相对路径，按字母排序） */
 export async function exportOracle(sourceRoot: string, targetRoot: string): Promise<string[]> {
   const read = (relativePath: string) => readFile(path.join(sourceRoot, relativePath), 'utf8')
@@ -71,7 +115,9 @@ export async function exportOracle(sourceRoot: string, targetRoot: string): Prom
     await mkdir(path.dirname(target), { recursive: true })
     await writeFile(target, text, 'utf8')
   }
-  return [...outputs.keys()].sort()
+  const manifest = fingerprintManifest(outputs)
+  await writeFile(path.join(targetRoot, INPUTS_MANIFEST), manifest, 'utf8')
+  return [...outputs.keys(), INPUTS_MANIFEST].sort()
 }
 
 function isDirectRun(): boolean {
