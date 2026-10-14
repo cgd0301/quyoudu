@@ -9,6 +9,7 @@ import { resultCoreSchema } from '../../src/engine/result.ts'
 import { toWire } from '../../src/engine/wire.ts'
 import { PathError, resolvePath, type Resolved } from '../lib/path.ts'
 import {
+  AI_DERIVED_MARK,
   DISPUTES_DOC,
   FIXTURE_VECTORS_DIR,
   GAPS_FILE,
@@ -231,9 +232,12 @@ describe('断言按 ResultCore 校验', () => {
     expect(vectorProblems({ ...vector, rule: 'R004' }, 'fixtures/vectors/T003-01.json', trace)).toHaveLength(1)
     expect(vectorProblems({ ...vector, source_text: '改写过的预期' }, 'fixtures/vectors/T003-01.json', trace)).toHaveLength(1)
     expect(vectorProblems({ ...vector, needs_review: true }, 'fixtures/vectors/T003-01.json', trace)).toHaveLength(1)
-    const reviewRow = trace.get('T003-08')
-    const review = { ...vector, test_id: 'T003-08', source_text: reviewRow?.expected, needs_review: true }
-    expect(vectorProblems(review, 'fixtures/vectors/T003-08.json', trace)).toEqual([])
+    const markedExpected = `示例预期${AI_DERIVED_MARK}`
+    const reviewTrace = new Map(trace)
+    reviewTrace.set('T003-08', { rule: 'R003', expected: markedExpected })
+    const review = { ...vector, test_id: 'T003-08', source_text: markedExpected, needs_review: true }
+    expect(vectorProblems(review, 'fixtures/vectors/T003-08.json', reviewTrace)).toEqual([])
+    expect(vectorProblems({ ...review, needs_review: false }, 'fixtures/vectors/T003-08.json', reviewTrace)).toHaveLength(1)
     const duplicated = { ...vector, expect: [...vector.expect, ...vector.expect] }
     expect(vectorProblems(duplicated, 'fixtures/vectors/T003-01.json', trace)).toHaveLength(1)
     expect(vectorProblems({ ...vector, input: { cash: 1 } }, 'fixtures/vectors/T003-01.json', trace).length).toBeGreaterThan(0)

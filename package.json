@@ -31,7 +31,7 @@
     "vec": "tsx scripts/vec.ts",
     "vector:modules": "tsx scripts/vector-modules.ts",
     "slice": "tsx scripts/spec-slice.ts",
-    "golden:write": "node scripts/not-implemented.mjs",
+    "golden:write": "tsx scripts/golden-write.ts",
     "export:results": "node scripts/not-implemented.mjs",
     "doc:lint": "node scripts/not-implemented.mjs",
     "presubmit": "node scripts/not-implemented.mjs"

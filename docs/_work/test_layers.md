@@ -33,7 +33,7 @@ traceability.csv 的 161 个子用例按断言对象分层，父行（T001、T00
 | T003-05 | ENGINE | A4 向量 |
 | T003-06 | ENGINE | A4 向量 |
 | T003-07 | ENGINE | A4 向量 |
-| T003-08 | ENGINE | A4 向量（needs_review） |
+| T003-08 | ENGINE | A4 向量 |
 | T004-01 | ENGINE | A4 向量 |
 | T004-02 | ENGINE | A4 向量 |
 | T004-03 | ENGINE | A4 向量 |
@@ -142,8 +142,8 @@ traceability.csv 的 161 个子用例按断言对象分层，父行（T001、T00
 | T017-01 | ENGINE | A4 向量；“草案预览，未确认”对应的标签代码见 vector_gaps |
 | T017-01 | UI | A7 e2e（资金日历页标“草案预览，未确认”） |
 | T017-02 | ENGINE | A4 向量；“重新检查通过后才进入确认”见 vector_gaps |
-| T017-03 | ENGINE | A4 向量（needs_review） |
-| T017-04 | ENGINE | A4 向量（needs_review） |
+| T017-03 | ENGINE | A4 向量 |
+| T017-04 | ENGINE | A4 向量 |
 | T017-04 | UI | A7 e2e（界面名称“建议分配额（不减少今日可额外支出）”） |
 | T017-05 | ENGINE | A4 向量 |
 | T017-06 | ENGINE | A4 向量 |
@@ -152,8 +152,8 @@ traceability.csv 的 161 个子用例按断言对象分层，父行（T001、T00
 | T017-09 | ENGINE | A4 向量（行动清单字段） |
 | T017-09 | UI | A7 e2e（没有独立的购买日历组件；资金日历时间轴标购买日与付款日） |
 | T017-10 | ENGINE | A4 向量（#1 确认 C01，#2 确认 C02） |
-| T017-11 | ENGINE | A4 向量（needs_review） |
-| T017-12 | ENGINE | A4 向量（needs_review） |
+| T017-11 | ENGINE | A4 向量 |
+| T017-12 | ENGINE | A4 向量 |
 | T017-12 | UI | A7 e2e（界面名称“建议分配额（不减少今日可额外支出）”） |
 | T018-01 | ENGINE | A4 向量；餐饮日均参考 30.00 见 vector_gaps |
 | T018-02 | ENGINE | A4 向量 |

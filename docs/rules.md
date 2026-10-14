@@ -652,6 +652,7 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 - D65 订单优惠落到付款：按 D45 算出一张即时类优惠在该订单内的减免额后，只冲减该订单中 scope 内价格项的付款。这些价格项付款时刻不同时，从付款时刻最晚的一笔开始依次冲减，每笔最多减到 0；付款时刻相同的，按价格项在 items[] 中的顺序从后往前。返现、返券不冲减付款（D12）。（DEMO-CFG-1｜依 SG-42 裁决）
 - D66 同日多条价格观测：同一 series_id、同一 observed_on 有多条在预测起点已可获得的观测时只取一条：available_at 最晚者；相同则取 recorded_at 最晚者；仍相同则取在 price_series 中位置靠后者（R020 第3条）。（DEMO-CFG-1｜依 SG-42 裁决）
 - D67 情景组总额：Pg = 该类别观察窗口内的金额合计 × 组内天数 ÷ 30，精确算出后按 ROUND_HALF_UP 一次取整到分，不先把日均取整（D23）。组按 §5 为同一类别、同一覆盖期间：由生活预留覆盖的类别，按对应生活预留的覆盖期间切分；不由预留覆盖的类别，整个检查期间为一组。组内天数为该组覆盖期间与检查期间交集的自然日数，含首尾，含 as_of 当日。例：T018-04 为 100000×10÷30=33333.33…，取 33333 分。（DEMO-CFG-1｜依 SG-42 裁决）
+- D68 方案版本的写法：结果里 candidates[].plan_version、confirmation.plan_version、action_list[].plan_version 一律写成「候选编号@v1」，例如 C02@v1。输入版本按 §12.4 增到 v2 及以后时不改写该字符串；confirmation.input_version 可以已经是 v2 或更后，plan_version 仍为 @v1。（DEMO-CFG-1｜依 A4-0 写定）
 - D69 PATCH 只做替换：path 必须指向案例中已存在的位置，用 value 整体替换，不做新增或删除；替换后的案例必须仍通过 caseFileSchema，否则 evaluate 直接抛错（这是测试输入写错了，不是输入冲突）。（DEMO-CFG-1｜依 SG-43 裁决）
 
 #### 8.9 提交版数据约束
@@ -1253,3 +1254,7 @@ evaluate(caseData, ops, config)返回{checkpoints: [{label, result}]}。每个EV
 - 当结果中出现§11.4规定的“同价”“历史不足”文案时，顶层 labels 须包含对应代码（SAME_PRICE、HISTORY_INSUFFICIENT）。（DEMO-CFG-1｜依 A4-0 裁决）
 - 已确认的预测估算在购买前须复核窗口、资格、库存等条件；即使没有优惠，pending_checks 也须同时包含 RECHECK_PRICE 与 RECHECK_OFFER_CONDITIONS。沿用现有代码，不新增枚举。（DEMO-CFG-1｜依 A4-0 裁决）
 - 观察窗口内完整历日（COMPLETE 或 NO_SPEND）不足30个时，近月情景不可用，原因记为 HISTORY_INSUFFICIENT。（DEMO-CFG-1｜依 A4-0 裁决）
+- check_period.start 取该检查点 as_of 的原文，不做格式转换。（DEMO-CFG-1｜依 A4-0 写定）
+- candidates[] 保留案例输入中的全部候选，顺序与输入 candidates[] 相同，不按 rank 重排。进入前 K 名的 rank 为从 1 起、不重复、不缺号、且不超过 optimization.top_k 的正整数；不在前 K 名的 rank 为 null。（DEMO-CFG-1｜依 A4-0 写定）
+- 每个检查点的 labels 以 SIMULATED_DATA、TOP_K_DEMO 开头。（DEMO-CFG-1｜依 A4-0 写定）
+- scenarios[] 的顺序固定为 CONFIRMED_ONLY、RECENT_MONTH。（DEMO-CFG-1｜依 A4-0 写定）
