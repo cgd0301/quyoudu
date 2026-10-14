@@ -7,6 +7,7 @@ import { priceCandidates } from './pricing/index.ts'
 import type { ResultCore } from './result.ts'
 import type { CaseFile } from './schema.ts'
 import { buildSnapshot } from './snapshot/index.ts'
+import { runTimeline, timelineInput, type PlanLifecycle } from './timeline/index.ts'
 
 export type Checkpoint = {
   label: string
@@ -50,12 +51,22 @@ function skeleton(
   data: CaseFile,
   version: number,
   selectedCandidateId: string | null,
+  lifecycle: PlanLifecycle,
   opIssues: readonly InputIssue[],
   config: EngineConfig,
 ): ResultCore {
   const normalized = normalize(data)
   const priced = new Map(priceCandidates(normalized).map((row) => [row.candidateId, row]))
   const report = inputIssues(data, opIssues)
+  // D47：已确认方案，否则当前选中的候选
+  const planCandidateId = data.confirmed_plan?.candidate_id ?? selectedCandidateId
+  const timeline = runTimeline(
+    timelineInput(normalized, {
+      candidateId: planCandidateId,
+      priced: planCandidateId === null ? undefined : priced.get(planCandidateId),
+      lifecycle,
+    }),
+  )
   const confirmed = data.confirmed_plan != null
   const labels: ResultCore['labels'] = ['SIMULATED_DATA', 'TOP_K_DEMO']
   if (!confirmed) labels.push('DRAFT_PREVIEW', 'PREVIEW_UNCONFIRMED')
@@ -75,13 +86,13 @@ function skeleton(
     inputVersion: versionLabel(version),
     configVersion: config.configVersion,
     topKLabel: config.topKLabel,
-    checkPeriod: { start: data.snapshot.as_of, end: null, outOfRange: report.outOfRange },
-    inputIssues: report.issues,
+    checkPeriod: { ...timeline.checkPeriod, outOfRange: report.outOfRange || timeline.checkPeriod.outOfRange },
+    inputIssues: [...report.issues, ...timeline.issues],
     snapshot: buildSnapshot(normalized),
-    nodes: [],
-    earliestGap: null,
-    gapList: [],
-    constraintIssues: { budgetOverrun: null, allocationConflicts: [] },
+    nodes: timeline.nodes,
+    earliestGap: timeline.earliestGap,
+    gapList: timeline.gapList,
+    constraintIssues: { budgetOverrun: null, allocationConflicts: timeline.allocationConflicts },
     cost: {
       paidTotal: zeroMoney(),
       futurePayable: null,
@@ -147,12 +158,13 @@ export function evaluate(caseData: CaseFile, ops: readonly Op[], config: EngineC
   let opIssues: InputIssue[] = []
   let version = 1
   let selectedCandidateId: string | null = null
+  let lifecycle: PlanLifecycle = 'ACTIVE'
   const checkpoints: Checkpoint[] = []
   for (const op of ensureCheckpoint(ops)) {
     if (op.type === 'EVALUATE') {
       checkpoints.push({
         label: op.label,
-        result: skeleton(data, version, selectedCandidateId, opIssues, config),
+        result: skeleton(data, version, selectedCandidateId, lifecycle, opIssues, config),
       })
       continue
     }
@@ -161,6 +173,8 @@ export function evaluate(caseData: CaseFile, ops: readonly Op[], config: EngineC
       continue
     }
     if (op.type === 'CONFIRM' || op.type === 'CONFIRM_FORECASTS') continue
+    if (op.type === 'PAUSE' && lifecycle === 'ACTIVE') lifecycle = 'PAUSED'
+    if (op.type === 'CANCEL') lifecycle = 'CANCELLED'
     const next = applyMutation(data, op, createdReserves)
     data = next.data
     createdReserves = next.createdReserves
