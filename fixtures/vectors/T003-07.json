@@ -1,0 +1,197 @@
+{
+  "test_id": "T003-07",
+  "rule": "R003",
+  "layer": "ENGINE",
+  "needs_review": false,
+  "source_text": "初始：c01；操作：9/3不属于本目标的生活支出450，其中300由生活预留覆盖（q=300），150无覆盖；预期：没有未来目标收付款，也没有as_of之后的已确认收入，检查期间为2026-09-01至2027-01-01（D41④、D56）；C=550、L=0、M=200、A=400；G=550、H=350、U=-50；L+N+O+M=200≤550，U<0且由流出触发，按D05、D36为付款缺口50，相关项目为该笔支出；A不变；计划状态＝发现付款缺口",
+  "base": "c01",
+  "input": {
+    "meta": {
+      "case_id": "T003-07",
+      "purpose": "c01；9/3 不属于本目标的生活支出 450（E1），其中 300 由生活预留覆盖；没有本目标收付款，候选 C01 无付款，只作计划对象。",
+      "data_version": "1",
+      "simulated": true,
+      "source_type": "HAND_WRITTEN",
+      "generator": "cursor-agent",
+      "batch": "vectors-2026-10-14",
+      "created_at_real": "2026-10-14T20:00:00+08:00",
+      "demo_points": []
+    },
+    "snapshot": {
+      "as_of": "2026-09-01T09:00:00+08:00",
+      "cash_as_of": "2026-09-01T09:00:00+08:00",
+      "snapshot_phase": "DAY_START",
+      "cash": 100000,
+      "goal_allocation": 40000,
+      "other_goal_hold": null
+    },
+    "reserves": [
+      {
+        "reserve_id": "R-LIV-09",
+        "reserve_kind": "LIVING",
+        "amount": 30000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-30",
+        "release_at_end": false
+      },
+      {
+        "reserve_id": "R-CON",
+        "reserve_kind": "CONTINGENCY",
+        "amount": 20000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-28",
+        "release_at_end": false
+      }
+    ],
+    "events": [
+      {
+        "event_id": "E1",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "amount": 45000,
+        "expected_at": "2026-09-03",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [
+          {
+            "reserve_id": "R-LIV-09",
+            "covered_amount": 30000
+          }
+        ],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY",
+        "category": "MEALS"
+      }
+    ],
+    "goal": {
+      "goal_id": "G1",
+      "budget_cap": 90000,
+      "show_start_at": "2026-09-27T19:30:00+08:00",
+      "show_end_at": "2026-09-27T22:00:00+08:00",
+      "venue_city": "上海",
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "arrive_before_show_min": null,
+      "return_after_show_min": null,
+      "lodging_nights_required": null,
+      "seat_tier_allowed": null,
+      "lodging_max_distance_m": null,
+      "refundable_required": null
+    },
+    "cost_items": [],
+    "candidates": [
+      {
+        "candidate_id": "C01",
+        "items": [],
+        "offers_used": [],
+        "returns": []
+      }
+    ],
+    "offers": [],
+    "price_series": [],
+    "consumption_records": [],
+    "planned_allocation": null,
+    "forecast_confirmations": []
+  },
+  "ops": [
+    {
+      "type": "SELECT_CANDIDATE",
+      "candidate_id": "C01"
+    }
+  ],
+  "expect": [
+    {
+      "checkpoint": "final",
+      "path": "check_period.start",
+      "op": "includes",
+      "value": "2026-09-01"
+    },
+    {
+      "checkpoint": "final",
+      "path": "check_period.end",
+      "op": "eq",
+      "value": "2027-01-01"
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E1].cash.value",
+      "op": "eq",
+      "value": 55000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E1].living_reserve.value",
+      "op": "eq",
+      "value": 0
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E1].contingency_reserve.value",
+      "op": "eq",
+      "value": 20000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E1].goal_allocation.value",
+      "op": "eq",
+      "value": 40000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E1].goal_available.value",
+      "op": "eq",
+      "value": 55000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E1].payment_headroom.value",
+      "op": "eq",
+      "value": 35000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E1].unallocated.value",
+      "op": "eq",
+      "value": -5000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E1].protected_total.value",
+      "op": "eq",
+      "value": 20000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E1].node_verdict",
+      "op": "eq",
+      "value": "PAYMENT_SHORTFALL"
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E1].amount.value",
+      "op": "eq",
+      "value": 5000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E1].related",
+      "op": "includes",
+      "value": "E1"
+    },
+    {
+      "checkpoint": "final",
+      "path": "states.plan_state",
+      "op": "eq",
+      "value": "PAYMENT_GAP"
+    }
+  ]
+}

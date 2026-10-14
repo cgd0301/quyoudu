@@ -1,0 +1,209 @@
+{
+  "test_id": "T016-06",
+  "rule": "R016",
+  "layer": "ENGINE",
+  "needs_review": false,
+  "source_text": "初始：资金同T016-01；C01—C03净支出为1010、1020、1050；操作：比较；预期：全部按预算排除；不推荐任何方案；优化状态＝未找到已知可行方案",
+  "base": null,
+  "input": {
+    "meta": {
+      "case_id": "T016-06",
+      "purpose": "资金同 T016-01；C01—C03 净支出 1010、1020、1050。",
+      "data_version": "1",
+      "simulated": true,
+      "source_type": "HAND_WRITTEN",
+      "generator": "cursor-agent",
+      "batch": "vectors-2026-10-14",
+      "created_at_real": "2026-10-14T20:00:00+08:00",
+      "demo_points": []
+    },
+    "snapshot": {
+      "as_of": "2026-09-01T09:00:00+08:00",
+      "cash_as_of": "2026-09-01T09:00:00+08:00",
+      "snapshot_phase": "DAY_START",
+      "cash": 300000,
+      "goal_allocation": 0,
+      "other_goal_hold": null
+    },
+    "reserves": [
+      {
+        "reserve_id": "R-LIV-09",
+        "reserve_kind": "LIVING",
+        "amount": 30000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-30",
+        "release_at_end": false
+      },
+      {
+        "reserve_id": "R-CON",
+        "reserve_kind": "CONTINGENCY",
+        "amount": 20000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-28",
+        "release_at_end": false
+      }
+    ],
+    "events": [],
+    "goal": {
+      "goal_id": "G1",
+      "budget_cap": 100000,
+      "show_start_at": "2026-09-27T19:30:00+08:00",
+      "show_end_at": "2026-09-27T22:00:00+08:00",
+      "venue_city": "上海",
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "arrive_before_show_min": null,
+      "return_after_show_min": null,
+      "lodging_nights_required": null,
+      "seat_tier_allowed": null,
+      "lodging_max_distance_m": null,
+      "refundable_required": null
+    },
+    "cost_items": [
+      {
+        "cost_item_id": "TRAIN-OUT",
+        "category": "OUTBOUND_TRANSPORT",
+        "necessary": true,
+        "amount_status": "CONFIRMED"
+      }
+    ],
+    "candidates": [
+      {
+        "candidate_id": "C01",
+        "items": [
+          {
+            "cost_item_id": "TRAIN-OUT",
+            "channel": "渠道丙",
+            "spec": "二等座",
+            "price": 101000,
+            "currency": "CNY",
+            "price_basis": "QUOTE",
+            "order_id": "O1",
+            "purchase_date": "2026-09-10",
+            "payment_at": "2026-09-10",
+            "quote": {
+              "valid_from": "2026-09-01",
+              "valid_to": "2026-09-30",
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "available_at": "2026-09-01T08:00:00+08:00"
+            }
+          }
+        ],
+        "offers_used": [],
+        "returns": []
+      },
+      {
+        "candidate_id": "C02",
+        "items": [
+          {
+            "cost_item_id": "TRAIN-OUT",
+            "channel": "渠道丙",
+            "spec": "二等座",
+            "price": 102000,
+            "currency": "CNY",
+            "price_basis": "QUOTE",
+            "order_id": "O1",
+            "purchase_date": "2026-09-10",
+            "payment_at": "2026-09-10",
+            "quote": {
+              "valid_from": "2026-09-01",
+              "valid_to": "2026-09-30",
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "available_at": "2026-09-01T08:00:00+08:00"
+            }
+          }
+        ],
+        "offers_used": [],
+        "returns": []
+      },
+      {
+        "candidate_id": "C03",
+        "items": [
+          {
+            "cost_item_id": "TRAIN-OUT",
+            "channel": "渠道丙",
+            "spec": "二等座",
+            "price": 105000,
+            "currency": "CNY",
+            "price_basis": "QUOTE",
+            "order_id": "O1",
+            "purchase_date": "2026-09-10",
+            "payment_at": "2026-09-10",
+            "quote": {
+              "valid_from": "2026-09-01",
+              "valid_to": "2026-09-30",
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "available_at": "2026-09-01T08:00:00+08:00"
+            }
+          }
+        ],
+        "offers_used": [],
+        "returns": []
+      }
+    ],
+    "offers": [],
+    "price_series": [],
+    "consumption_records": [],
+    "planned_allocation": null,
+    "forecast_confirmations": []
+  },
+  "ops": [],
+  "expect": [
+    {
+      "checkpoint": "final",
+      "path": "candidates[candidate_id=C01].excluded_reasons",
+      "op": "includes",
+      "value": {
+        "code": "BUDGET_EXCEEDED"
+      }
+    },
+    {
+      "checkpoint": "final",
+      "path": "candidates[candidate_id=C01].rank",
+      "op": "eq",
+      "value": null
+    },
+    {
+      "checkpoint": "final",
+      "path": "candidates[candidate_id=C02].excluded_reasons",
+      "op": "includes",
+      "value": {
+        "code": "BUDGET_EXCEEDED"
+      }
+    },
+    {
+      "checkpoint": "final",
+      "path": "candidates[candidate_id=C02].rank",
+      "op": "eq",
+      "value": null
+    },
+    {
+      "checkpoint": "final",
+      "path": "candidates[candidate_id=C03].excluded_reasons",
+      "op": "includes",
+      "value": {
+        "code": "BUDGET_EXCEEDED"
+      }
+    },
+    {
+      "checkpoint": "final",
+      "path": "candidates[candidate_id=C03].rank",
+      "op": "eq",
+      "value": null
+    },
+    {
+      "checkpoint": "final",
+      "path": "states.optimization_state",
+      "op": "eq",
+      "value": "NO_KNOWN_FEASIBLE"
+    }
+  ]
+}

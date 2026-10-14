@@ -1,0 +1,136 @@
+{
+  "test_id": "T001-05#2",
+  "rule": "R001",
+  "layer": "ENGINE",
+  "needs_review": false,
+  "source_text": "初始：c01；当日10:00发生生活支出200（由生活预留覆盖，event_id=E1）；操作：①在09:00按DAY_START计算；②记录E1后，以as_of=2026-09-01T10:30:00+08:00、snapshot_phase=AFTER_EVENT(1)、C0=800、L0=100重算；预期：①E1为时间轴事件，执行后C=800、L=100、H=500、U=100；②快照即为该状态，E1只计入快照一次，不再作为待发生事件扣减；①中E1后的节点与②的起始节点数值相同；按D03，②中E1为ACTUAL、in_snapshot=true，当日已计入1笔，与AFTER_EVENT(1)相符",
+  "base": "c01",
+  "input": {
+    "meta": {
+      "case_id": "T001-05#2",
+      "purpose": "情形②：记录 E1 后的快照，as_of=cash_as_of=2026-09-01T10:30:00+08:00，AFTER_EVENT(1)，C0=800、L0=100；E1 为 ACTUAL 且已计入快照。",
+      "data_version": "1",
+      "simulated": true,
+      "source_type": "HAND_WRITTEN",
+      "generator": "cursor-agent",
+      "batch": "vectors-2026-10-14",
+      "created_at_real": "2026-10-14T20:00:00+08:00",
+      "demo_points": []
+    },
+    "snapshot": {
+      "as_of": "2026-09-01T10:30:00+08:00",
+      "cash_as_of": "2026-09-01T10:30:00+08:00",
+      "snapshot_phase": "AFTER_EVENT(1)",
+      "cash": 80000,
+      "goal_allocation": 40000,
+      "other_goal_hold": null
+    },
+    "reserves": [
+      {
+        "reserve_id": "R-LIV-09",
+        "reserve_kind": "LIVING",
+        "amount": 10000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-30",
+        "release_at_end": false
+      },
+      {
+        "reserve_id": "R-CON",
+        "reserve_kind": "CONTINGENCY",
+        "amount": 20000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-28",
+        "release_at_end": false
+      }
+    ],
+    "events": [
+      {
+        "event_id": "E1",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "ACTUAL",
+        "amount": 20000,
+        "expected_at": "2026-09-01T10:00:00+08:00",
+        "actual_at": "2026-09-01T10:00:00+08:00",
+        "time_precision": "DATETIME",
+        "in_snapshot": true,
+        "coverage": [
+          {
+            "reserve_id": "R-LIV-09",
+            "covered_amount": 20000
+          }
+        ],
+        "recorded_at": "2026-09-01T10:00:00+08:00",
+        "available_at": "2026-09-01T10:00:00+08:00",
+        "currency": "CNY",
+        "category": "MEALS"
+      }
+    ],
+    "goal": {
+      "goal_id": "G1",
+      "budget_cap": 90000,
+      "show_start_at": "2026-09-27T19:30:00+08:00",
+      "show_end_at": "2026-09-27T22:00:00+08:00",
+      "venue_city": "上海",
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "arrive_before_show_min": null,
+      "return_after_show_min": null,
+      "lodging_nights_required": null,
+      "seat_tier_allowed": null,
+      "lodging_max_distance_m": null,
+      "refundable_required": null
+    },
+    "cost_items": [],
+    "candidates": [],
+    "offers": [],
+    "price_series": [],
+    "consumption_records": [],
+    "planned_allocation": null,
+    "forecast_confirmations": []
+  },
+  "ops": [],
+  "expect": [
+    {
+      "checkpoint": "final",
+      "path": "snapshot.cash.value",
+      "op": "eq",
+      "value": 80000
+    },
+    {
+      "checkpoint": "final",
+      "path": "snapshot.living_reserve.value",
+      "op": "eq",
+      "value": 10000
+    },
+    {
+      "checkpoint": "final",
+      "path": "snapshot.payment_headroom.value",
+      "op": "eq",
+      "value": 50000
+    },
+    {
+      "checkpoint": "final",
+      "path": "snapshot.unallocated.value",
+      "op": "eq",
+      "value": 10000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E1]",
+      "op": "absent"
+    },
+    {
+      "checkpoint": "final",
+      "path": "input_issues[code=SNAPSHOT_PHASE_MISMATCH]",
+      "op": "absent"
+    }
+  ]
+}

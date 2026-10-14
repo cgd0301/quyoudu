@@ -1,0 +1,155 @@
+{
+  "test_id": "T019-03",
+  "rule": "R019",
+  "layer": "ENGINE",
+  "needs_review": false,
+  "source_text": "初始：as_of=2026-10-01T09:00:00+08:00，DAY_START；C0=1000、L0=300、N0=O0=M0=0、A0=400；已确认方案为10/8本目标付款600（无预留覆盖），B=600；10/9生活支出300由该生活预留覆盖；10/10已确认预计收入500，检查期间按D04为10/1—10/10；近月情景中今日同口径情景额10.00，10/2—10/10同口径情景支出合计30.00，均无预留覆盖，都在10/10收入之前流出；今日已发生同口径支出0；操作：计算D；预期：今日替换额=max(0, 10.00-0)=10.00，由x替换；近月情景D=300-30-200=70；仅已确认安排D=100；主展示70，注明限制来自近月情景；不得得到60（重复计入今日10.00）；检查期间10/1—10/10按D41、D56；同口径按D48为娱乐；本行是独立测试数据，不与9/1快照勾稽（V-06）",
+  "base": null,
+  "input": {
+    "meta": {
+      "case_id": "T019-03",
+      "purpose": "独立测试数据的已确认安排部分：as_of=2026-10-01T09:00:00+08:00，DAY_START；C0=1000、L0=300、N0=O0=M0=0、A0=400，B=600；已确认方案 C01 为 10/8 本目标付款 600；10/9 生活支出 300 由生活预留覆盖；10/10 已确认预计收入 500。近月情景各项写不进输入（见 vector_gaps），不提供消费记录。",
+      "data_version": "1",
+      "simulated": true,
+      "source_type": "HAND_WRITTEN",
+      "generator": "cursor-agent",
+      "batch": "vectors-2026-10-14",
+      "created_at_real": "2026-10-14T20:00:00+08:00",
+      "demo_points": []
+    },
+    "snapshot": {
+      "as_of": "2026-10-01T09:00:00+08:00",
+      "cash_as_of": "2026-10-01T09:00:00+08:00",
+      "snapshot_phase": "DAY_START",
+      "cash": 100000,
+      "goal_allocation": 40000,
+      "other_goal_hold": null
+    },
+    "reserves": [
+      {
+        "reserve_id": "R-LIV-10",
+        "reserve_kind": "LIVING",
+        "amount": 30000,
+        "coverage_start": "2026-10-01",
+        "coverage_end": "2026-10-31",
+        "release_at_end": false
+      }
+    ],
+    "events": [
+      {
+        "event_id": "E-LIV-1009",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "amount": 30000,
+        "expected_at": "2026-10-09",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [
+          {
+            "reserve_id": "R-LIV-10",
+            "covered_amount": 30000
+          }
+        ],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY",
+        "category": "MEALS"
+      },
+      {
+        "event_id": "E-INC",
+        "event_kind": "INCOME",
+        "event_status": "EXPECTED",
+        "amount": 50000,
+        "expected_at": "2026-10-10",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY"
+      }
+    ],
+    "goal": {
+      "goal_id": "G1",
+      "budget_cap": 60000,
+      "show_start_at": "2026-10-27T19:30:00+08:00",
+      "show_end_at": "2026-10-27T22:00:00+08:00",
+      "venue_city": "上海",
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "arrive_before_show_min": null,
+      "return_after_show_min": null,
+      "lodging_nights_required": null,
+      "seat_tier_allowed": null,
+      "lodging_max_distance_m": null,
+      "refundable_required": null
+    },
+    "cost_items": [
+      {
+        "cost_item_id": "TICKET",
+        "category": "TICKET",
+        "necessary": true,
+        "amount_status": "CONFIRMED"
+      }
+    ],
+    "candidates": [
+      {
+        "candidate_id": "C01",
+        "items": [
+          {
+            "cost_item_id": "TICKET",
+            "channel": "渠道甲",
+            "spec": "B",
+            "price": 60000,
+            "currency": "CNY",
+            "price_basis": "QUOTE",
+            "order_id": "O1",
+            "purchase_date": "2026-10-08",
+            "payment_at": "2026-10-08",
+            "quote": {
+              "valid_from": "2026-10-01",
+              "valid_to": "2026-10-31",
+              "recorded_at": "2026-10-01T08:00:00+08:00",
+              "available_at": "2026-10-01T08:00:00+08:00"
+            }
+          }
+        ],
+        "offers_used": [],
+        "returns": []
+      }
+    ],
+    "offers": [],
+    "price_series": [],
+    "consumption_records": [],
+    "planned_allocation": null,
+    "confirmed_plan": {
+      "candidate_id": "C01",
+      "plan_version": "C01@v1",
+      "input_version": "v1"
+    },
+    "forecast_confirmations": []
+  },
+  "ops": [],
+  "expect": [
+    {
+      "checkpoint": "final",
+      "path": "scenarios[kind=CONFIRMED_ONLY].daily_reference.value",
+      "op": "eq",
+      "value": 10000
+    },
+    {
+      "checkpoint": "final",
+      "path": "check_period.end",
+      "op": "eq",
+      "value": "2026-10-10"
+    }
+  ]
+}

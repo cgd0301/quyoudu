@@ -1,0 +1,145 @@
+{
+  "test_id": "T013-01",
+  "rule": "R013",
+  "layer": "ENGINE",
+  "needs_review": false,
+  "source_text": "初始：c01，输入版本v1；操作：新增9/3生活支出100，按D29默认同时新建对应的生活预留100；预期：形成v2；起始节点L=400、H0=400、U0=0，通过；9/3后C=900、L=300、H=400、U=0；四页显示的金额和状态都来自v2",
+  "base": "c01",
+  "input": {
+    "meta": {
+      "case_id": "T013-01",
+      "purpose": "c01（v1）；ADD_LIVING_EXPENSE 新增 9/3 生活支出 100（E-NEW），按 D29 默认新建生活预留 R-NEW 100。",
+      "data_version": "1",
+      "simulated": true,
+      "source_type": "HAND_WRITTEN",
+      "generator": "cursor-agent",
+      "batch": "vectors-2026-10-14",
+      "created_at_real": "2026-10-14T20:00:00+08:00",
+      "demo_points": []
+    },
+    "snapshot": {
+      "as_of": "2026-09-01T09:00:00+08:00",
+      "cash_as_of": "2026-09-01T09:00:00+08:00",
+      "snapshot_phase": "DAY_START",
+      "cash": 100000,
+      "goal_allocation": 40000,
+      "other_goal_hold": null
+    },
+    "reserves": [
+      {
+        "reserve_id": "R-LIV-09",
+        "reserve_kind": "LIVING",
+        "amount": 30000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-30",
+        "release_at_end": false
+      },
+      {
+        "reserve_id": "R-CON",
+        "reserve_kind": "CONTINGENCY",
+        "amount": 20000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-28",
+        "release_at_end": false
+      }
+    ],
+    "events": [],
+    "goal": {
+      "goal_id": "G1",
+      "budget_cap": 90000,
+      "show_start_at": "2026-09-27T19:30:00+08:00",
+      "show_end_at": "2026-09-27T22:00:00+08:00",
+      "venue_city": "上海",
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "arrive_before_show_min": null,
+      "return_after_show_min": null,
+      "lodging_nights_required": null,
+      "seat_tier_allowed": null,
+      "lodging_max_distance_m": null,
+      "refundable_required": null
+    },
+    "cost_items": [],
+    "candidates": [],
+    "offers": [],
+    "price_series": [],
+    "consumption_records": [],
+    "planned_allocation": null,
+    "forecast_confirmations": []
+  },
+  "ops": [
+    {
+      "type": "ADD_LIVING_EXPENSE",
+      "event_id": "E-NEW",
+      "expected_at": "2026-09-03",
+      "amount": 10000,
+      "cover_mode": "NEW_RESERVE",
+      "reserve_id": "R-NEW",
+      "category": "MEALS"
+    }
+  ],
+  "expect": [
+    {
+      "checkpoint": "final",
+      "path": "input_version",
+      "op": "eq",
+      "value": "v2"
+    },
+    {
+      "checkpoint": "final",
+      "path": "snapshot.living_reserve.value",
+      "op": "eq",
+      "value": 40000
+    },
+    {
+      "checkpoint": "final",
+      "path": "snapshot.payment_headroom.value",
+      "op": "eq",
+      "value": 40000
+    },
+    {
+      "checkpoint": "final",
+      "path": "snapshot.unallocated.value",
+      "op": "eq",
+      "value": 0
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[0].node_verdict",
+      "op": "eq",
+      "value": "PASS"
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-NEW].cash.value",
+      "op": "eq",
+      "value": 90000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-NEW].living_reserve.value",
+      "op": "eq",
+      "value": 30000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-NEW].payment_headroom.value",
+      "op": "eq",
+      "value": 40000
+    },
+    {
+      "checkpoint": "final",
+      "path": "nodes[trigger.event_ids=E-NEW].unallocated.value",
+      "op": "eq",
+      "value": 0
+    }
+  ]
+}

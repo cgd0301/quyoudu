@@ -1,0 +1,201 @@
+{
+  "test_id": "T011-03",
+  "rule": "R011",
+  "layer": "ENGINE",
+  "needs_review": false,
+  "source_text": "初始：C01信息完整并通过检查，净支出850；C02的住宿待填；操作：比较；预期：优化状态＝部分可评估；只能表述为已评估子集内最低，不宣称全部已知候选最低，也不宣称全部已知无解",
+  "base": null,
+  "input": {
+    "meta": {
+      "case_id": "T011-03",
+      "purpose": "资金宽裕（C0=3000、L0=300、M0=200、A0=0，B=1000）；候选 C01 的门票 500 与住宿 350 信息完整（净支出 850），C02 的住宿待填。",
+      "data_version": "1",
+      "simulated": true,
+      "source_type": "HAND_WRITTEN",
+      "generator": "cursor-agent",
+      "batch": "vectors-2026-10-14",
+      "created_at_real": "2026-10-14T20:00:00+08:00",
+      "demo_points": []
+    },
+    "snapshot": {
+      "as_of": "2026-09-01T09:00:00+08:00",
+      "cash_as_of": "2026-09-01T09:00:00+08:00",
+      "snapshot_phase": "DAY_START",
+      "cash": 300000,
+      "goal_allocation": 0,
+      "other_goal_hold": null
+    },
+    "reserves": [
+      {
+        "reserve_id": "R-LIV-09",
+        "reserve_kind": "LIVING",
+        "amount": 30000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-30",
+        "release_at_end": false
+      },
+      {
+        "reserve_id": "R-CON",
+        "reserve_kind": "CONTINGENCY",
+        "amount": 20000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-28",
+        "release_at_end": false
+      }
+    ],
+    "events": [],
+    "goal": {
+      "goal_id": "G1",
+      "budget_cap": 100000,
+      "show_start_at": "2026-09-27T19:30:00+08:00",
+      "show_end_at": "2026-09-27T22:00:00+08:00",
+      "venue_city": "上海",
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "arrive_before_show_min": null,
+      "return_after_show_min": null,
+      "lodging_nights_required": null,
+      "seat_tier_allowed": null,
+      "lodging_max_distance_m": null,
+      "refundable_required": null
+    },
+    "cost_items": [
+      {
+        "cost_item_id": "TICKET",
+        "category": "TICKET",
+        "necessary": true,
+        "amount_status": "CONFIRMED"
+      },
+      {
+        "cost_item_id": "LODGING",
+        "category": "LODGING",
+        "necessary": true,
+        "amount_status": "CONFIRMED"
+      }
+    ],
+    "candidates": [
+      {
+        "candidate_id": "C01",
+        "items": [
+          {
+            "cost_item_id": "TICKET",
+            "channel": "渠道甲",
+            "spec": "B",
+            "price": 50000,
+            "currency": "CNY",
+            "price_basis": "QUOTE",
+            "order_id": "O1",
+            "purchase_date": "2026-09-10",
+            "payment_at": "2026-09-10",
+            "quote": {
+              "valid_from": "2026-09-01",
+              "valid_to": "2026-09-30",
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "available_at": "2026-09-01T08:00:00+08:00"
+            }
+          },
+          {
+            "cost_item_id": "LODGING",
+            "channel": "渠道乙",
+            "spec": "大床房",
+            "price": 35000,
+            "currency": "CNY",
+            "price_basis": "QUOTE",
+            "order_id": "O2",
+            "purchase_date": "2026-09-10",
+            "payment_at": "2026-09-27",
+            "quote": {
+              "valid_from": "2026-09-01",
+              "valid_to": "2026-09-30",
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "available_at": "2026-09-01T08:00:00+08:00"
+            }
+          }
+        ],
+        "offers_used": [],
+        "returns": []
+      },
+      {
+        "candidate_id": "C02",
+        "items": [
+          {
+            "cost_item_id": "TICKET",
+            "channel": "渠道甲",
+            "spec": "B",
+            "price": 48000,
+            "currency": "CNY",
+            "price_basis": "QUOTE",
+            "order_id": "O1",
+            "purchase_date": "2026-09-10",
+            "payment_at": "2026-09-10",
+            "quote": {
+              "valid_from": "2026-09-01",
+              "valid_to": "2026-09-30",
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "available_at": "2026-09-01T08:00:00+08:00"
+            }
+          },
+          {
+            "cost_item_id": "LODGING",
+            "channel": "渠道乙",
+            "spec": "大床房",
+            "price": null,
+            "currency": "CNY",
+            "price_basis": "PENDING",
+            "order_id": "O2",
+            "purchase_date": "2026-09-10",
+            "payment_at": "2026-09-27",
+            "quote": {
+              "valid_from": null,
+              "valid_to": null,
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "available_at": "2026-09-01T08:00:00+08:00"
+            }
+          }
+        ],
+        "offers_used": [],
+        "returns": []
+      }
+    ],
+    "offers": [],
+    "price_series": [],
+    "consumption_records": [],
+    "planned_allocation": null,
+    "forecast_confirmations": []
+  },
+  "ops": [],
+  "expect": [
+    {
+      "checkpoint": "final",
+      "path": "states.optimization_state",
+      "op": "eq",
+      "value": "PARTIALLY_EVALUABLE"
+    },
+    {
+      "checkpoint": "final",
+      "path": "candidates[candidate_id=C01].net_spend.value",
+      "op": "eq",
+      "value": 85000
+    },
+    {
+      "checkpoint": "final",
+      "path": "candidates[candidate_id=C01].feasible",
+      "op": "eq",
+      "value": true
+    },
+    {
+      "checkpoint": "final",
+      "path": "candidates[candidate_id=C02].evaluable",
+      "op": "eq",
+      "value": false
+    }
+  ]
+}

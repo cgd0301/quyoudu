@@ -1,0 +1,884 @@
+{
+  "test_id": "T018-04",
+  "rule": "R018",
+  "layer": "ENGINE",
+  "needs_review": false,
+  "source_text": "初始：同T018-01，但9月餐饮合计1000.00；检查期间为10/1—10/10；已确认生活安排中10/1—10/10的餐饮每日30.00（Eg=300.00）；生活预留余额另计；操作：生成情景；预期：Pg=1000.00×10÷30=333.333…，按D23四舍五入为333.33；Δg=333.33-300.00=33.33；按§7.1分摊，10/1—10/3每日3.34、10/4—10/10每日3.33，合计33.33；Eg只计已列入安排的支出，不含生活预留余额，Δg另行加入；按D23分摊的是Δg，Eg不均匀的情形见T018-12",
+  "base": null,
+  "input": {
+    "meta": {
+      "case_id": "T018-04",
+      "purpose": "10月1日独立测试数据：C0=2000、A0=0；9月餐饮合计 1000.00；10 月生活预留 R-LIV-10 余额 400；已确认生活安排为 10/1—10/10 每日餐饮 30.00（由 R-LIV-10 覆盖，Eg=300.00）；10/10 的已确认收入使检查期间为 10/1—10/10；候选 C01 无付款，只作计划对象。",
+      "data_version": "1",
+      "simulated": true,
+      "source_type": "HAND_WRITTEN",
+      "generator": "cursor-agent",
+      "batch": "vectors-2026-10-14",
+      "created_at_real": "2026-10-14T20:00:00+08:00",
+      "demo_points": []
+    },
+    "snapshot": {
+      "as_of": "2026-10-01T09:00:00+08:00",
+      "cash_as_of": "2026-10-01T09:00:00+08:00",
+      "snapshot_phase": "DAY_START",
+      "cash": 200000,
+      "goal_allocation": 0,
+      "other_goal_hold": null
+    },
+    "reserves": [
+      {
+        "reserve_id": "R-LIV-10",
+        "reserve_kind": "LIVING",
+        "amount": 40000,
+        "coverage_start": "2026-10-01",
+        "coverage_end": "2026-10-31",
+        "release_at_end": false
+      }
+    ],
+    "events": [
+      {
+        "event_id": "E-M1001",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "amount": 3000,
+        "expected_at": "2026-10-01",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [
+          {
+            "reserve_id": "R-LIV-10",
+            "covered_amount": 3000
+          }
+        ],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY",
+        "category": "MEALS"
+      },
+      {
+        "event_id": "E-M1002",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "amount": 3000,
+        "expected_at": "2026-10-02",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [
+          {
+            "reserve_id": "R-LIV-10",
+            "covered_amount": 3000
+          }
+        ],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY",
+        "category": "MEALS"
+      },
+      {
+        "event_id": "E-M1003",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "amount": 3000,
+        "expected_at": "2026-10-03",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [
+          {
+            "reserve_id": "R-LIV-10",
+            "covered_amount": 3000
+          }
+        ],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY",
+        "category": "MEALS"
+      },
+      {
+        "event_id": "E-M1004",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "amount": 3000,
+        "expected_at": "2026-10-04",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [
+          {
+            "reserve_id": "R-LIV-10",
+            "covered_amount": 3000
+          }
+        ],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY",
+        "category": "MEALS"
+      },
+      {
+        "event_id": "E-M1005",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "amount": 3000,
+        "expected_at": "2026-10-05",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [
+          {
+            "reserve_id": "R-LIV-10",
+            "covered_amount": 3000
+          }
+        ],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY",
+        "category": "MEALS"
+      },
+      {
+        "event_id": "E-M1006",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "amount": 3000,
+        "expected_at": "2026-10-06",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [
+          {
+            "reserve_id": "R-LIV-10",
+            "covered_amount": 3000
+          }
+        ],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY",
+        "category": "MEALS"
+      },
+      {
+        "event_id": "E-M1007",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "amount": 3000,
+        "expected_at": "2026-10-07",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [
+          {
+            "reserve_id": "R-LIV-10",
+            "covered_amount": 3000
+          }
+        ],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY",
+        "category": "MEALS"
+      },
+      {
+        "event_id": "E-M1008",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "amount": 3000,
+        "expected_at": "2026-10-08",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [
+          {
+            "reserve_id": "R-LIV-10",
+            "covered_amount": 3000
+          }
+        ],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY",
+        "category": "MEALS"
+      },
+      {
+        "event_id": "E-M1009",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "amount": 3000,
+        "expected_at": "2026-10-09",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [
+          {
+            "reserve_id": "R-LIV-10",
+            "covered_amount": 3000
+          }
+        ],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY",
+        "category": "MEALS"
+      },
+      {
+        "event_id": "E-M1010",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "amount": 3000,
+        "expected_at": "2026-10-10",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [
+          {
+            "reserve_id": "R-LIV-10",
+            "covered_amount": 3000
+          }
+        ],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY",
+        "category": "MEALS"
+      },
+      {
+        "event_id": "E-INC",
+        "event_kind": "INCOME",
+        "event_status": "EXPECTED",
+        "amount": 100000,
+        "expected_at": "2026-10-10",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "coverage": [],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY"
+      }
+    ],
+    "goal": {
+      "goal_id": "G1",
+      "budget_cap": 90000,
+      "show_start_at": "2026-10-27T19:30:00+08:00",
+      "show_end_at": "2026-10-27T22:00:00+08:00",
+      "venue_city": "上海",
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "arrive_before_show_min": null,
+      "return_after_show_min": null,
+      "lodging_nights_required": null,
+      "seat_tier_allowed": null,
+      "lodging_max_distance_m": null,
+      "refundable_required": null
+    },
+    "cost_items": [],
+    "candidates": [
+      {
+        "candidate_id": "C01",
+        "items": [],
+        "offers_used": [],
+        "returns": []
+      }
+    ],
+    "offers": [],
+    "price_series": [],
+    "consumption_records": [
+      {
+        "observed_on": "2026-09-01",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0901-MEALS",
+            "category": "MEALS",
+            "amount": 3334,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-01T20:00:00+08:00",
+            "available_at": "2026-09-01T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-02",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0902-MEALS",
+            "category": "MEALS",
+            "amount": 3334,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-02T20:00:00+08:00",
+            "available_at": "2026-09-02T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-03",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0903-MEALS",
+            "category": "MEALS",
+            "amount": 3334,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-03T20:00:00+08:00",
+            "available_at": "2026-09-03T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-04",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0904-MEALS",
+            "category": "MEALS",
+            "amount": 3334,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-04T20:00:00+08:00",
+            "available_at": "2026-09-04T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-05",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0905-MEALS",
+            "category": "MEALS",
+            "amount": 3334,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-05T20:00:00+08:00",
+            "available_at": "2026-09-05T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-06",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0906-MEALS",
+            "category": "MEALS",
+            "amount": 3334,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-06T20:00:00+08:00",
+            "available_at": "2026-09-06T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-07",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0907-MEALS",
+            "category": "MEALS",
+            "amount": 3334,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-07T20:00:00+08:00",
+            "available_at": "2026-09-07T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-08",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0908-MEALS",
+            "category": "MEALS",
+            "amount": 3334,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-08T20:00:00+08:00",
+            "available_at": "2026-09-08T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-09",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0909-MEALS",
+            "category": "MEALS",
+            "amount": 3334,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-09T20:00:00+08:00",
+            "available_at": "2026-09-09T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-10",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0910-MEALS",
+            "category": "MEALS",
+            "amount": 3334,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-10T20:00:00+08:00",
+            "available_at": "2026-09-10T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-11",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0911-MEALS",
+            "category": "MEALS",
+            "amount": 3333,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-11T20:00:00+08:00",
+            "available_at": "2026-09-11T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-12",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0912-MEALS",
+            "category": "MEALS",
+            "amount": 3333,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-12T20:00:00+08:00",
+            "available_at": "2026-09-12T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-13",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0913-MEALS",
+            "category": "MEALS",
+            "amount": 3333,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-13T20:00:00+08:00",
+            "available_at": "2026-09-13T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-14",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0914-MEALS",
+            "category": "MEALS",
+            "amount": 3333,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-14T20:00:00+08:00",
+            "available_at": "2026-09-14T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-15",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0915-MEALS",
+            "category": "MEALS",
+            "amount": 3333,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-15T20:00:00+08:00",
+            "available_at": "2026-09-15T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-16",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0916-MEALS",
+            "category": "MEALS",
+            "amount": 3333,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-16T20:00:00+08:00",
+            "available_at": "2026-09-16T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-17",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0917-MEALS",
+            "category": "MEALS",
+            "amount": 3333,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-17T20:00:00+08:00",
+            "available_at": "2026-09-17T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-18",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0918-MEALS",
+            "category": "MEALS",
+            "amount": 3333,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-18T20:00:00+08:00",
+            "available_at": "2026-09-18T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-19",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0919-MEALS",
+            "category": "MEALS",
+            "amount": 3333,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-19T20:00:00+08:00",
+            "available_at": "2026-09-19T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-20",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0920-MEALS",
+            "category": "MEALS",
+            "amount": 3333,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-20T20:00:00+08:00",
+            "available_at": "2026-09-20T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-21",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0921-MEALS",
+            "category": "MEALS",
+            "amount": 3333,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-21T20:00:00+08:00",
+            "available_at": "2026-09-21T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-22",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0922-MEALS",
+            "category": "MEALS",
+            "amount": 3333,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-22T20:00:00+08:00",
+            "available_at": "2026-09-22T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-23",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0923-MEALS",
+            "category": "MEALS",
+            "amount": 3333,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-23T20:00:00+08:00",
+            "available_at": "2026-09-23T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-24",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0924-MEALS",
+            "category": "MEALS",
+            "amount": 3333,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-24T20:00:00+08:00",
+            "available_at": "2026-09-24T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-25",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0925-MEALS",
+            "category": "MEALS",
+            "amount": 3333,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-25T20:00:00+08:00",
+            "available_at": "2026-09-25T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-26",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0926-MEALS",
+            "category": "MEALS",
+            "amount": 3333,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-26T20:00:00+08:00",
+            "available_at": "2026-09-26T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-27",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0927-MEALS",
+            "category": "MEALS",
+            "amount": 3333,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-27T20:00:00+08:00",
+            "available_at": "2026-09-27T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-28",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0928-MEALS",
+            "category": "MEALS",
+            "amount": 3333,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-28T20:00:00+08:00",
+            "available_at": "2026-09-28T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-29",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0929-MEALS",
+            "category": "MEALS",
+            "amount": 3333,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-29T20:00:00+08:00",
+            "available_at": "2026-09-29T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      },
+      {
+        "observed_on": "2026-09-30",
+        "day_coverage": "COMPLETE",
+        "items": [
+          {
+            "event_id": "H-0930-MEALS",
+            "category": "MEALS",
+            "amount": 3333,
+            "currency": "CNY",
+            "in_snapshot": true,
+            "recorded_at": "2026-09-30T20:00:00+08:00",
+            "available_at": "2026-09-30T20:00:00+08:00",
+            "covered_by_living_reserve": true,
+            "same_scope_as_discretionary": false
+          }
+        ]
+      }
+    ],
+    "planned_allocation": null,
+    "forecast_confirmations": []
+  },
+  "ops": [
+    {
+      "type": "SELECT_CANDIDATE",
+      "candidate_id": "C01"
+    }
+  ],
+  "expect": [
+    {
+      "checkpoint": "final",
+      "path": "check_period.end",
+      "op": "eq",
+      "value": "2026-10-10"
+    },
+    {
+      "checkpoint": "final",
+      "path": "scenarios[kind=RECENT_MONTH].groups[category=MEALS].scenario_group_total.value",
+      "op": "eq",
+      "value": 33333
+    },
+    {
+      "checkpoint": "final",
+      "path": "scenarios[kind=RECENT_MONTH].groups[category=MEALS].scheduled_group_total.value",
+      "op": "eq",
+      "value": 30000
+    },
+    {
+      "checkpoint": "final",
+      "path": "scenarios[kind=RECENT_MONTH].groups[category=MEALS].scenario_increment.value",
+      "op": "eq",
+      "value": 3333
+    },
+    {
+      "checkpoint": "final",
+      "path": "scenarios[kind=RECENT_MONTH].groups[category=MEALS].daily_amounts[date=2026-10-01].amount.value",
+      "op": "eq",
+      "value": 334
+    },
+    {
+      "checkpoint": "final",
+      "path": "scenarios[kind=RECENT_MONTH].groups[category=MEALS].daily_amounts[date=2026-10-02].amount.value",
+      "op": "eq",
+      "value": 334
+    },
+    {
+      "checkpoint": "final",
+      "path": "scenarios[kind=RECENT_MONTH].groups[category=MEALS].daily_amounts[date=2026-10-03].amount.value",
+      "op": "eq",
+      "value": 334
+    },
+    {
+      "checkpoint": "final",
+      "path": "scenarios[kind=RECENT_MONTH].groups[category=MEALS].daily_amounts[date=2026-10-04].amount.value",
+      "op": "eq",
+      "value": 333
+    },
+    {
+      "checkpoint": "final",
+      "path": "scenarios[kind=RECENT_MONTH].groups[category=MEALS].daily_amounts[date=2026-10-05].amount.value",
+      "op": "eq",
+      "value": 333
+    },
+    {
+      "checkpoint": "final",
+      "path": "scenarios[kind=RECENT_MONTH].groups[category=MEALS].daily_amounts[date=2026-10-06].amount.value",
+      "op": "eq",
+      "value": 333
+    },
+    {
+      "checkpoint": "final",
+      "path": "scenarios[kind=RECENT_MONTH].groups[category=MEALS].daily_amounts[date=2026-10-07].amount.value",
+      "op": "eq",
+      "value": 333
+    },
+    {
+      "checkpoint": "final",
+      "path": "scenarios[kind=RECENT_MONTH].groups[category=MEALS].daily_amounts[date=2026-10-08].amount.value",
+      "op": "eq",
+      "value": 333
+    },
+    {
+      "checkpoint": "final",
+      "path": "scenarios[kind=RECENT_MONTH].groups[category=MEALS].daily_amounts[date=2026-10-09].amount.value",
+      "op": "eq",
+      "value": 333
+    },
+    {
+      "checkpoint": "final",
+      "path": "scenarios[kind=RECENT_MONTH].groups[category=MEALS].daily_amounts[date=2026-10-10].amount.value",
+      "op": "eq",
+      "value": 333
+    }
+  ]
+}

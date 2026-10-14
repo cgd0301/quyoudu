@@ -710,31 +710,37 @@ describe('宽松模式：测试向量只校验 schema', () => {
   test('含故意冲突输入的向量通过', () => {
     const vector = {
       source_text: 'T001-02 cash_as_of 与 as_of 不对应',
-      case: conflictingCase(),
+      input: conflictingCase(),
       ops: [{ type: 'EVALUATE', label: 'final' }],
-      expect: { plan_state: 'INCOMPLETE' },
+      expect: [{ checkpoint: 'final', path: 'states.plan_state', op: 'eq', value: 'INCOMPLETE' }],
     }
     expect(validateVector(vector, VECTOR_FILE)).toEqual([])
     expect(strict(conflictingCase()).length).toBeGreaterThan(0)
   })
 
-  test('case 的 schema 错误带 case 前缀', () => {
-    const vector = { case: withCase((d) => Object.assign(d.snapshot, { cash: '100000' })) }
+  test('input 的 schema 错误带 input 前缀', () => {
+    const vector = { input: withCase((d) => Object.assign(d.snapshot, { cash: '100000' })) }
     expect(validateVector(vector, VECTOR_FILE)).toContainEqual(
-      expect.objectContaining({ file: VECTOR_FILE, code: 'SCHEMA', path: 'case.snapshot.cash' }),
+      expect.objectContaining({ file: VECTOR_FILE, code: 'SCHEMA', path: 'input.snapshot.cash' }),
     )
   })
 
   test('ops 的 schema 错误带 ops 前缀', () => {
-    const vector = { case: c01(), ops: [{ type: 'DELETE_EVENT', event_id: 'E1' }] }
+    const vector = { input: c01(), ops: [{ type: 'DELETE_EVENT', event_id: 'E1' }] }
     expect(validateVector(vector, VECTOR_FILE)).toContainEqual(
       expect.objectContaining({ code: 'SCHEMA', path: 'ops[0].type' }),
     )
   })
 
-  test('缺少 case', () => {
+  test('缺少 input', () => {
     expect(validateVector({ ops: [] }, VECTOR_FILE)).toEqual([
-      expect.objectContaining({ code: 'VECTOR_SHAPE', path: 'case' }),
+      expect.objectContaining({ code: 'VECTOR_SHAPE', path: 'input' }),
+    ])
+  })
+
+  test('旧字段名 case 不再被当作 CaseFile', () => {
+    expect(validateVector({ case: c01() }, VECTOR_FILE)).toEqual([
+      expect.objectContaining({ code: 'VECTOR_SHAPE', path: 'input' }),
     ])
   })
 
@@ -780,7 +786,7 @@ describe('读取 fixtures 目录', () => {
     write('fixtures/cases/cB_bom.json', `\uFEFF${JSON.stringify(demoCase())}`)
     write('fixtures/cases/cB_broken.json', '{ "meta": ')
     write('fixtures/cases/README.txt', '不是 JSON，不检查')
-    write('fixtures/vectors/T001-02.json', JSON.stringify({ case: conflictingCase(), ops: [] }))
+    write('fixtures/vectors/T001-02.json', JSON.stringify({ input: conflictingCase(), ops: [] }))
   })
 
   afterAll(() => {

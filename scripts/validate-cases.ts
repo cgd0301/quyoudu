@@ -655,16 +655,16 @@ export function validateDemoCase(data: unknown, file: string): Problem[] {
   return problems
 }
 
-/** 宽松模式：测试向量只校验 schema，允许故意的冲突输入 */
+/** 宽松模式：测试向量只校验 input 与 ops 的 schema，允许故意的冲突输入 */
 export function validateVector(data: unknown, file: string): Problem[] {
   const { problems, add } = collect(file)
-  // SPEC-GAP SG-35：向量为 {case, ops?, ...}，expect、source_text 等其余字段不校验
+  // SPEC-GAP SG-35：向量为 {input, ops?, ...}，expect、source_text 等其余字段由 tests/unit/vectors.test.ts 校验
   if (data === null || typeof data !== 'object' || Array.isArray(data)) {
-    add('VECTOR_SHAPE', [], '测试向量须为 JSON 对象，含 case 字段')
+    add('VECTOR_SHAPE', [], '测试向量须为 JSON 对象，含 input 字段')
     return problems
   }
-  if ('case' in data) parseWithSchema(caseFileSchema, data.case, ['case'], add)
-  else add('VECTOR_SHAPE', ['case'], '测试向量缺少 case（CaseFile）')
+  if ('input' in data) parseWithSchema(caseFileSchema, data.input, ['input'], add)
+  else add('VECTOR_SHAPE', ['input'], '测试向量缺少 input（CaseFile）')
   if ('ops' in data) parseWithSchema(opsSchema, data.ops, ['ops'], add)
   return problems
 }

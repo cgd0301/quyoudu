@@ -1,0 +1,150 @@
+{
+  "test_id": "T016-03",
+  "rule": "R016",
+  "layer": "ENGINE",
+  "needs_review": false,
+  "source_text": "初始：资金同T016-01；门票已实付580（P=580）；C04的后续应付为450；操作：比较；预期：C04的预计消费净支出=580+450=1030>B=1000，按预算排除；不能只用450与B比较",
+  "base": null,
+  "input": {
+    "meta": {
+      "case_id": "T016-03",
+      "purpose": "资金同 T016-01；门票已于 2026-08-20 实付 580（E0，P=580）；候选 C04 的后续应付为住宿 450。",
+      "data_version": "1",
+      "simulated": true,
+      "source_type": "HAND_WRITTEN",
+      "generator": "cursor-agent",
+      "batch": "vectors-2026-10-14",
+      "created_at_real": "2026-10-14T20:00:00+08:00",
+      "demo_points": []
+    },
+    "snapshot": {
+      "as_of": "2026-09-01T09:00:00+08:00",
+      "cash_as_of": "2026-09-01T09:00:00+08:00",
+      "snapshot_phase": "DAY_START",
+      "cash": 300000,
+      "goal_allocation": 0,
+      "other_goal_hold": null
+    },
+    "reserves": [
+      {
+        "reserve_id": "R-LIV-09",
+        "reserve_kind": "LIVING",
+        "amount": 30000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-30",
+        "release_at_end": false
+      },
+      {
+        "reserve_id": "R-CON",
+        "reserve_kind": "CONTINGENCY",
+        "amount": 20000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-28",
+        "release_at_end": false
+      }
+    ],
+    "events": [
+      {
+        "event_id": "E0",
+        "event_kind": "GOAL_PAYMENT",
+        "event_status": "ACTUAL",
+        "amount": 58000,
+        "expected_at": "2026-08-20",
+        "actual_at": "2026-08-20T12:00:00+08:00",
+        "time_precision": "DATE",
+        "in_snapshot": true,
+        "goal_id": "G1",
+        "cost_item_id": "TICKET",
+        "coverage": [],
+        "recorded_at": "2026-08-20T12:00:00+08:00",
+        "available_at": "2026-08-20T12:00:00+08:00",
+        "currency": "CNY"
+      }
+    ],
+    "goal": {
+      "goal_id": "G1",
+      "budget_cap": 100000,
+      "show_start_at": "2026-09-27T19:30:00+08:00",
+      "show_end_at": "2026-09-27T22:00:00+08:00",
+      "venue_city": "上海",
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "arrive_before_show_min": null,
+      "return_after_show_min": null,
+      "lodging_nights_required": null,
+      "seat_tier_allowed": null,
+      "lodging_max_distance_m": null,
+      "refundable_required": null
+    },
+    "cost_items": [
+      {
+        "cost_item_id": "TICKET",
+        "category": "TICKET",
+        "necessary": true,
+        "amount_status": "CONFIRMED"
+      },
+      {
+        "cost_item_id": "LODGING",
+        "category": "LODGING",
+        "necessary": true,
+        "amount_status": "CONFIRMED"
+      }
+    ],
+    "candidates": [
+      {
+        "candidate_id": "C04",
+        "items": [
+          {
+            "cost_item_id": "LODGING",
+            "channel": "渠道乙",
+            "spec": "大床房",
+            "price": 45000,
+            "currency": "CNY",
+            "price_basis": "QUOTE",
+            "order_id": "O1",
+            "purchase_date": "2026-09-10",
+            "payment_at": "2026-09-27",
+            "quote": {
+              "valid_from": "2026-09-01",
+              "valid_to": "2026-09-30",
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "available_at": "2026-09-01T08:00:00+08:00"
+            }
+          }
+        ],
+        "offers_used": [],
+        "returns": []
+      }
+    ],
+    "offers": [],
+    "price_series": [],
+    "consumption_records": [],
+    "planned_allocation": null,
+    "forecast_confirmations": []
+  },
+  "ops": [],
+  "expect": [
+    {
+      "checkpoint": "final",
+      "path": "candidates[candidate_id=C04].net_spend.value",
+      "op": "eq",
+      "value": 103000
+    },
+    {
+      "checkpoint": "final",
+      "path": "candidates[candidate_id=C04].excluded_reasons",
+      "op": "includes",
+      "value": {
+        "code": "BUDGET_EXCEEDED"
+      }
+    }
+  ]
+}

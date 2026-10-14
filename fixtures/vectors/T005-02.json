@@ -1,0 +1,249 @@
+{
+  "test_id": "T005-02",
+  "rule": "R005",
+  "layer": "ENGINE",
+  "needs_review": false,
+  "source_text": "初始：c01；9/10本目标付款600（无预留覆盖）；无条件返现100原定9/12到账，金额与日期明确；操作：返现推迟到9/20；预期：推迟前后9/10后均为C=400、A=0、H=U=-100，保护性资金缺口100；返现在9/20到账后C=500、H=U=0；返现不提前填补缺口；该返现付款即取得、金额与日期明确，按D12计入R（R=100）；界面金额为-U（D34）",
+  "base": "c01",
+  "input": {
+    "meta": {
+      "case_id": "T005-02",
+      "purpose": "c01；候选 C01 为 9/10 本目标付款 600（无预留覆盖）；无条件返现 100（E-CB）原定 9/12 到账；DELAY_INCOME 把 E-CB 推迟到 9/20。",
+      "data_version": "1",
+      "simulated": true,
+      "source_type": "HAND_WRITTEN",
+      "generator": "cursor-agent",
+      "batch": "vectors-2026-10-14",
+      "created_at_real": "2026-10-14T20:00:00+08:00",
+      "demo_points": []
+    },
+    "snapshot": {
+      "as_of": "2026-09-01T09:00:00+08:00",
+      "cash_as_of": "2026-09-01T09:00:00+08:00",
+      "snapshot_phase": "DAY_START",
+      "cash": 100000,
+      "goal_allocation": 40000,
+      "other_goal_hold": null
+    },
+    "reserves": [
+      {
+        "reserve_id": "R-LIV-09",
+        "reserve_kind": "LIVING",
+        "amount": 30000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-30",
+        "release_at_end": false
+      },
+      {
+        "reserve_id": "R-CON",
+        "reserve_kind": "CONTINGENCY",
+        "amount": 20000,
+        "coverage_start": "2026-09-01",
+        "coverage_end": "2026-09-28",
+        "release_at_end": false
+      }
+    ],
+    "events": [
+      {
+        "event_id": "E-CB",
+        "event_kind": "RETURN",
+        "event_status": "EXPECTED",
+        "amount": 10000,
+        "expected_at": "2026-09-12",
+        "time_precision": "DATE",
+        "in_snapshot": false,
+        "goal_id": "G1",
+        "cost_item_id": "TICKET",
+        "coverage": [],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY"
+      }
+    ],
+    "goal": {
+      "goal_id": "G1",
+      "budget_cap": 90000,
+      "show_start_at": "2026-09-27T19:30:00+08:00",
+      "show_end_at": "2026-09-27T22:00:00+08:00",
+      "venue_city": "上海",
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "arrive_before_show_min": null,
+      "return_after_show_min": null,
+      "lodging_nights_required": null,
+      "seat_tier_allowed": null,
+      "lodging_max_distance_m": null,
+      "refundable_required": null
+    },
+    "cost_items": [
+      {
+        "cost_item_id": "TICKET",
+        "category": "TICKET",
+        "necessary": true,
+        "amount_status": "CONFIRMED"
+      }
+    ],
+    "candidates": [
+      {
+        "candidate_id": "C01",
+        "items": [
+          {
+            "cost_item_id": "TICKET",
+            "channel": "渠道甲",
+            "spec": "B",
+            "price": 60000,
+            "currency": "CNY",
+            "price_basis": "QUOTE",
+            "order_id": "O1",
+            "purchase_date": "2026-09-10",
+            "payment_at": "2026-09-10",
+            "quote": {
+              "valid_from": "2026-09-01",
+              "valid_to": "2026-09-30",
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "available_at": "2026-09-01T08:00:00+08:00"
+            }
+          }
+        ],
+        "offers_used": [],
+        "returns": []
+      }
+    ],
+    "offers": [],
+    "price_series": [],
+    "consumption_records": [],
+    "planned_allocation": null,
+    "forecast_confirmations": []
+  },
+  "ops": [
+    {
+      "type": "SELECT_CANDIDATE",
+      "candidate_id": "C01"
+    },
+    {
+      "type": "EVALUATE",
+      "label": "推迟前"
+    },
+    {
+      "type": "DELAY_INCOME",
+      "event_id": "E-CB",
+      "expected_at": "2026-09-20"
+    },
+    {
+      "type": "EVALUATE",
+      "label": "推迟后"
+    }
+  ],
+  "expect": [
+    {
+      "checkpoint": "推迟前",
+      "path": "nodes[at=2026-09-10].cash.value",
+      "op": "eq",
+      "value": 40000
+    },
+    {
+      "checkpoint": "推迟前",
+      "path": "nodes[at=2026-09-10].goal_allocation.value",
+      "op": "eq",
+      "value": 0
+    },
+    {
+      "checkpoint": "推迟前",
+      "path": "nodes[at=2026-09-10].payment_headroom.value",
+      "op": "eq",
+      "value": -10000
+    },
+    {
+      "checkpoint": "推迟前",
+      "path": "nodes[at=2026-09-10].unallocated.value",
+      "op": "eq",
+      "value": -10000
+    },
+    {
+      "checkpoint": "推迟前",
+      "path": "nodes[at=2026-09-10].node_verdict",
+      "op": "eq",
+      "value": "PROTECTED_SHORTFALL"
+    },
+    {
+      "checkpoint": "推迟前",
+      "path": "nodes[at=2026-09-10].amount.value",
+      "op": "eq",
+      "value": 10000
+    },
+    {
+      "checkpoint": "推迟前",
+      "path": "cost.eligible_return.value",
+      "op": "eq",
+      "value": 10000
+    },
+    {
+      "checkpoint": "推迟后",
+      "path": "nodes[at=2026-09-10].cash.value",
+      "op": "eq",
+      "value": 40000
+    },
+    {
+      "checkpoint": "推迟后",
+      "path": "nodes[at=2026-09-10].goal_allocation.value",
+      "op": "eq",
+      "value": 0
+    },
+    {
+      "checkpoint": "推迟后",
+      "path": "nodes[at=2026-09-10].payment_headroom.value",
+      "op": "eq",
+      "value": -10000
+    },
+    {
+      "checkpoint": "推迟后",
+      "path": "nodes[at=2026-09-10].unallocated.value",
+      "op": "eq",
+      "value": -10000
+    },
+    {
+      "checkpoint": "推迟后",
+      "path": "nodes[at=2026-09-10].node_verdict",
+      "op": "eq",
+      "value": "PROTECTED_SHORTFALL"
+    },
+    {
+      "checkpoint": "推迟后",
+      "path": "nodes[at=2026-09-10].amount.value",
+      "op": "eq",
+      "value": 10000
+    },
+    {
+      "checkpoint": "推迟后",
+      "path": "cost.eligible_return.value",
+      "op": "eq",
+      "value": 10000
+    },
+    {
+      "checkpoint": "推迟后",
+      "path": "nodes[trigger.event_ids=E-CB].cash.value",
+      "op": "eq",
+      "value": 50000
+    },
+    {
+      "checkpoint": "推迟后",
+      "path": "nodes[trigger.event_ids=E-CB].payment_headroom.value",
+      "op": "eq",
+      "value": 0
+    },
+    {
+      "checkpoint": "推迟后",
+      "path": "nodes[trigger.event_ids=E-CB].unallocated.value",
+      "op": "eq",
+      "value": 0
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "test_id": "T015-08",
+  "rule": "R015",
+  "layer": "ENGINE",
+  "needs_review": false,
+  "source_text": "初始：用户只提供活动和城市；操作：生成结果；预期：输出需求草稿、费用清单草稿和关键待办；计划状态＝暂无法完整判断，不输出完整可行结论",
+  "base": null,
+  "input": {
+    "meta": {
+      "case_id": "T015-08",
+      "purpose": "用户只提供了活动和城市：现金和预算未知（null），无预留、无候选；门票、去程交通、住宿均为待填；confirmations 只有 ACTIVITY 与 CITY。",
+      "data_version": "1",
+      "simulated": true,
+      "source_type": "HAND_WRITTEN",
+      "generator": "cursor-agent",
+      "batch": "vectors-2026-10-14",
+      "created_at_real": "2026-10-14T20:00:00+08:00",
+      "demo_points": []
+    },
+    "snapshot": {
+      "as_of": "2026-09-01T09:00:00+08:00",
+      "cash_as_of": "2026-09-01T09:00:00+08:00",
+      "snapshot_phase": "DAY_START",
+      "cash": null,
+      "goal_allocation": 0,
+      "other_goal_hold": null
+    },
+    "reserves": [],
+    "events": [],
+    "goal": {
+      "goal_id": "G1",
+      "budget_cap": null,
+      "show_start_at": "2026-09-27T19:30:00+08:00",
+      "show_end_at": "2026-09-27T22:00:00+08:00",
+      "venue_city": "上海",
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "arrive_before_show_min": null,
+      "return_after_show_min": null,
+      "lodging_nights_required": null,
+      "seat_tier_allowed": null,
+      "lodging_max_distance_m": null,
+      "refundable_required": null
+    },
+    "cost_items": [
+      {
+        "cost_item_id": "TICKET",
+        "category": "TICKET",
+        "necessary": true,
+        "amount_status": "PENDING"
+      },
+      {
+        "cost_item_id": "TRAIN-OUT",
+        "category": "OUTBOUND_TRANSPORT",
+        "necessary": true,
+        "amount_status": "PENDING"
+      },
+      {
+        "cost_item_id": "LODGING",
+        "category": "LODGING",
+        "necessary": true,
+        "amount_status": "PENDING"
+      }
+    ],
+    "candidates": [],
+    "offers": [],
+    "price_series": [],
+    "consumption_records": [],
+    "planned_allocation": null,
+    "forecast_confirmations": [],
+    "confirmations": [
+      {
+        "field": "ACTIVITY",
+        "value": "演唱会",
+        "input_version": "v1"
+      },
+      {
+        "field": "CITY",
+        "value": "上海",
+        "input_version": "v1"
+      }
+    ],
+    "nl_script": {
+      "script_id": "T015-08",
+      "utterances": [
+        "我想去上海看演唱会"
+      ]
+    }
+  },
+  "ops": [],
+  "expect": [
+    {
+      "checkpoint": "final",
+      "path": "states.plan_state",
+      "op": "eq",
+      "value": "INCOMPLETE"
+    },
+    {
+      "checkpoint": "final",
+      "path": "states.plan_state",
+      "op": "not_eq",
+      "value": "FEASIBLE_UNDER_ASSUMPTIONS"
+    }
+  ]
+}
