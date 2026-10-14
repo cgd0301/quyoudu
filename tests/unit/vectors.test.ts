@@ -1,9 +1,10 @@
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { describe, expect, test } from 'vitest'
+import { loadVectorModules } from '../../scripts/vec.ts'
 import { DEMO_CFG_1 } from '../../src/engine/config.ts'
 import { evaluate } from '../../src/engine/evaluate.ts'
-import { implementedTests } from '../../src/engine/modules.ts'
+import { doneModules } from '../../src/engine/modules.ts'
 import { resultCoreSchema } from '../../src/engine/result.ts'
 import { toWire } from '../../src/engine/wire.ts'
 import { PathError, resolvePath, type Resolved } from '../lib/path.ts'
@@ -48,6 +49,19 @@ const vectors: Vector[] = files.flatMap(({ text }) => {
     return []
   }
 })
+
+let vectorModules = new Map<string, string>()
+let vectorModulesError: string | null = null
+try {
+  vectorModules = loadVectorModules(REPO_ROOT)
+} catch (error) {
+  vectorModulesError = error instanceof Error ? error.message : String(error)
+}
+
+function isDoneModule(testId: string): boolean {
+  const required = vectorModules.get(testId)
+  return required !== undefined && doneModules.some((id) => id === required)
+}
 
 describe('测试向量结构', () => {
   test('tests/golden/vectors 有 json 时读它，否则读 fixtures/vectors；目录不为空', () => {
@@ -104,6 +118,12 @@ describe('测试向量结构', () => {
       ]
     })
     expect(problems).toEqual([])
+  })
+
+  test('每个向量都在 vector-modules.json 中', () => {
+    if (vectorModulesError !== null) throw new Error(vectorModulesError)
+    const missing = vectors.filter((vector) => !vectorModules.has(vector.test_id)).map((vector) => vector.test_id)
+    expect(missing, '这些向量不在 tests/vector-modules.json 中，请先运行 pnpm vector:modules').toEqual([])
   })
 })
 
@@ -233,12 +253,12 @@ function checkOne(result: unknown, expectation: Expectation): string[] {
   return [`${label}：实际为 ${resolved.found ? JSON.stringify(resolved.value) : '不存在'}`]
 }
 
-describe('运行已实现模块的向量', () => {
+describe('运行已完成模块的向量', () => {
   let skippedAssertions = 0
   let ran = 0
 
   for (const vector of vectors) {
-    test.skipIf(!implementedTests.has(baseTestId(vector.test_id)))(vector.test_id, () => {
+    test.skipIf(!isDoneModule(vector.test_id))(vector.test_id, () => {
       ran += 1
       const output = evaluate(vector.input, vector.ops, DEMO_CFG_1)
       const results = new Map<string, unknown>()
@@ -261,9 +281,9 @@ describe('运行已实现模块的向量', () => {
 
   // 同一文件内的测试按定义顺序执行，这一条在全部向量之后
   test('汇总：运行的向量数与登记跳过的断言数', () => {
-    const selected = vectors.filter((vector) => implementedTests.has(baseTestId(vector.test_id))).length
+    const selected = vectors.filter((vector) => isDoneModule(vector.test_id)).length
     console.log(
-      `测试向量 ${vectors.length} 个，按 implementedTests 运行 ${ran} 个；vector-disputes.json 登记跳过 ${skippedAssertions} 条断言`,
+      `测试向量 ${vectors.length} 个，按 doneModules 运行 ${ran} 个；vector-disputes.json 登记跳过 ${skippedAssertions} 条断言`,
     )
     expect(ran).toBe(selected)
   })

@@ -8,3 +8,6 @@ alwaysApply: false
 - 事件排序：日期 → 已知时刻 → 同日先后未知时流出排在不确定流入之前（R006、D10）。
 - 状态与文案只能取 rules.md §11 的枚举。
 - 预测用 decimal.js，按 D25 舍入，进入金额计算前转为整数分。
+- evaluate 的每个检查点必须通过 resultCoreSchema（strictObject）：不得有多余键；可省略的键不存在时直接省略，禁止写 undefined；可为 null 的按条文给 null。
+- 节点 at、计划对象、forecasts、scenarios 按 rules.md §12.7 生成。断言只用 at 选节点却命中多个时，说明向量写法有歧义，按 AGENTS.md §3 登记争议，不要为了迁就断言改输出格式。
+- 流水线：normalize → applyOps → inputIssues → snapshot → pricing（M2）→ timeline（M3）→ cost、states（M4）→ compare（M5）→ confirm（M6）→ daily（M7）；holt（M8）、scenarios（M9）是独立纯函数，由流水线调用。每个阶段一个目录 src/engine/<阶段>/。

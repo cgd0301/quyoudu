@@ -23,14 +23,17 @@ docs/sources.md 原有内容只读，只允许在文末标题'外部公开资料
 - 不新增正式文档；规则改动只写入 docs/ 五份文件的对应章节。
 - 终端是 Windows PowerShell：不用 >、>>、Out-File、Set-Content 写文件，一律用编辑工具或 Node/Python 脚本写 UTF-8（无 BOM）、LF；新脚本只写 tsx 或 Python，不写 .sh/.ps1。
 - 金额字段名不带单位后缀（rules.md §9.1）；D32、D52 中的'_cents 值'指 ResultCore 中登记为金额的字段（src/engine/money.ts 的 moneyPaths）。
+- oracle/ 只能用 python -m oracle 运行（通过 pnpm vec --impl oracle 或对拍脚本），不得打开、阅读、引用其源码；分析参考实现只看 .cache/oracle-out/ 的输出。
 
 ## 4 工作方式
 - 一次只做一个模块；先写测试再实现；完成后运行 pnpm check，全部通过才提交，提交信息带规则或测试编号。pnpm spec:lint 不在 check 中，新增'待团队裁决'不阻塞提交，但要在汇报中列出。
 - 不引入 package.json 以外的依赖；确需引入时在汇报中说明理由。
 - 汇报用简体中文，只写：做了什么、测试结果、新增的 SPEC-GAP。
+- 跑向量用 pnpm vec，不要通读向量文件。单元测试覆盖 vector_gaps 条目时，测试名以“<编号> gap”开头，并把 vector_gaps.md 该条原因列改为“已覆盖：<测试文件>「<测试名>」”。模块的向量全部通过后才把模块号加入 doneModules。换对话前写 .cache/handoff/<模块或任务>.md（不超过 300 字：已完成、失败摘要、下一步），新对话 @ 它继续。
 
 ## 5 分工边界
 - 主仓库的代理不读写 ../quyoudu-oracle。
 - 分支 ui 只改 src/ui/**、src/App.tsx、src/main.tsx、src/*.css、tests/e2e/**、fixtures/mock/**；分支 holt 只改 src/engine/holt/**、tests/unit/holt*。
+- 分支 scen 只改 src/engine/scenarios/**、tests/unit/scenarios*。
 - 项目书相关工作只改 book/**、submission/**、docs/_work/evidence*、docs/_work/survey/**、docs/_work/team_story.md、docs/_work/judge_*.md，以及 docs/sources.md 文末追加区。
-- 标"仅限人工运行"的脚本（golden:freeze、golden:write、oracle:import）代理不得运行。
+- 标"仅限人工运行"的脚本（golden:freeze、golden:write、oracle:import、oracle:export）代理不得运行。

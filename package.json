@@ -29,6 +29,8 @@
     "oracle:export": "tsx scripts/oracle-export.ts",
     "oracle:import": "tsx scripts/oracle-import.ts",
     "vec": "tsx scripts/vec.ts",
+    "vector:modules": "tsx scripts/vector-modules.ts",
+    "slice": "tsx scripts/spec-slice.ts",
     "golden:write": "node scripts/not-implemented.mjs",
     "export:results": "node scripts/not-implemented.mjs",
     "doc:lint": "node scripts/not-implemented.mjs",

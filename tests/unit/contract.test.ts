@@ -5,7 +5,7 @@ import { buildSchemaFiles } from '../../scripts/export-schemas.ts'
 import { DEMO_CFG_1 } from '../../src/engine/config.ts'
 import * as enums from '../../src/engine/enums.ts'
 import { evaluate } from '../../src/engine/evaluate.ts'
-import { implementedTests } from '../../src/engine/modules.ts'
+import { MODULES, doneModules } from '../../src/engine/modules.ts'
 import { moneyPaths } from '../../src/engine/money.ts'
 import {
   ENGINE_OP_TYPES,
@@ -483,8 +483,8 @@ describe('导出与占位', () => {
     expect(() => evaluate(c01(), [], DEMO_CFG_1)).toThrow('未实现')
   })
 
-  test('implementedTests 中的编号都在 traceability.csv 中', () => {
-    const known = new Set(readRepo('docs/traceability.csv').match(/T\d{3}-\d{2}/g))
-    expect([...implementedTests].filter((id) => !known.has(id))).toEqual([])
+  test('doneModules 都在 MODULES 中且不重复', () => {
+    expect(doneModules.filter((id) => !MODULES.includes(id))).toEqual([])
+    expect(new Set(doneModules).size).toBe(doneModules.length)
   })
 })
