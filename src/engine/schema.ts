@@ -12,6 +12,8 @@ import {
   priceBasisSchema,
   reserveKindSchema,
   roundingSchema,
+  confirmationFieldSchema,
+  livingArrangementSchema,
   sourceTypeSchema,
   timePrecisionSchema,
 } from './enums.ts'
@@ -30,6 +32,9 @@ export const inputVersionSchema = z
   .string()
   .regex(/^v[1-9][0-9]*$/)
   .meta({ description: '输入版本 v1、v2……（R013）' })
+
+// D60：金额为整数分，晚数为整数，是否已购票为布尔，日期和时刻为字符串
+export const confirmationValueSchema = z.union([z.string(), z.int(), z.boolean(), z.null()])
 
 const AFTER_EVENT_PATTERN = /^AFTER_EVENT\([1-9][0-9]*\)$/
 
@@ -74,6 +79,8 @@ const snapshotSchema = z.strictObject({
   cash: amountSchema.nullable(),
   goal_allocation: amountSchema,
   other_goal_hold: otherGoalHoldSchema.nullable(),
+  // D59：省略即 PROVIDED，包括明确没有任何生活支出
+  living_arrangement: livingArrangementSchema.optional(),
 })
 
 const reserveSchema = z.strictObject({
@@ -113,6 +120,8 @@ const eventSchema = z.strictObject({
   // SPEC-GAP SG-31：生活支出的消费类别，供 §5 去重
   category: consumptionCategorySchema.optional(),
   payment_windows: z.array(eventPaymentWindowSchema).optional(),
+  // D61：省略或 false 表示取消后仍是有效义务；暂停不因此移除
+  cancellable: z.boolean().optional(),
 })
 
 const seatTierSchema = z.strictObject({
@@ -177,6 +186,8 @@ const candidateItemSchema = z.strictObject({
   refundable: z.boolean().optional(),
   quote: quoteSchema,
   payment_windows: z.array(itemPaymentWindowSchema).optional(),
+  // D61：省略或 false 表示取消后仍把该价格项当作有效义务
+  cancellable: z.boolean().optional(),
 })
 
 // SPEC-GAP SG-30：order_id 为该次使用所作用的订单；sequence 缺省即未给出叠加计算顺序（D45）
@@ -281,6 +292,13 @@ const nlScriptSchema = z.strictObject({
   utterances: z.array(z.string()),
 })
 
+// D60：早于当前输入版本的记录不直接用于判断
+const caseConfirmationSchema = z.strictObject({
+  field: confirmationFieldSchema,
+  value: confirmationValueSchema,
+  input_version: inputVersionSchema,
+})
+
 export const caseFileSchema = z
   .strictObject({
     meta: metaSchema,
@@ -296,6 +314,7 @@ export const caseFileSchema = z
     planned_allocation: plannedAllocationSchema.nullable(),
     confirmed_plan: confirmedPlanSchema.optional(),
     forecast_confirmations: z.array(forecastConfirmationSchema),
+    confirmations: z.array(caseConfirmationSchema).optional(),
     nl_script: nlScriptSchema.optional(),
   })
   .meta({ title: 'CaseFile', description: '案例输入（rules.md §12.2）' })

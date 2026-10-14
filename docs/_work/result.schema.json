@@ -988,6 +988,8 @@
             "PRE_RANGE_PAID",
             "PAID_BY_UNALLOCATED_LATER",
             "PROTECTED_SQUEEZE",
+            "NEED_RECONFIRM",
+            "LIVING_ARRANGEMENT_MISSING",
             "SIMULATED_DATA"
           ]
         },
@@ -1020,13 +1022,86 @@
             ],
             "additionalProperties": false
           }
+        },
+        "missing_reasons": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "const": "LIVING_ARRANGEMENT_MISSING"
+          }
         }
       },
       "required": [
         "display",
-        "unavailable"
+        "unavailable",
+        "missing_reasons"
       ],
       "additionalProperties": false
+    },
+    "user_confirmations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "enum": [
+              "ACTIVITY",
+              "CITY",
+              "SHOW_DATETIME",
+              "TICKET_PURCHASED",
+              "AMOUNT_PAID",
+              "SEAT_TIER",
+              "ORIGIN_CITY",
+              "TRANSPORT_PREFERENCE",
+              "LODGING_REQUIREMENT",
+              "BUDGET",
+              "CASH",
+              "EXPECTED_INCOME",
+              "LIVING_COST",
+              "TRAVEL_DATE",
+              "LODGING_NIGHTS"
+            ]
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "input_version": {
+            "type": "string",
+            "pattern": "^v[1-9][0-9]*$",
+            "description": "输入版本 v1、v2……（R013）"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "CURRENT",
+              "NEEDS_RECONFIRM"
+            ]
+          }
+        },
+        "required": [
+          "field",
+          "value",
+          "input_version",
+          "status"
+        ],
+        "additionalProperties": false
+      }
     },
     "states": {
       "type": "object",
@@ -1497,6 +1572,8 @@
           "PRE_RANGE_PAID",
           "PAID_BY_UNALLOCATED_LATER",
           "PROTECTED_SQUEEZE",
+          "NEED_RECONFIRM",
+          "LIVING_ARRANGEMENT_MISSING",
           "SIMULATED_DATA"
         ]
       }
@@ -1521,6 +1598,7 @@
     "confirmation",
     "action_list",
     "daily_reference",
+    "user_confirmations",
     "states",
     "labels"
   ],

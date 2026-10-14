@@ -64,6 +64,36 @@ export const AMOUNT_STATUSES = ['CONFIRMED', 'ESTIMATE', 'PENDING', 'CONFIRMED_F
 export const amountStatusSchema = z.enum(AMOUNT_STATUSES)
 export type AmountStatus = z.infer<typeof amountStatusSchema>
 
+// D59：省略即 PROVIDED
+export const LIVING_ARRANGEMENTS = ['PROVIDED', 'NOT_PROVIDED'] as const
+export const livingArrangementSchema = z.enum(LIVING_ARRANGEMENTS)
+export type LivingArrangement = z.infer<typeof livingArrangementSchema>
+
+// D60：D30 的十三项，另加 T015-07 的出行日期与住宿晚数
+export const CONFIRMATION_FIELDS = [
+  'ACTIVITY',
+  'CITY',
+  'SHOW_DATETIME',
+  'TICKET_PURCHASED',
+  'AMOUNT_PAID',
+  'SEAT_TIER',
+  'ORIGIN_CITY',
+  'TRANSPORT_PREFERENCE',
+  'LODGING_REQUIREMENT',
+  'BUDGET',
+  'CASH',
+  'EXPECTED_INCOME',
+  'LIVING_COST',
+  'TRAVEL_DATE',
+  'LODGING_NIGHTS',
+] as const
+export const confirmationFieldSchema = z.enum(CONFIRMATION_FIELDS)
+export type ConfirmationField = z.infer<typeof confirmationFieldSchema>
+
+export const USER_CONFIRMATION_STATUSES = ['CURRENT', 'NEEDS_RECONFIRM'] as const
+export const userConfirmationStatusSchema = z.enum(USER_CONFIRMATION_STATUSES)
+export type UserConfirmationStatus = z.infer<typeof userConfirmationStatusSchema>
+
 // SPEC-GAP SG-31：cost_items.category、offers.scope、refundable_required 共用
 export const ITEM_CATEGORIES = [
   'TICKET',
@@ -260,6 +290,8 @@ export const LABEL_CODES = [
   'PRE_RANGE_PAID',
   'PAID_BY_UNALLOCATED_LATER',
   'PROTECTED_SQUEEZE',
+  'NEED_RECONFIRM',
+  'LIVING_ARRANGEMENT_MISSING',
   'SIMULATED_DATA',
 ] as const
 export const labelCodeSchema = z.enum(LABEL_CODES)

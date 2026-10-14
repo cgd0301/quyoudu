@@ -156,7 +156,9 @@ function shapeSample(): ResultCore {
       limitedBy: { scenario: 'CONFIRMED_ONLY', nodeIndex: 1 },
       label: 'CONFIRMED_ONLY',
       unavailable: [{ scenario: 'RECENT_MONTH', reason: 'HISTORY_INSUFFICIENT' }],
+      missingReasons: [],
     },
+    userConfirmations: [],
     states: {
       planState: 'PAYMENT_GAP',
       underlyingPlanState: null,

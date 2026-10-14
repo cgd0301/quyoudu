@@ -139,6 +139,13 @@
               "type": "null"
             }
           ]
+        },
+        "living_arrangement": {
+          "type": "string",
+          "enum": [
+            "PROVIDED",
+            "NOT_PROVIDED"
+          ]
         }
       },
       "required": [
@@ -346,6 +353,9 @@
               ],
               "additionalProperties": false
             }
+          },
+          "cancellable": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -712,6 +722,9 @@
                     ],
                     "additionalProperties": false
                   }
+                },
+                "cancellable": {
+                  "type": "boolean"
                 }
               },
               "required": [
@@ -1181,6 +1194,63 @@
           "purchase_date",
           "price",
           "config_version"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "confirmations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "enum": [
+              "ACTIVITY",
+              "CITY",
+              "SHOW_DATETIME",
+              "TICKET_PURCHASED",
+              "AMOUNT_PAID",
+              "SEAT_TIER",
+              "ORIGIN_CITY",
+              "TRANSPORT_PREFERENCE",
+              "LODGING_REQUIREMENT",
+              "BUDGET",
+              "CASH",
+              "EXPECTED_INCOME",
+              "LIVING_COST",
+              "TRAVEL_DATE",
+              "LODGING_NIGHTS"
+            ]
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "input_version": {
+            "type": "string",
+            "pattern": "^v[1-9][0-9]*$",
+            "description": "输入版本 v1、v2……（R013）"
+          }
+        },
+        "required": [
+          "field",
+          "value",
+          "input_version"
         ],
         "additionalProperties": false
       }

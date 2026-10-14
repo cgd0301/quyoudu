@@ -6,9 +6,11 @@ import {
   dependencyKindSchema,
   excludedReasonCodeSchema,
   forecastStatusSchema,
+  confirmationFieldSchema,
   inputIssueCodeSchema,
   itemCategorySchema,
   labelCodeSchema,
+  userConfirmationStatusSchema,
   nodeVerdictSchema,
   optimizationStateSchema,
   pendingCheckSchema,
@@ -21,7 +23,7 @@ import {
   triggerKindSchema,
   type LabelCode,
 } from './enums.ts'
-import { dateSchema, inputVersionSchema } from './schema.ts'
+import { confirmationValueSchema, dateSchema, inputVersionSchema } from './schema.ts'
 
 // TS 内用 camelCase，toWire() 只把键名转为 snake_case；不得用数据作键，否则会被一并转换
 
@@ -231,6 +233,8 @@ const dailyReferenceSchema = z.strictObject({
       reason: scenarioUnavailableReasonSchema,
     }),
   ),
+  // D59：NOT_PROVIDED 时含 LIVING_ARRANGEMENT_MISSING，且不给出 amount
+  missingReasons: z.array(z.literal('LIVING_ARRANGEMENT_MISSING')),
 })
 
 // §11、D47；underlyingPlanState 只在已暂停、已取消时给出底层检查的状态
@@ -315,6 +319,15 @@ export const resultCoreSchema = z
     confirmation: confirmationSchema.nullable(),
     actionList: z.array(actionItemSchema),
     dailyReference: dailyReferenceSchema,
+    // D60：早于当前输入版本的确认 status 为 NEEDS_RECONFIRM，不用于该版本的判断
+    userConfirmations: z.array(
+      z.strictObject({
+        field: confirmationFieldSchema,
+        value: confirmationValueSchema,
+        inputVersion: inputVersionSchema,
+        status: userConfirmationStatusSchema,
+      }),
+    ),
     states: statesSchema,
     forecasts: z.array(forecastSchema).optional(),
     scenarios: z.array(scenarioSchema).optional(),
@@ -344,5 +357,7 @@ export const LABEL_TEXT: Readonly<Record<LabelCode, string>> = {
   PRE_RANGE_PAID: '范围前已付，仅计入成本',
   PAID_BY_UNALLOCATED_LATER: '届时由未分配资金支付',
   PROTECTED_SQUEEZE: '这笔付款会挤占生活、机动等保护性预留 X 元',
+  NEED_RECONFIRM: '需重新确认',
+  LIVING_ARRANGEMENT_MISSING: '生活安排未提供',
   SIMULATED_DATA: '模拟数据',
 }

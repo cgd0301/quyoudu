@@ -122,7 +122,7 @@
 ## R012 暂停、取消与退款
 
 - 规则：暂停、取消是用户决策，不是完成同一目标的购买候选。取消永不进入最低价排序，不得使用“取消＝0元”推荐其为最低价购买方案。
-- 取消后释放尚未使用的本目标账面分配不增加现金余额；预期退款不自动入账。继续保留已付金额、退款条件、不可退费用、可避免的后续支出，以及仍有效的付款义务或取消费用。暂停不自动取消这些义务。
+- 取消后释放尚未使用的本目标账面分配不增加现金余额；预期退款不自动入账。继续保留已付金额、退款条件、不可退费用、可避免的后续支出，以及仍有效的付款义务或取消费用。逐笔是否仍有效由 cancellable 表示：省略或 false 仍为义务，true 在取消后不再计入；暂停不因此取消任何义务（V2.1 依 D-61 修订）。
 - 风险更新不能自动暂停、取消计划，也不能以取消或释放保护性预留的方式提高每日非计划支出参考金额。
 - 影响更新：调整页、取消状态、退款与分配记录、仍有效义务；
 - 对应测试：T012
@@ -159,7 +159,7 @@
 - 触发：创建目标、补充信息或修改影响当前判断的要求。
 - 规则：
   1. 提取已提供信息，只追问影响当前步骤的关键缺口，不为填满全部字段无限追问。
-  2. 关键金额、日期、预算及要求经用户确认；确认须关联输入版本。信息变化后，受影响的旧确认不能直接沿用。
+  2. 关键金额、日期、预算及要求经用户确认；确认须关联输入版本，写入案例的 confirmations[]。早于当前输入版本的确认标为需重新确认，不直接用于当前版本的判断（V2.1 依 D-60 修订）。
   3. 依据实际条件生成费用项目和购买任务草稿。必要项目至少考虑门票、交通、住宿、餐饮及当地交通，但是否适用须结合用户条件，不机械添加购买。
   4. 已购项目保留历史成本和义务，不能重复生成待购；部分付款只保留未履行部分。退改或替换须另行确认，并保留原记录。
   5. 明确免费的项目可以为0，明确不适用的项目可不生成购买任务；未知金额不能按0处理。
@@ -254,7 +254,7 @@
 - 输出：当前模拟时点、剩余参考金额、检查期间、限制节点、所用情景和收入依赖，以及“按当前输入和假设测算，不是资金安全保证”的说明。
 - 异常：
   - 不存在已确认方案时，不计算参考金额，显示“确认方案后可计算”，不显示0元（V2.1 依 D-27 修订）。
-  - 关键资金、付款、生活安排、用途或检查期间不足时，显示“暂无法给出建议金额”及原因，不用0元冒充已计算结果。
+  - 关键资金、付款、生活安排、用途或检查期间不足时，显示“暂无法给出建议金额”及原因，不用0元冒充已计算结果。生活安排未提供（living_arrangement=NOT_PROVIDED）即属生活安排不足，缺失原因为“生活安排未提供”；省略该字段视为已提供，包括明确没有任何生活支出（V2.1 依 D-59 修订）。
   - 信息完整但已有缺口或冲突时，显示“当前不建议新增非计划支出”，可以显示0元并解释原因；0元不表示原计划可行。
   - 历史不足但已确认安排足以支持检查时，可给出“仅依据已确认安排”的条件参考；不能声称已覆盖历史消费推演。
 - 验收：不能用余额或日均数替代；今日支出不重复扣；未来付款能限制今日金额；不重复使用At；缺数据不硬报数字；不自动改策略。
@@ -580,7 +580,7 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 
 - D18 确认时的分配：记W为剩余计划目标付款中未被预留覆盖的部分，A0为现有本目标分配。确认前模拟含该候选的付款，不含新增分配和消费情景。m为该模拟中检查期间全部节点U的最小值，含快照节点。确认前模拟的计划状态不是“按当前假设可行”时，只能保存为“草案”。建议分配额是在A0之上新增的金额，界面名称为“建议分配额（不减少今日可额外支出）”。增量上界为max(0, W - A0)；W ≤ A0时ΔA = 0，确认不调减现有A（调减属D29“改分配额”）。否则ΔA是[0, 上界]内的最大整数分，使确认后模拟全部节点U的最小值 ≥ m。该条件随ΔA单调，可用二分。验收：ΔA满足条件，且ΔA小于上界时ΔA + 1不满足。计划分配只建一笔：挂在已指定的预计收入上；未指定时，挂在as_of之后、最后一笔目标付款之前最早到账的已确认预计收入上，没有这样的收入就不建。计划分配金额在ΔA确定后按同一条件取最大值，上限为max(0, W - A0 - ΔA)。仍未分配的部分注明“届时由未分配资金支付”（D06）。确认后A = A0 + ΔA。计划分配不计入当前A和U0，在所挂收入到账（或在假设时间线中到账）的节点转为A（§10.3）。确认前不可行，或确认后计划状态为“暂无法完整判断”“发现付款缺口”或“存在约束问题”的方案，只能保存为“草案”，不写入正式分配（V2.1 依 D-46 修订R017第4条）。
 - D19 三类状态：计划状态、优化状态和确认状态分别保存；取值、优先级、触发条件和界面文案见§11。
-- D20 草案预览：计划状态针对的方案按已确认方案、当前选中的候选、用户初始描述形成的草案的顺序取第一个存在者。三者都没有时，计划状态为“暂无法完整判断”，原因为尚未形成方案。不是已确认方案的，一律标“草案预览，未确认”；预览不写入正式账面，也不计算每日参考金额（D27）。已暂停时主状态显示“已暂停”，底层检查和每日参考仍按原已确认方案计算，作为次要信息显示，暂停不释放资金。已取消时，底层检查从释放A之后的快照开始，只计仍有效义务和生活安排（R012）；M仍保留至D09的释放时点（D55）（V2.1 依 D-47 修订）。
+- D20 草案预览：计划状态针对的方案按已确认方案、当前选中的候选、用户初始描述形成的草案的顺序取第一个存在者。三者都没有时，计划状态为“暂无法完整判断”，原因为尚未形成方案。不是已确认方案的，一律标“草案预览，未确认”；预览不写入正式账面，也不计算每日参考金额（D27）。已暂停时主状态显示“已暂停”，底层检查和每日参考仍按原已确认方案计算，作为次要信息显示，暂停不释放资金。已取消时，底层检查从释放A之后的快照开始，只计仍有效义务和生活安排（R012、D61）；M仍保留至D09的释放时点（D55）（V2.1 依 D-47 修订）。
 
 #### 8.5 情景、预测与每日参考（D21—D27）
 
@@ -614,7 +614,7 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 - C7 “产品建议”按“面向工行（含工银亚洲）的产品落地建议”撰写。
 - C8 作品名称为品牌名加一句话定位，不超过25字。
 
-#### 8.8 本轮裁决（D34—D58）
+#### 8.8 本轮裁决（D34—D61）
 
 以下条目接在D33之后。与上文D01—D33或R001—R020冲突时，以本小节为准。每条均为DEMO-CFG-1。
 
@@ -631,7 +631,7 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 - D44 相容字段：新增show_end_at。arrive_before_show_min比较去程交通到达时刻与开演时刻；return_after_show_min比较返程出发时刻与show_end_at。lodging_nights_required为须覆盖的入住日期列表。seat_tier_allowed为票档编码列表；票档编码表由每个案例在Goal中列出，seat_tier_allowed只能引用其中的编码。约束字段为lodging_max_distance_m（整数米）；候选的住宿距离字段为lodging_distance_m（整数米）。refundable_required为项目类别列表，列出的类别须可退。（DEMO-CFG-1｜依 SG-11 裁决）
 - D45 优惠计算：新增value（立减、满减、返现、返券为整数分；折扣为万分比整数，9500即9.5折）和order_id（候选中每个价格项所属订单）。门槛与折扣以同一订单内scope所含项目的优惠前小计为基数。scope为项目类别列表，stackable_with为offer_id列表，rounding取FLOOR、HALF_UP、CEIL（均到分）或UNKNOWN。返现另需到账日期和触发条件（D12）。同一订单叠加多张优惠时须由案例数据给出计算顺序，未给出的候选计入待确认数。提交版另受V-03约束。（DEMO-CFG-1｜依 SG-12 裁决）
 - D46 确认时的建议分配额：W为剩余计划目标付款中未被预留覆盖的部分。m为该候选确认前模拟（含该候选付款，不含新增分配和消费情景）中，检查期间全部节点U的最小值，含快照节点。确认前模拟的计划状态不是“按当前假设可行”时，只能存草案。ΔA取[0, max(0, W - A0)]内满足条件的最大整数分；W ≤ A0时ΔA = 0，不调减已有A。条件为：确认后模拟中全部节点U的最小值 ≥ m。条件随ΔA单调，可用二分。验收：ΔA满足条件，且ΔA小于上界时ΔA + 1不满足。计划分配只建一笔，挂在已指定的预计收入上；未指定时，挂在as_of之后、最后一笔目标付款之前最早到账的已确认预计收入上，没有这样的收入就不建。计划分配金额在ΔA确定后按同一条件取最大值，上限为max(0, W - A0 - ΔA)。仍未分配的部分注明“届时由未分配资金支付”（D06）。界面名称为“建议分配额（不减少今日可额外支出）”。（DEMO-CFG-1｜依 SG-13、SG-29 裁决）
-- D47 计划状态所针对的方案：已确认方案 > 当前选中的候选 > 用户初始描述形成的草案。三者都没有时为“暂无法完整判断”，原因为尚未形成方案。不是已确认方案的，一律标“草案预览，未确认”。已暂停：主状态显示“已暂停”，底层检查和每日参考仍按原已确认方案计算，作为次要信息显示，暂停不释放资金。已取消：底层检查从释放A之后的快照开始，只计仍有效义务和生活安排（R012）；M按D55处理。（DEMO-CFG-1｜依 SG-14 裁决）
+- D47 计划状态所针对的方案：已确认方案 > 当前选中的候选 > 用户初始描述形成的草案。三者都没有时为“暂无法完整判断”，原因为尚未形成方案。不是已确认方案的，一律标“草案预览，未确认”。已暂停：主状态显示“已暂停”，底层检查和每日参考仍按原已确认方案计算，作为次要信息显示，暂停不释放资金。已取消：底层检查从释放A之后的快照开始，只计仍有效义务和生活安排（R012、D61）；M按D55处理。（DEMO-CFG-1｜依 SG-14 裁决）
 - D48 消费类别取值：餐饮、本地交通、日用为“由生活预留覆盖、非同口径”；娱乐为“不由预留覆盖、同口径”；目标相关、收入、退款、转账不进入日常情景。同一类别不拆分，需要区分时由案例数据把记录归入不同类别。（DEMO-CFG-1｜依 SG-16 裁决）
 - D49 情景增量的日期：Δg有已知付款日时按§5安排；没有已知日期才在检查期间内平均分摊，分币余数从早到晚分配。不先把Pg分摊到各日再逐日去重。（DEMO-CFG-1｜依 SG-17 裁决）
 - D50 预测数值：模型中间量算出后保留12位小数，参数选择比较舍入后的SSE，同值按α、β、φ升序取第一组。两端运算均为34位有效数字、ROUND_HALF_UP。decimal.js：Decimal.set({ precision: 34, rounding: Decimal.ROUND_HALF_UP })。Python：getcontext().prec = 34，rounding = ROUND_HALF_UP。（DEMO-CFG-1｜依 SG-18 裁决）
@@ -643,6 +643,9 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 - D56 终点纳入必要支出：D41得出的终点再取与基础时间轴最晚一笔OTHER_EXPENSE日期的较晚者。OTHER_EXPENSE指生活支出及其他仍有效义务，不含情景支出。仍受2027-01-01限制；晚于该日的必要事件按超界处理，不截断。（DEMO-CFG-1｜依 SG-26 裁决）
 - D57 范围前已付：in_snapshot = true、ACTUAL、只用于P或R的历史收付款可以早于2026-09-01，标“范围前已付，仅计入成本”。不进入时间轴、历史统计和价格预测。其余R008边界不变。（DEMO-CFG-1｜依 SG-27 裁决）
 - D58 输入版本与界面：规则测试可以直接构造新的输入版本。界面只提供D29白名单操作。（DEMO-CFG-1｜依 SG-28 裁决）
+- D59 生活安排是否已提供：snapshot.living_arrangement 取 PROVIDED（已提供）或 NOT_PROVIDED（未提供）。省略视为 PROVIDED，表示案例已经给出生活安排，包括明确没有任何生活支出。NOT_PROVIDED 与“没有生活支出”不是同一状态，不用生活预留是否覆盖检查期间来推断。为 NOT_PROVIDED 时，每日参考显示“暂无法给出建议金额”，缺失原因为“生活安排未提供”，不显示数值，也不用 0 元代替（R019、§10.5）。已提供且没有生活支出事件时，按已确认的空安排计算每日参考，不显示该句。（DEMO-CFG-1｜依 SG-33 裁决）
+- D60 关键确认记录：案例顶层 confirmations[] 记录用户确认的关键金额、日期和要求，每条为 {field, value, input_version}。field 取 ACTIVITY、CITY、SHOW_DATETIME、TICKET_PURCHASED、AMOUNT_PAID、SEAT_TIER、ORIGIN_CITY、TRANSPORT_PREFERENCE、LODGING_REQUIREMENT、BUDGET、CASH、EXPECTED_INCOME、LIVING_COST（对应 D30 的十三项），以及 TRAVEL_DATE（出行日期）、LODGING_NIGHTS（住宿晚数）。value：金额为整数分，晚数为整数，是否已购票为布尔，日期为 YYYY-MM-DD，时刻为带 +08:00 的字符串，其余为字符串；未知为 null。当前输入版本为 V 时，input_version 等于 V 的确认可用于判断，结果状态为 CURRENT；早于 V 的确认一律标“需重新确认”（NEEDS_RECONFIRM），不直接用于 V 的判断。结果写入 user_confirmations[]{field, value, input_version, status}。同一 field 不改写旧记录；当前版本另有一条新确认时以新确认为准。因此 v1 确认的出行日期 2026-09-27 和住宿晚数，在演出日期改为 9/28 并形成 v2 后都标为需重新确认（T015-07）。确认记录不改由 nl 回放代替。（DEMO-CFG-1｜依 SG-33 裁决）
+- D61 取消后仍有效的付款：events[] 与 candidates[].items[] 增加可选字段 cancellable。省略或 false 表示取消后仍是有效义务；true 表示取消后不再计入仍有效义务，可列为可避免的后续支出。已取消的底层检查从释放未使用的 A 之后的快照开始，只计入 cancellable 不为 true 的尚未发生付款，以及生活安排；已计入快照的实际收付款不删除（D47、R012）。暂停不因 cancellable 移除任何义务（T012-04）。不从 refundable 推断 cancellable。可能退款仍不入账（T012-02）。（DEMO-CFG-1｜依 SG-33 裁决）
 
 #### 8.9 提交版数据约束
 
@@ -690,6 +693,7 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 | 预留到期是否释放 | — | releaseAtEnd | release_at_end | D08；提交版只允许false（V-01） |
 | 预留所挂预计收入 | — | fundingEventId | funding_event_id | D08 |
 | 计划分配（挂在预计收入上） | — | plannedAllocation | planned_allocation | D18 |
+| 生活安排是否已提供 | — | livingArrangement | living_arrangement | D59：PROVIDED／NOT_PROVIDED，省略即 PROVIDED |
 
 #### 9.3 事件与节点
 
@@ -706,6 +710,7 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 | 实际发生时间 | — | actualAt | actual_at | R005 |
 | 时间精度 | — | timePrecision | time_precision | R006 |
 | 已知先后关系 | — | knownOrder | known_order | R006、D10、D38 |
+| 取消后是否可不再支付 | — | cancellable | cancellable | D61：省略或 false 仍为义务；true 在取消后不计。暂停不因此移除 |
 | 触发条件 | — | triggerCondition | trigger_condition | R005、D12 |
 | 模拟记录时间 | — | recordedAt | recorded_at | R013 |
 | 模拟可获得时间 | — | availableAt | available_at | R008、R013 |
@@ -725,6 +730,12 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 | 待测额外支出 | x | probeSpend | — | §4 |
 | 资金检查期间 | I | checkPeriod | — | §4、D04 |
 | 输入版本 | V | inputVersion | input_version | §4、R013 |
+| 关键确认 | — | confirmations | confirmations | D60 |
+| 确认事项 | — | field | field | D60 |
+| 确认值 | — | value | value | D60：金额为整数分 |
+| 确认核对结果 | — | userConfirmations | user_confirmations | D60 |
+| 确认是否仍有效 | — | status | status | D60：CURRENT／NEEDS_RECONFIRM |
+| 每日参考缺失原因 | — | missingReasons | missing_reasons | D59 |
 | 选定情景集合 | S | scenarioSet | — | §4、D26 |
 | 今日情景替换额 | — | todayReplacement | — | D22 |
 | 配置版本 | — | configVersion | config_version | D02，本轮取值DEMO-CFG-1 |
@@ -774,7 +785,7 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 | 优惠编号 | — | offerId | offer_id | D17（stackable_with引用的对象） |
 | 优惠类型 | — | type | type | D17：INSTANT_OFF（立减）／THRESHOLD_OFF（满减）／PERCENT_OFF（折扣）／CASHBACK（返现）／VOUCHER（返券） |
 | 优惠金额或折扣 | — | value | value | D17、D45：金额为整数分；折扣为万分比整数 |
-| 优惠所属订单 | — | orderId | order_id | D17、D45 |
+| 价格项所属订单 | — | orderId | order_id | D45：写在价格项和 offers_used 上，不写在 offers 上（SG-30 已裁决） |
 | 适用范围 | — | scope | scope | D17、D45：项目类别列表 |
 | 门槛 | — | threshold | threshold | D17 |
 | 有效期起止 | — | validFrom、validTo | valid_from、valid_to | D17 |
@@ -795,14 +806,14 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 
 - C：Ct、C0为现金；“C类建议”指§7的技术配置建议；C1—C8为§8.7的比赛对齐裁决；C01、C02……为候选完整组合编号（D15）；小写c01为案例编号，指§10.8的基础资金数据。
 - R：符号R为符合规则的返还；R001—R020为规则编号。
-- D：符号D为每日非计划支出参考金额；D01—D58为§8的默认裁决编号；注记“V2.1 依 D-xx 修订”中的D-xx即Dxx。V-01—V-06为§8.9的提交版数据约束。
+- D：符号D为每日非计划支出参考金额；D01—D61为§8的默认裁决编号；注记“V2.1 依 D-xx 修订”中的D-xx即Dxx。V-01—V-06为§8.9的提交版数据约束。
 - G：Gt为本目标可用金额；spec_gaps.md的条目编号写作SG-xx，以免混淆。
 - T与t：T001、T004-02为测试编号；t为节点下标。
 - K：推荐数量；DEMO-CFG-1中K = 3。
 
 ### 10.未来节点检查与预留生命周期
 
-本节把D04—D11、D27和D34—D58写成逐事件的计算步骤。符号和字段名见§1、§9；金额按整数分计算，例子以元书写。本节未写到的情形按spec_gaps.md中的SG编号处理，不自行补全。
+本节把D04—D11、D27和D34—D61写成逐事件的计算步骤。符号和字段名见§1、§9；金额按整数分计算，例子以元书写。本节未写到的情形按spec_gaps.md中的SG编号处理，不自行补全。
 
 #### 10.1 检查期间（D04、D41、D56）
 
@@ -883,7 +894,7 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 #### 10.5 每日参考金额的前提（D27）
 
 1. 不存在已确认方案时，不计算D，显示“确认方案后可计算”，不显示0。
-2. 关键资金、付款、生活安排、用途或检查期间不足时，显示“暂无法给出建议金额”及原因（R019）。
+2. 关键资金、付款、生活安排、用途或检查期间不足时，显示“暂无法给出建议金额”及原因（R019）。living_arrangement=NOT_PROVIDED 即生活安排不足，missing_reasons 含 LIVING_ARRANGEMENT_MISSING，不给出金额（D59）。省略该字段按已提供处理。
 3. 否则按§4计算：检查期间按10.1；方案金额取已确认方案版本，尚未确认的新价格估算只用于R017第10条的风险重评和待确认差异，不进入D的计算（R019输入为已确认方案）；情景集合S按D26；x作为as_of时刻不属于本目标、无预留覆盖的流出，排在时间轴最前，按10.3、10.4检查；今日同口径情景支出按D22替换。
 4. D26所选的近月情景因历史不足、记录不完整、配置版本缺失、类别标注缺失或覆盖关系不清而不可用时（R018异常），从S中移出，不按0元或缺口处理；结果按“仅已确认安排”给出，标“仅依据已确认安排”，并列出不可用的情景及原因（R019异常、R010）。“仅已确认安排”本身无法评估的，按第2步处理。
 5. S中任一情景在x = 0时检查不通过（出现缺口、冲突或预算超限），显示“当前不建议新增非计划支出”，可以显示0元并说明原因（R019）。
@@ -1055,10 +1066,10 @@ c01是本节和traceability.csv使用的基础资金数据：
 | 3 | 存在约束问题 | CONSTRAINT_ISSUE | 预算超限，即P + F - R > B，金额为P + F - R - B；或分配冲突（D05）；且不存在更高优先级的状态。冲突延续与分配冲突同列（D35） | “存在约束问题”；逐项列出预算超限额和分配冲突额；不得称为付款缺口（R010） |
 | 4 | 按当前假设可行 | FEASIBLE_UNDER_ASSUMPTIONS | 检查期间内全部节点通过，预算检查和分配检查通过 | “按当前假设可行”；列出依赖条件：尚未到账的预计收入及日期、已确认的预测估算和其他估算费用（R010）；不得显示为资金已经充足 |
 | 单独显示 | 已暂停 | PAUSED | 用户确认暂停（R012）。底层检查和每日参考仍按原已确认方案，作为次要信息；暂停不释放资金（D47） | “已暂停”；已付金额、仍有效的付款义务 |
-| 单独显示 | 已取消 | CANCELLED | 用户确认取消（R012）。底层检查从释放A之后的快照开始；M按D55保留至释放时点（D47） | “已取消”；已付金额、可能退回的金额及条件、不可退费用、可避免的后续支出、仍有效义务 |
+| 单独显示 | 已取消 | CANCELLED | 用户确认取消（R012）。底层检查从释放A之后的快照开始；M按D55保留至释放时点（D47）。仍有效义务按 D61 | “已取消”；已付金额、可能退回的金额及条件、不可退费用、可避免的后续支出、仍有效义务 |
 
 - 节点判定结果与计划状态的对应：PROTECTED_SHORTFALL、PAYMENT_SHORTFALL对应“发现付款缺口”；ALLOCATION_CONFLICT、CONFLICT_CONTINUED和预算超限对应“存在约束问题”。GAP_CONTINUED不单独成为最早缺口（D19、D35）。
-- 已暂停、已取消是用户决策，不参与优先级比较，也不参与最低价排序。已暂停仍显示原方案的底层检查和每日参考，暂停不释放资金。已取消的底层检查从释放A之后的快照开始，M按D55保留（D47）。
+- 已暂停、已取消是用户决策，不参与优先级比较，也不参与最低价排序。已暂停仍显示原方案的底层检查和每日参考，暂停不释放资金，也不因 cancellable 移除义务。已取消的底层检查从释放A之后的快照开始，M按D55保留（D47）；cancellable 为 true 的预计事件和候选价格项不进入仍有效义务，省略或 false 的仍进入（D61）。
 - 输入变化或确认方案后重新计算计划状态，不沿用旧结论（R013）。
 
 #### 11.2 优化状态 optimization_state
@@ -1098,6 +1109,8 @@ c01是本节和traceability.csv使用的基础资金数据：
 - 范围前已付：“范围前已付，仅计入成本”（D57）。
 - 确认时未分配的剩余目标付款：“届时由未分配资金支付”（D46、D06）。
 - 由付款引起的保护性资金缺口：“这笔付款会挤占生活、机动等保护性预留 X 元”，X取该节点的-U（D34）。
+- 旧确认：“需重新确认”（D60、R015）。
+- 每日参考缺生活安排：“生活安排未提供”（D59、R019）。
 
 #### 11.5 界面文案（草案）
 
@@ -1122,7 +1135,7 @@ c01是本节和traceability.csv使用的基础资金数据：
 
 ### 12.数据结构摘要
 
-本节只列对象、关键字段、枚举和操作。完整定义以src/engine/schema.ts（案例输入CaseFile）、src/engine/ops.ts（操作Op）、src/engine/result.ts（输出ResultCore）和src/engine/enums.ts（枚举）为准；JSON Schema由pnpm schema:export导出到docs/_work/schema.json、result.schema.json、ops.schema.json。字段名与§9冲突时以§9为准，并记入spec_gaps.md（SG-30）；§9没有给出的取值和结构见SG-31，操作语义见SG-32，暂时无法表示的数据见SG-33。
+本节只列对象、关键字段、枚举和操作。完整定义以src/engine/schema.ts（案例输入CaseFile）、src/engine/ops.ts（操作Op）、src/engine/result.ts（输出ResultCore）和src/engine/enums.ts（枚举）为准；JSON Schema由pnpm schema:export导出到docs/_work/schema.json、result.schema.json、ops.schema.json。字段名与§9冲突时以§9为准（SG-30 已按 D09、D45、D46 裁决）。§9没有给出的取值和结构以本节与 enums.ts 为准（SG-31 已裁决）。操作语义见§12.4（SG-32 已按 D29、D58 裁决）。生活安排、确认记录和取消后义务见 D59—D61。
 
 #### 12.1 约定
 
@@ -1138,13 +1151,13 @@ c01是本节和traceability.csv使用的基础资金数据：
 | 对象 | 关键字段 |
 |----|----|
 | meta | case_id、purpose、data_version、simulated（恒为true）、source_type、generator、batch、created_at_real（真实生成时间，不进入计算）、demo_points[]、boundary_test?、continuation_of? |
-| snapshot | as_of、cash_as_of、snapshot_phase、cash、goal_allocation、other_goal_hold{name, amount}或null（D09） |
+| snapshot | as_of、cash_as_of、snapshot_phase、cash、goal_allocation、other_goal_hold{name, amount}或null（D09）、living_arrangement?（PROVIDED／NOT_PROVIDED，省略即 PROVIDED，D59） |
 | reserves[] | reserve_id、reserve_kind、amount、coverage_start、coverage_end、release_at_end、funding_event_id? |
-| events[] | event_id、event_kind、event_status、amount、expected_at、actual_at?、time_precision、known_order?、in_snapshot、goal_id?、cost_item_id?、task_id?、coverage[]{reserve_id, covered_amount}、trigger_condition?、recorded_at、available_at、currency、category?、payment_windows?[]{window_id, expected_at} |
+| events[] | event_id、event_kind、event_status、amount、expected_at、actual_at?、time_precision、known_order?、in_snapshot、goal_id?、cost_item_id?、task_id?、coverage[]{reserve_id, covered_amount}、trigger_condition?、recorded_at、available_at、currency、category?、payment_windows?[]{window_id, expected_at}、cancellable?（D61） |
 | goal | goal_id、name?、budget_cap、show_start_at、show_end_at、venue_city、seat_tiers[]{code, name}、arrive_before_show_min、return_after_show_min、lodging_nights_required、seat_tier_allowed、lodging_max_distance_m、refundable_required（六项约束为null即未填写） |
 | cost_items[] | cost_item_id、category、necessary、amount_status、confirm_basis? |
 | candidates[] | candidate_id、items[]、offers_used[]{offer_id, order_id, sequence?}、returns[] |
-| candidates[].items[] | cost_item_id、channel、spec、price、currency、price_basis、order_id、purchase_date、payment_at、arrive_at?、depart_at?、lodging_distance_m?、lodging_nights?、refundable?、quote{valid_from, valid_to, recorded_at, available_at}、payment_windows?[]{window_id, payment_at} |
+| candidates[].items[] | cost_item_id、channel、spec、price、currency、price_basis、order_id、purchase_date、payment_at、arrive_at?、depart_at?、lodging_distance_m?、lodging_nights?、refundable?、quote{valid_from, valid_to, recorded_at, available_at}、payment_windows?[]{window_id, payment_at}、cancellable?（D61） |
 | candidates[].returns[] | event_id、amount、expected_at、time_precision、trigger_condition?、cost_item_id?、currency、recorded_at、available_at |
 | offers[] | offer_id、type、value、scope、threshold、valid_from、valid_to、applies_at、max_uses、stackable_with、rounding、expected_at?、trigger_condition?（后两项为返现的到账日期和触发条件，D12） |
 | price_series[] | series_id、cost_item_id、channel、spec、service_date、observed_on、price、currency、recorded_at、available_at（每行一笔日级观测） |
@@ -1152,6 +1165,7 @@ c01是本节和traceability.csv使用的基础资金数据：
 | planned_allocation | {funding_event_id, amount}或null（D46只建一笔） |
 | confirmed_plan? | candidate_id、plan_version、input_version |
 | forecast_confirmations[] | series_id、purchase_date、price、config_version（D14按项目＋购买日确认） |
+| confirmations[]? | field、value、input_version（D60；省略即没有确认记录） |
 | nl_script? | script_id、utterances[] |
 
 - 门票项的spec填goal.seat_tiers中的编码。offers.value对立减、满减、返现、返券为整数分，对折扣为万分比整数（D45）。
@@ -1173,6 +1187,9 @@ c01是本节和traceability.csv使用的基础资金数据：
 | 项目category、offers.scope、refundable_required | TICKET、OUTBOUND_TRANSPORT、RETURN_TRANSPORT、LODGING、MEALS、LOCAL_TRANSPORT、SERVICE_FEE、OPTIONAL_PURCHASE |
 | price_basis | QUOTE、FORECAST、REFERENCE、UNDATED_QUOTE、PENDING（D13五档，按优先级排列） |
 | source_type | LLM_GENERATED、HAND_WRITTEN |
+| living_arrangement | PROVIDED、NOT_PROVIDED（D59；省略即 PROVIDED） |
+| confirmations.field | ACTIVITY、CITY、SHOW_DATETIME、TICKET_PURCHASED、AMOUNT_PAID、SEAT_TIER、ORIGIN_CITY、TRANSPORT_PREFERENCE、LODGING_REQUIREMENT、BUDGET、CASH、EXPECTED_INCOME、LIVING_COST、TRAVEL_DATE、LODGING_NIGHTS（D60） |
+| user_confirmations.status | CURRENT、NEEDS_RECONFIRM（D60） |
 
 ResultCore另用的代码（节点触发、方案来源、情景、每日参考展示、任务状态、依赖条件、待核价事项、预测状态、情景不可用原因、输入问题、待确认与排除原因、标签）见enums.ts。
 
@@ -1206,7 +1223,8 @@ ResultCore另用的代码（节点触发、方案来源、情景、每日参考�
 | optimization | scope、evaluated_count、pending_count、excluded_count、top_k |
 | confirmation | candidate_id、plan_version、input_version、w、m、delta_a、planned_allocation、unallocated_note（D46） |
 | action_list[] | task_id、cost_item_id、category、spec、purchase_date、channel、offer_ids、amount、payment_at、pending_checks、task_state、plan_version（R017第7条） |
-| daily_reference | display、amount?、limited_by?、label?、unavailable[]（R019、D26、D27） |
+| daily_reference | display、amount?、limited_by?、label?、unavailable[]、missing_reasons[]（R019、D26、D27、D59） |
+| user_confirmations[] | field、value、input_version、status（D60） |
 | states | plan_state、underlying_plan_state（只在已暂停、已取消时给出）、optimization_state、confirmation_state、plan_target（§11、D47） |
 | forecasts?、scenarios? | 预测与情景结果，字段名取§9.5、§9.6的TS列（R018、R020） |
 | labels | 标签代码；文字见result.ts的LABEL_TEXT，与§11.4原文一致 |

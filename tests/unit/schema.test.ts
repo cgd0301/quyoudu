@@ -14,7 +14,11 @@ function fullCase(): CaseFile {
       boundary_test: false,
       continuation_of: 'c01',
     },
-    snapshot: { ...base.snapshot, other_goal_hold: { name: '第二目标', amount: 10000 } },
+    snapshot: {
+      ...base.snapshot,
+      other_goal_hold: { name: '第二目标', amount: 10000 },
+      living_arrangement: 'PROVIDED',
+    },
     reserves: [
       ...base.reserves,
       {
@@ -56,6 +60,7 @@ function fullCase(): CaseFile {
         cost_item_id: 'LODGING',
         task_id: 'T-LODGING',
         payment_windows: [{ window_id: 'W-LODGING-0927', expected_at: '2026-09-27' }],
+        cancellable: false,
       }),
       expense({ event_id: 'E-INC-10', event_kind: 'INCOME', amount: 150000, expected_at: '2026-10-01' }),
       expense({
@@ -113,6 +118,7 @@ function fullCase(): CaseFile {
             refundable: true,
             quote: { valid_from: '2026-09-01', valid_to: '2026-09-15', ...RECORDED },
             payment_windows: [{ window_id: 'W-TRAIN-0912', payment_at: '2026-09-12' }],
+            cancellable: true,
           },
           {
             cost_item_id: 'LODGING',
@@ -213,6 +219,10 @@ function fullCase(): CaseFile {
     forecast_confirmations: [
       { series_id: 'S-LODGING', purchase_date: '2026-09-10', price: 39500, config_version: 'DEMO-CFG-1' },
     ],
+    confirmations: [
+      { field: 'TRAVEL_DATE', value: '2026-09-27', input_version: 'v1' },
+      { field: 'LODGING_NIGHTS', value: 1, input_version: 'v1' },
+    ],
     nl_script: {
       script_id: 'demo-1',
       utterances: ['我9月27日去上海看演唱会，已经花580买了票，预算900'],
@@ -293,6 +303,14 @@ const structuralErrors: [string, (draft: CaseFile) => void][] = [
   ['simulated=false', (d) => Object.assign(d.meta, { simulated: false })],
   ['source_type 未知', (d) => Object.assign(d.meta, { source_type: 'BANK_EXPORT' })],
   ['other_goal_hold 写成数组', (d) => Object.assign(d.snapshot, { other_goal_hold: [{ name: '第二目标', amount: 10000 }] })],
+  ['未知 living_arrangement', (d) => Object.assign(d.snapshot, { living_arrangement: 'MISSING' })],
+  [
+    '未知确认事项',
+    (d) => {
+      d.confirmations = [{ field: 'TRAVEL_DATE', value: '2026-09-27', input_version: 'v1' }]
+      Object.assign(d.confirmations[0], { field: 'NOTE' })
+    },
+  ],
 ]
 
 describe('结构错误被拒绝', () => {
