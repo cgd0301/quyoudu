@@ -1,0 +1,1078 @@
+{
+  "meta": {
+    "case_id": "cB_topk",
+    "purpose": "案例B（政策卡第八节）：武汉出发去上海看 11/28 晚的演唱会（模拟），尚未购票；7 个完整候选，K=3。E-INC-1020 为 10/20 家教兼职收入。",
+    "data_version": "1",
+    "simulated": true,
+    "source_type": "LLM_GENERATED",
+    "generator": "cursor-agent",
+    "batch": "demo-cases-2026-10-14",
+    "created_at_real": "2026-10-14T18:50:00+08:00",
+    "demo_points": [
+      "C01：门票预售与酒店A早鸟须在 9/20 一次付清，早于各笔收入，用于演示最便宜但付款太早",
+      "C02：略贵，票款在 10/20 家教兼职收入（E-INC-1020）之后支付，用于演示略贵但能通过检查、依赖预计收入",
+      "C03：逐项最低价拼成，去程 18:50 到达，用于演示组合不满足开演前 60 分钟到达（arrive_before_show_min）",
+      "C04 违规叠加用于排除：Y2、Y3 用在同一订单，彼此不可叠加",
+      "C05：住宿返现 Y4 须离店后评价才发放，用于演示“若到账”",
+      "C06、C07：用于演示末位同价按候选编号截取，不突破 K=3",
+      "酒店B 的价格依据为有效参考价，价格序列 S-HOTEL-B 只有 1 条观测，用于演示预测不可用时降级为参考价并标“估算”",
+      "SELECT_CANDIDATE C02 后正式账面不变；CONFIRM 同一方案版本和输入版本提交两次，用于演示不重复分配",
+      "确认 C02 后 DELAY_INCOME E-INC-1020 至 2026-11-20，用于演示付款缺口和“当前不建议新增非计划支出”",
+      "ADD_LIVING_EXPENSE 新增 9/10 必要生活支出 200 元（NEW_RESERVE）后实时重算",
+      "nl_script：三轮话术，留交通偏好、住宿要求、当前现金、预计收入四项由系统追问",
+      "机动预留 R-CON 单列，不计入消费成本，但在资金检查中保留"
+    ]
+  },
+  "snapshot": {
+    "as_of": "2026-09-01T09:00:00+08:00",
+    "cash_as_of": "2026-09-01T09:00:00+08:00",
+    "snapshot_phase": "DAY_START",
+    "cash": 160000,
+    "goal_allocation": 0,
+    "other_goal_hold": null
+  },
+  "reserves": [
+    {
+      "reserve_id": "R-LIV-09",
+      "reserve_kind": "LIVING",
+      "amount": 100000,
+      "coverage_start": "2026-09-01",
+      "coverage_end": "2026-09-30",
+      "release_at_end": false
+    },
+    {
+      "reserve_id": "R-CON",
+      "reserve_kind": "CONTINGENCY",
+      "amount": 20000,
+      "coverage_start": "2026-09-01",
+      "coverage_end": "2026-11-29",
+      "release_at_end": false
+    },
+    {
+      "reserve_id": "R-LIV-10",
+      "reserve_kind": "LIVING",
+      "amount": 100000,
+      "coverage_start": "2026-10-01",
+      "coverage_end": "2026-10-31",
+      "release_at_end": false,
+      "funding_event_id": "E-INC-1001"
+    },
+    {
+      "reserve_id": "R-LIV-11",
+      "reserve_kind": "LIVING",
+      "amount": 100000,
+      "coverage_start": "2026-11-01",
+      "coverage_end": "2026-11-30",
+      "release_at_end": false,
+      "funding_event_id": "E-INC-1101"
+    },
+    {
+      "reserve_id": "R-LIV-12",
+      "reserve_kind": "LIVING",
+      "amount": 100000,
+      "coverage_start": "2026-12-01",
+      "coverage_end": "2026-12-31",
+      "release_at_end": false,
+      "funding_event_id": "E-INC-1201"
+    }
+  ],
+  "events": [
+    {
+      "event_id": "E-LIV-0902",
+      "event_kind": "OTHER_EXPENSE",
+      "event_status": "EXPECTED",
+      "amount": 50000,
+      "expected_at": "2026-09-02",
+      "time_precision": "DATE",
+      "in_snapshot": false,
+      "coverage": [
+        {
+          "reserve_id": "R-LIV-09",
+          "covered_amount": 50000
+        }
+      ],
+      "recorded_at": "2026-09-01T08:00:00+08:00",
+      "available_at": "2026-09-01T08:00:00+08:00",
+      "currency": "CNY",
+      "category": "MEALS"
+    },
+    {
+      "event_id": "E-LIV-0916",
+      "event_kind": "OTHER_EXPENSE",
+      "event_status": "EXPECTED",
+      "amount": 50000,
+      "expected_at": "2026-09-16",
+      "time_precision": "DATE",
+      "in_snapshot": false,
+      "coverage": [
+        {
+          "reserve_id": "R-LIV-09",
+          "covered_amount": 50000
+        }
+      ],
+      "recorded_at": "2026-09-01T08:00:00+08:00",
+      "available_at": "2026-09-01T08:00:00+08:00",
+      "currency": "CNY",
+      "category": "MEALS"
+    },
+    {
+      "event_id": "E-INC-1001",
+      "event_kind": "INCOME",
+      "event_status": "EXPECTED",
+      "amount": 120000,
+      "expected_at": "2026-10-01",
+      "time_precision": "DATE",
+      "in_snapshot": false,
+      "coverage": [],
+      "recorded_at": "2026-09-01T08:00:00+08:00",
+      "available_at": "2026-09-01T08:00:00+08:00",
+      "currency": "CNY"
+    },
+    {
+      "event_id": "E-LIV-1002",
+      "event_kind": "OTHER_EXPENSE",
+      "event_status": "EXPECTED",
+      "amount": 50000,
+      "expected_at": "2026-10-02",
+      "time_precision": "DATE",
+      "in_snapshot": false,
+      "coverage": [
+        {
+          "reserve_id": "R-LIV-10",
+          "covered_amount": 50000
+        }
+      ],
+      "recorded_at": "2026-09-01T08:00:00+08:00",
+      "available_at": "2026-09-01T08:00:00+08:00",
+      "currency": "CNY",
+      "category": "MEALS"
+    },
+    {
+      "event_id": "E-LIV-1016",
+      "event_kind": "OTHER_EXPENSE",
+      "event_status": "EXPECTED",
+      "amount": 50000,
+      "expected_at": "2026-10-16",
+      "time_precision": "DATE",
+      "in_snapshot": false,
+      "coverage": [
+        {
+          "reserve_id": "R-LIV-10",
+          "covered_amount": 50000
+        }
+      ],
+      "recorded_at": "2026-09-01T08:00:00+08:00",
+      "available_at": "2026-09-01T08:00:00+08:00",
+      "currency": "CNY",
+      "category": "MEALS"
+    },
+    {
+      "event_id": "E-INC-1020",
+      "event_kind": "INCOME",
+      "event_status": "EXPECTED",
+      "amount": 100000,
+      "expected_at": "2026-10-20",
+      "time_precision": "DATE",
+      "in_snapshot": false,
+      "coverage": [],
+      "recorded_at": "2026-09-01T08:00:00+08:00",
+      "available_at": "2026-09-01T08:00:00+08:00",
+      "currency": "CNY"
+    },
+    {
+      "event_id": "E-INC-1101",
+      "event_kind": "INCOME",
+      "event_status": "EXPECTED",
+      "amount": 120000,
+      "expected_at": "2026-11-01",
+      "time_precision": "DATE",
+      "in_snapshot": false,
+      "coverage": [],
+      "recorded_at": "2026-09-01T08:00:00+08:00",
+      "available_at": "2026-09-01T08:00:00+08:00",
+      "currency": "CNY"
+    },
+    {
+      "event_id": "E-LIV-1102",
+      "event_kind": "OTHER_EXPENSE",
+      "event_status": "EXPECTED",
+      "amount": 50000,
+      "expected_at": "2026-11-02",
+      "time_precision": "DATE",
+      "in_snapshot": false,
+      "coverage": [
+        {
+          "reserve_id": "R-LIV-11",
+          "covered_amount": 50000
+        }
+      ],
+      "recorded_at": "2026-09-01T08:00:00+08:00",
+      "available_at": "2026-09-01T08:00:00+08:00",
+      "currency": "CNY",
+      "category": "MEALS"
+    },
+    {
+      "event_id": "E-LIV-1116",
+      "event_kind": "OTHER_EXPENSE",
+      "event_status": "EXPECTED",
+      "amount": 50000,
+      "expected_at": "2026-11-16",
+      "time_precision": "DATE",
+      "in_snapshot": false,
+      "coverage": [
+        {
+          "reserve_id": "R-LIV-11",
+          "covered_amount": 50000
+        }
+      ],
+      "recorded_at": "2026-09-01T08:00:00+08:00",
+      "available_at": "2026-09-01T08:00:00+08:00",
+      "currency": "CNY",
+      "category": "MEALS"
+    },
+    {
+      "event_id": "E-MEALS-1128",
+      "event_kind": "GOAL_PAYMENT",
+      "event_status": "EXPECTED",
+      "amount": 10000,
+      "expected_at": "2026-11-28",
+      "time_precision": "DATE",
+      "in_snapshot": false,
+      "goal_id": "G1",
+      "cost_item_id": "MEALS",
+      "coverage": [],
+      "recorded_at": "2026-09-01T08:00:00+08:00",
+      "available_at": "2026-09-01T08:00:00+08:00",
+      "currency": "CNY",
+      "cancellable": true
+    },
+    {
+      "event_id": "E-LOCAL-1128",
+      "event_kind": "GOAL_PAYMENT",
+      "event_status": "EXPECTED",
+      "amount": 4000,
+      "expected_at": "2026-11-28",
+      "time_precision": "DATE",
+      "in_snapshot": false,
+      "goal_id": "G1",
+      "cost_item_id": "LOCAL",
+      "coverage": [],
+      "recorded_at": "2026-09-01T08:00:00+08:00",
+      "available_at": "2026-09-01T08:00:00+08:00",
+      "currency": "CNY",
+      "cancellable": true
+    },
+    {
+      "event_id": "E-INC-1201",
+      "event_kind": "INCOME",
+      "event_status": "EXPECTED",
+      "amount": 120000,
+      "expected_at": "2026-12-01",
+      "time_precision": "DATE",
+      "in_snapshot": false,
+      "coverage": [],
+      "recorded_at": "2026-09-01T08:00:00+08:00",
+      "available_at": "2026-09-01T08:00:00+08:00",
+      "currency": "CNY"
+    }
+  ],
+  "goal": {
+    "goal_id": "G1",
+    "name": "上海演唱会资金",
+    "budget_cap": 180000,
+    "show_start_at": "2026-11-28T19:30:00+08:00",
+    "show_end_at": "2026-11-28T22:00:00+08:00",
+    "venue_city": "上海",
+    "seat_tiers": [
+      {
+        "code": "A",
+        "name": "内场"
+      },
+      {
+        "code": "B",
+        "name": "看台"
+      }
+    ],
+    "arrive_before_show_min": 60,
+    "return_after_show_min": null,
+    "lodging_nights_required": [
+      "2026-11-28"
+    ],
+    "seat_tier_allowed": [
+      "B"
+    ],
+    "lodging_max_distance_m": 3000,
+    "refundable_required": null
+  },
+  "cost_items": [
+    {
+      "cost_item_id": "TICKET",
+      "category": "TICKET",
+      "necessary": true,
+      "amount_status": "CONFIRMED"
+    },
+    {
+      "cost_item_id": "TRAIN-OUT",
+      "category": "OUTBOUND_TRANSPORT",
+      "necessary": true,
+      "amount_status": "CONFIRMED"
+    },
+    {
+      "cost_item_id": "TRAIN-BACK",
+      "category": "RETURN_TRANSPORT",
+      "necessary": true,
+      "amount_status": "CONFIRMED"
+    },
+    {
+      "cost_item_id": "LODGING",
+      "category": "LODGING",
+      "necessary": true,
+      "amount_status": "CONFIRMED"
+    },
+    {
+      "cost_item_id": "MEALS",
+      "category": "MEALS",
+      "necessary": true,
+      "amount_status": "ESTIMATE"
+    },
+    {
+      "cost_item_id": "LOCAL",
+      "category": "LOCAL_TRANSPORT",
+      "necessary": true,
+      "amount_status": "ESTIMATE"
+    }
+  ],
+  "candidates": [
+    {
+      "candidate_id": "C01",
+      "items": [
+        {
+          "cost_item_id": "TICKET",
+          "channel": "渠道甲",
+          "spec": "B",
+          "price": 68000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O1",
+          "purchase_date": "2026-09-20",
+          "payment_at": "2026-09-20",
+          "quote": {
+            "valid_from": "2026-09-20",
+            "valid_to": "2026-09-20",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        },
+        {
+          "cost_item_id": "LODGING",
+          "channel": "渠道甲",
+          "spec": "酒店A 大床房·早鸟预付",
+          "price": 30000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O1",
+          "purchase_date": "2026-09-20",
+          "payment_at": "2026-09-20",
+          "lodging_distance_m": 1200,
+          "lodging_nights": [
+            "2026-11-28"
+          ],
+          "quote": {
+            "valid_from": "2026-09-01",
+            "valid_to": "2026-09-20",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        },
+        {
+          "cost_item_id": "TRAIN-OUT",
+          "channel": "渠道丙",
+          "spec": "二等座·12:30 发车",
+          "price": 30000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O3",
+          "purchase_date": "2026-11-13",
+          "payment_at": "2026-11-13",
+          "arrive_at": "2026-11-28T17:30:00+08:00",
+          "depart_at": "2026-11-28T12:30:00+08:00",
+          "quote": {
+            "valid_from": "2026-09-01",
+            "valid_to": "2026-11-28",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        },
+        {
+          "cost_item_id": "TRAIN-BACK",
+          "channel": "渠道丙",
+          "spec": "二等座·07:00 发车",
+          "price": 28000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O4",
+          "purchase_date": "2026-11-14",
+          "payment_at": "2026-11-14",
+          "arrive_at": "2026-11-29T12:00:00+08:00",
+          "depart_at": "2026-11-29T07:00:00+08:00",
+          "quote": {
+            "valid_from": "2026-09-01",
+            "valid_to": "2026-11-29",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        }
+      ],
+      "offers_used": [
+        {
+          "offer_id": "Y1",
+          "order_id": "O1"
+        }
+      ],
+      "returns": []
+    },
+    {
+      "candidate_id": "C02",
+      "items": [
+        {
+          "cost_item_id": "TICKET",
+          "channel": "渠道乙",
+          "spec": "B",
+          "price": 66000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O1",
+          "purchase_date": "2026-10-25",
+          "payment_at": "2026-10-25",
+          "quote": {
+            "valid_from": "2026-10-25",
+            "valid_to": "2026-11-27",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        },
+        {
+          "cost_item_id": "LODGING",
+          "channel": "渠道乙",
+          "spec": "酒店B 大床房·到店付",
+          "price": 28000,
+          "currency": "CNY",
+          "price_basis": "REFERENCE",
+          "order_id": "O2",
+          "purchase_date": "2026-10-25",
+          "payment_at": "2026-11-28",
+          "lodging_distance_m": 1500,
+          "lodging_nights": [
+            "2026-11-28"
+          ],
+          "quote": {
+            "valid_from": "2026-09-01",
+            "valid_to": "2026-09-07",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        },
+        {
+          "cost_item_id": "TRAIN-OUT",
+          "channel": "渠道丙",
+          "spec": "二等座·12:30 发车",
+          "price": 30000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O3",
+          "purchase_date": "2026-11-13",
+          "payment_at": "2026-11-13",
+          "arrive_at": "2026-11-28T17:30:00+08:00",
+          "depart_at": "2026-11-28T12:30:00+08:00",
+          "quote": {
+            "valid_from": "2026-09-01",
+            "valid_to": "2026-11-28",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        },
+        {
+          "cost_item_id": "TRAIN-BACK",
+          "channel": "渠道丙",
+          "spec": "二等座·07:00 发车",
+          "price": 28000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O4",
+          "purchase_date": "2026-11-14",
+          "payment_at": "2026-11-14",
+          "arrive_at": "2026-11-29T12:00:00+08:00",
+          "depart_at": "2026-11-29T07:00:00+08:00",
+          "quote": {
+            "valid_from": "2026-09-01",
+            "valid_to": "2026-11-29",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        }
+      ],
+      "offers_used": [],
+      "returns": []
+    },
+    {
+      "candidate_id": "C03",
+      "items": [
+        {
+          "cost_item_id": "TICKET",
+          "channel": "渠道乙",
+          "spec": "B",
+          "price": 66000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O1",
+          "purchase_date": "2026-10-25",
+          "payment_at": "2026-10-25",
+          "quote": {
+            "valid_from": "2026-10-25",
+            "valid_to": "2026-11-27",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        },
+        {
+          "cost_item_id": "LODGING",
+          "channel": "渠道乙",
+          "spec": "酒店B 大床房·到店付",
+          "price": 28000,
+          "currency": "CNY",
+          "price_basis": "REFERENCE",
+          "order_id": "O2",
+          "purchase_date": "2026-10-25",
+          "payment_at": "2026-11-28",
+          "lodging_distance_m": 1500,
+          "lodging_nights": [
+            "2026-11-28"
+          ],
+          "quote": {
+            "valid_from": "2026-09-01",
+            "valid_to": "2026-09-07",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        },
+        {
+          "cost_item_id": "TRAIN-OUT",
+          "channel": "渠道丙",
+          "spec": "二等座·13:50 发车",
+          "price": 24000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O3",
+          "purchase_date": "2026-11-13",
+          "payment_at": "2026-11-13",
+          "arrive_at": "2026-11-28T18:50:00+08:00",
+          "depart_at": "2026-11-28T13:50:00+08:00",
+          "quote": {
+            "valid_from": "2026-09-01",
+            "valid_to": "2026-11-28",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        },
+        {
+          "cost_item_id": "TRAIN-BACK",
+          "channel": "渠道丙",
+          "spec": "二等座·07:00 发车",
+          "price": 28000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O4",
+          "purchase_date": "2026-11-14",
+          "payment_at": "2026-11-14",
+          "arrive_at": "2026-11-29T12:00:00+08:00",
+          "depart_at": "2026-11-29T07:00:00+08:00",
+          "quote": {
+            "valid_from": "2026-09-01",
+            "valid_to": "2026-11-29",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        }
+      ],
+      "offers_used": [],
+      "returns": []
+    },
+    {
+      "candidate_id": "C04",
+      "items": [
+        {
+          "cost_item_id": "TICKET",
+          "channel": "渠道丙",
+          "spec": "B",
+          "price": 72000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O1",
+          "purchase_date": "2026-10-25",
+          "payment_at": "2026-10-25",
+          "quote": {
+            "valid_from": "2026-10-25",
+            "valid_to": "2026-11-27",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        },
+        {
+          "cost_item_id": "LODGING",
+          "channel": "渠道丙",
+          "spec": "酒店C 大床房·到店付",
+          "price": 30000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O2",
+          "purchase_date": "2026-10-25",
+          "payment_at": "2026-11-28",
+          "lodging_distance_m": 800,
+          "lodging_nights": [
+            "2026-11-28"
+          ],
+          "quote": {
+            "valid_from": "2026-09-01",
+            "valid_to": "2026-11-27",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        },
+        {
+          "cost_item_id": "TRAIN-OUT",
+          "channel": "渠道丙",
+          "spec": "二等座·12:30 发车",
+          "price": 30000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O3",
+          "purchase_date": "2026-11-13",
+          "payment_at": "2026-11-13",
+          "arrive_at": "2026-11-28T17:30:00+08:00",
+          "depart_at": "2026-11-28T12:30:00+08:00",
+          "quote": {
+            "valid_from": "2026-09-01",
+            "valid_to": "2026-11-28",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        },
+        {
+          "cost_item_id": "TRAIN-BACK",
+          "channel": "渠道丙",
+          "spec": "二等座·07:00 发车",
+          "price": 28000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O4",
+          "purchase_date": "2026-11-14",
+          "payment_at": "2026-11-14",
+          "arrive_at": "2026-11-29T12:00:00+08:00",
+          "depart_at": "2026-11-29T07:00:00+08:00",
+          "quote": {
+            "valid_from": "2026-09-01",
+            "valid_to": "2026-11-29",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        }
+      ],
+      "offers_used": [
+        {
+          "offer_id": "Y2",
+          "order_id": "O1",
+          "sequence": 1
+        },
+        {
+          "offer_id": "Y3",
+          "order_id": "O1",
+          "sequence": 2
+        }
+      ],
+      "returns": []
+    },
+    {
+      "candidate_id": "C05",
+      "items": [
+        {
+          "cost_item_id": "TICKET",
+          "channel": "渠道乙",
+          "spec": "B",
+          "price": 66000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O1",
+          "purchase_date": "2026-10-25",
+          "payment_at": "2026-10-25",
+          "quote": {
+            "valid_from": "2026-10-25",
+            "valid_to": "2026-11-27",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        },
+        {
+          "cost_item_id": "LODGING",
+          "channel": "渠道丙",
+          "spec": "酒店C 大床房·到店付",
+          "price": 30000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O2",
+          "purchase_date": "2026-10-25",
+          "payment_at": "2026-11-28",
+          "lodging_distance_m": 800,
+          "lodging_nights": [
+            "2026-11-28"
+          ],
+          "quote": {
+            "valid_from": "2026-09-01",
+            "valid_to": "2026-11-27",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        },
+        {
+          "cost_item_id": "TRAIN-OUT",
+          "channel": "渠道丙",
+          "spec": "二等座·12:30 发车",
+          "price": 30000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O3",
+          "purchase_date": "2026-11-13",
+          "payment_at": "2026-11-13",
+          "arrive_at": "2026-11-28T17:30:00+08:00",
+          "depart_at": "2026-11-28T12:30:00+08:00",
+          "quote": {
+            "valid_from": "2026-09-01",
+            "valid_to": "2026-11-28",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        },
+        {
+          "cost_item_id": "TRAIN-BACK",
+          "channel": "渠道丙",
+          "spec": "二等座·07:00 发车",
+          "price": 28000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O4",
+          "purchase_date": "2026-11-14",
+          "payment_at": "2026-11-14",
+          "arrive_at": "2026-11-29T12:00:00+08:00",
+          "depart_at": "2026-11-29T07:00:00+08:00",
+          "quote": {
+            "valid_from": "2026-09-01",
+            "valid_to": "2026-11-29",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        }
+      ],
+      "offers_used": [
+        {
+          "offer_id": "Y4",
+          "order_id": "O2"
+        }
+      ],
+      "returns": [
+        {
+          "event_id": "E-C05-Y4",
+          "amount": 5000,
+          "expected_at": "2026-12-05",
+          "time_precision": "DATE",
+          "trigger_condition": "离店后提交入住评价并审核通过",
+          "cost_item_id": "LODGING",
+          "currency": "CNY",
+          "recorded_at": "2026-09-01T08:00:00+08:00",
+          "available_at": "2026-09-01T08:00:00+08:00"
+        }
+      ]
+    },
+    {
+      "candidate_id": "C06",
+      "items": [
+        {
+          "cost_item_id": "TICKET",
+          "channel": "渠道甲",
+          "spec": "B",
+          "price": 68000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O1",
+          "purchase_date": "2026-10-25",
+          "payment_at": "2026-10-25",
+          "quote": {
+            "valid_from": "2026-10-25",
+            "valid_to": "2026-11-27",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        },
+        {
+          "cost_item_id": "LODGING",
+          "channel": "渠道乙",
+          "spec": "酒店B 大床房·到店付",
+          "price": 28000,
+          "currency": "CNY",
+          "price_basis": "REFERENCE",
+          "order_id": "O2",
+          "purchase_date": "2026-10-25",
+          "payment_at": "2026-11-28",
+          "lodging_distance_m": 1500,
+          "lodging_nights": [
+            "2026-11-28"
+          ],
+          "quote": {
+            "valid_from": "2026-09-01",
+            "valid_to": "2026-09-07",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        },
+        {
+          "cost_item_id": "TRAIN-OUT",
+          "channel": "渠道丙",
+          "spec": "二等座·12:30 发车",
+          "price": 30000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O3",
+          "purchase_date": "2026-11-13",
+          "payment_at": "2026-11-13",
+          "arrive_at": "2026-11-28T17:30:00+08:00",
+          "depart_at": "2026-11-28T12:30:00+08:00",
+          "quote": {
+            "valid_from": "2026-09-01",
+            "valid_to": "2026-11-28",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        },
+        {
+          "cost_item_id": "TRAIN-BACK",
+          "channel": "渠道丙",
+          "spec": "二等座·10:00 发车",
+          "price": 32000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O4",
+          "purchase_date": "2026-11-14",
+          "payment_at": "2026-11-14",
+          "arrive_at": "2026-11-29T15:00:00+08:00",
+          "depart_at": "2026-11-29T10:00:00+08:00",
+          "quote": {
+            "valid_from": "2026-09-01",
+            "valid_to": "2026-11-29",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        }
+      ],
+      "offers_used": [],
+      "returns": []
+    },
+    {
+      "candidate_id": "C07",
+      "items": [
+        {
+          "cost_item_id": "TICKET",
+          "channel": "渠道乙",
+          "spec": "B",
+          "price": 66000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O1",
+          "purchase_date": "2026-10-25",
+          "payment_at": "2026-10-25",
+          "quote": {
+            "valid_from": "2026-10-25",
+            "valid_to": "2026-11-27",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        },
+        {
+          "cost_item_id": "LODGING",
+          "channel": "渠道甲",
+          "spec": "酒店A 大床房·到店付",
+          "price": 34000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O2",
+          "purchase_date": "2026-10-25",
+          "payment_at": "2026-11-28",
+          "lodging_distance_m": 1200,
+          "lodging_nights": [
+            "2026-11-28"
+          ],
+          "quote": {
+            "valid_from": "2026-09-01",
+            "valid_to": "2026-11-27",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        },
+        {
+          "cost_item_id": "TRAIN-OUT",
+          "channel": "渠道丙",
+          "spec": "二等座·12:30 发车",
+          "price": 30000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O3",
+          "purchase_date": "2026-11-13",
+          "payment_at": "2026-11-13",
+          "arrive_at": "2026-11-28T17:30:00+08:00",
+          "depart_at": "2026-11-28T12:30:00+08:00",
+          "quote": {
+            "valid_from": "2026-09-01",
+            "valid_to": "2026-11-28",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        },
+        {
+          "cost_item_id": "TRAIN-BACK",
+          "channel": "渠道丙",
+          "spec": "二等座·07:00 发车",
+          "price": 28000,
+          "currency": "CNY",
+          "price_basis": "QUOTE",
+          "order_id": "O4",
+          "purchase_date": "2026-11-14",
+          "payment_at": "2026-11-14",
+          "arrive_at": "2026-11-29T12:00:00+08:00",
+          "depart_at": "2026-11-29T07:00:00+08:00",
+          "quote": {
+            "valid_from": "2026-09-01",
+            "valid_to": "2026-11-29",
+            "recorded_at": "2026-09-01T08:00:00+08:00",
+            "available_at": "2026-09-01T08:00:00+08:00"
+          },
+          "cancellable": true
+        }
+      ],
+      "offers_used": [],
+      "returns": []
+    }
+  ],
+  "offers": [
+    {
+      "offer_id": "Y1",
+      "type": "INSTANT_OFF",
+      "value": 12000,
+      "scope": [
+        "LODGING"
+      ],
+      "threshold": null,
+      "valid_from": "2026-09-01",
+      "valid_to": "2026-09-20",
+      "applies_at": "ORDER",
+      "max_uses": 1,
+      "stackable_with": [],
+      "rounding": "FLOOR"
+    },
+    {
+      "offer_id": "Y2",
+      "type": "INSTANT_OFF",
+      "value": 5000,
+      "scope": [
+        "TICKET"
+      ],
+      "threshold": null,
+      "valid_from": "2026-09-01",
+      "valid_to": "2026-11-27",
+      "applies_at": "ORDER",
+      "max_uses": 1,
+      "stackable_with": [],
+      "rounding": "FLOOR"
+    },
+    {
+      "offer_id": "Y3",
+      "type": "THRESHOLD_OFF",
+      "value": 6000,
+      "scope": [
+        "TICKET"
+      ],
+      "threshold": 60000,
+      "valid_from": "2026-10-25",
+      "valid_to": "2026-11-27",
+      "applies_at": "ORDER",
+      "max_uses": 1,
+      "stackable_with": [],
+      "rounding": "FLOOR"
+    },
+    {
+      "offer_id": "Y4",
+      "type": "CASHBACK",
+      "value": 5000,
+      "scope": [
+        "LODGING"
+      ],
+      "threshold": null,
+      "valid_from": "2026-09-01",
+      "valid_to": "2026-11-28",
+      "applies_at": "PAYMENT",
+      "max_uses": 1,
+      "stackable_with": [],
+      "rounding": "FLOOR",
+      "expected_at": "2026-12-05",
+      "trigger_condition": "离店后提交入住评价并审核通过"
+    }
+  ],
+  "price_series": [
+    {
+      "series_id": "S-HOTEL-B",
+      "cost_item_id": "LODGING",
+      "channel": "渠道乙",
+      "spec": "酒店B 大床房·到店付",
+      "service_date": "2026-11-28",
+      "observed_on": "2026-09-01",
+      "price": 28000,
+      "currency": "CNY",
+      "recorded_at": "2026-09-01T08:00:00+08:00",
+      "available_at": "2026-09-01T08:00:00+08:00"
+    }
+  ],
+  "consumption_records": [],
+  "planned_allocation": null,
+  "forecast_confirmations": [],
+  "nl_script": {
+    "script_id": "cB_topk-nl-1",
+    "utterances": [
+      "我想11月28日（周六）去上海看一场晚上7点半开场的演唱会，还没买票，也还没付过钱。想买看台票，从武汉出发，这次总共控制在1800元以内。我每个月生活费大概一千，主要花在吃饭和日用上。",
+      "坐高铁去就行，开场前至少一小时到；住一晚，离场馆3公里以内。",
+      "我现在手里有1600元。每月1号家里打1200元生活费，10月20号家教兼职能结1000元。"
+    ]
+  }
+}
