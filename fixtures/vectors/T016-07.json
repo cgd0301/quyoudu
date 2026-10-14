@@ -153,7 +153,7 @@
         "items": [
           {
             "cost_item_id": "TRAIN-OUT",
-            "channel": "渠道丙",
+            "channel": "渠道丁",
             "spec": "二等座",
             "price": 87000,
             "currency": "CNY",

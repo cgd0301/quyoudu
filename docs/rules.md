@@ -502,14 +502,14 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 
 建议：
 
-- 使用as_of之前最近30个完整历日，窗口仍须全部位于原支持日期范围内；
+- 使用as_of之前最近30个完整历日（定义见§12.7），窗口仍须全部位于原支持日期范围内；
 - 各日明确为记录完整或确认无支出；缺少记录的日子不能补0；
 - 对已明确为可重复日常支出的类别，计算该类别30日金额合计除以30得到日均参考；
 - 一次性目标消费、收入、转账、重复事件及已关联退款另行处理，不直接混入日常支出均值；
 - 将日均参考用于构造明确标注的基础支出情景，再按第5小节与已确认安排去重；
 - 整数分分摊后保持情景总额一致，分币余数按日期从早到晚分配；
 - 已知付款日期不被平均分摊替代；对无法明确安排到时间轴的必要支出，不据此给出完整可行结论；
-- 不足30个完整历日时，只展示覆盖情况或描述统计，不按该建议配置自动生成完整近月消费情景；
+- 不足30个完整历日时，只展示覆盖情况或描述统计，不按该建议配置自动生成完整近月消费情景；不可用原因见§12.7；
 - 每日可花参考仍按R019逐节点计算，不能直接使用上述日均值。
 
 这里的30日门槛和日均方法是首轮工程建议，不是统计代表性或预测准确性的证明。用户也可以确认其他明确、可复算的配置。
@@ -1238,7 +1238,7 @@ ResultCore另用的代码（节点触发、方案来源、情景、每日参考�
 | user_confirmations[] | field、value、input_version、status（D60） |
 | states | plan_state、underlying_plan_state（只在已暂停、已取消时给出）、optimization_state、confirmation_state、plan_target（§11、D47） |
 | forecasts?、scenarios? | 预测与情景结果，字段名取§9.5、§9.6的TS列（R018、R020） |
-| labels | 标签代码；文字见result.ts的LABEL_TEXT，与§11.4原文一致。未确认方案同时含 DRAFT_PREVIEW 与 PREVIEW_UNCONFIRMED（D62） |
+| labels | 标签代码；文字见result.ts的LABEL_TEXT，与§11.4原文一致。未确认方案同时含 DRAFT_PREVIEW 与 PREVIEW_UNCONFIRMED（D62）。结果中出现§11.4的“同价”“历史不足”时，顶层 labels 须含对应代码，见§12.7 |
 
 #### 12.6 evaluate
 
@@ -1250,3 +1250,6 @@ evaluate(caseData, ops, config)返回{checkpoints: [{label, result}]}。每个EV
 - 节点的 at：起始节点取 as_of 原文；事件触发的节点取该事件 expected_at 原文（实际发生的取 actual_at 原文）；价格项触发的节点取其 payment_at 原文；不做格式转换。
 - forecasts[]：price_series 按 series_id 成序列；序列中有观测与候选价格项的 cost_item_id、channel、spec 都相同时，按该价格项的 purchase_date 为该序列生成一条 forecasts[] 条目，同一序列、同一购买日只生成一条；序列混有不同规格时为不可比（R020 第1条）。
 - scenarios[]：总列出 CONFIRMED_ONLY 与 RECENT_MONTH 两项，不可用的带原因。
+- 当结果中出现§11.4规定的“同价”“历史不足”文案时，顶层 labels 须包含对应代码（SAME_PRICE、HISTORY_INSUFFICIENT）。（DEMO-CFG-1｜依 A4-0 裁决）
+- 已确认的预测估算在购买前须复核窗口、资格、库存等条件；即使没有优惠，pending_checks 也须同时包含 RECHECK_PRICE 与 RECHECK_OFFER_CONDITIONS。沿用现有代码，不新增枚举。（DEMO-CFG-1｜依 A4-0 裁决）
+- 观察窗口内完整历日（COMPLETE 或 NO_SPEND）不足30个时，近月情景不可用，原因记为 HISTORY_INSUFFICIENT。（DEMO-CFG-1｜依 A4-0 裁决）
