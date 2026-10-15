@@ -314,13 +314,13 @@ describe('相容性 D16、D44 与重复组合 R016', () => {
 })
 
 describe('evaluate 接线', () => {
-  test('报价失效写入待确认原因，evaluable 与净支出仍留空', () => {
+  test('报价失效写入待确认原因，该候选的 evaluable 与净支出留空', () => {
     const result = evaluate(loadCase('T009-01'), [], DEMO_CFG_1).checkpoints.at(-1)?.result
     if (result === undefined) throw new Error('没有检查点')
     const expired = result.candidates.find((item) => item.candidateId === 'C02')
     expect(expired?.pendingReasons).toEqual(expect.arrayContaining([expect.objectContaining({ code: 'QUOTE_EXPIRED' })]))
-    expect(result.candidates.every((item) => item.evaluable === false)).toBe(true)
-    expect(result.candidates.every((item) => item.netSpend === null)).toBe(true)
+    expect(expired?.evaluable).toBe(false)
+    expect(expired?.netSpend).toBeNull()
     expect(result.cost.futurePayable).toBeNull()
   })
 })

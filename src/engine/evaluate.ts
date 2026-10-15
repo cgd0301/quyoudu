@@ -1,3 +1,4 @@
+import { compareCandidates } from './compare/index.ts'
 import type { EngineConfig } from './config.ts'
 import { buildCost } from './cost/index.ts'
 import { inputIssues, type InputIssue } from './issues/index.ts'
@@ -53,7 +54,8 @@ function skeleton(
   config: EngineConfig,
 ): ResultCore {
   const normalized = normalize(data)
-  const priced = new Map(priceCandidates(normalized).map((row) => [row.candidateId, row]))
+  const pricedRows = priceCandidates(normalized)
+  const priced = new Map(pricedRows.map((row) => [row.candidateId, row]))
   const report = inputIssues(data, opIssues)
   // D47：已确认方案，否则当前选中的候选
   const planCandidateId = data.confirmed_plan?.candidate_id ?? selectedCandidateId
@@ -71,6 +73,8 @@ function skeleton(
   const labels = withStateLabels(['SIMULATED_DATA', 'TOP_K_DEMO'], planTarget, confirmations)
   if (report.preRangePaid) labels.push('PRE_RANGE_PAID')
   const snapshot = buildSnapshot(normalized)
+  const comparison = compareCandidates({ raw: data, data: normalized, priced: pricedRows, opIssues, snapshot, topK: config.topK })
+  if (comparison.samePrice) labels.push('SAME_PRICE')
   const costReport = buildCost({
     data: normalized,
     candidateId: planCandidateId,
@@ -79,19 +83,22 @@ function skeleton(
     snapshot,
   })
   const issues = [...report.issues, ...timeline.issues]
-  const states = buildStates({
-    issues,
-    nodes: timeline.nodes,
-    allocationConflicts: timeline.allocationConflicts,
-    lifecycle,
-    confirmed,
-    selected: selectedCandidateId != null,
-    budgetCap: normalized.goal.budgetCap,
-    unresolvedNecessary: costReport.unresolvedNecessary,
-    pendingCount: planPriced?.pendingReasons.length ?? 0,
-    planTarget,
-    overrun: costReport.cost.budgetOverrun,
-  })
+  const states = {
+    ...buildStates({
+      issues,
+      nodes: timeline.nodes,
+      allocationConflicts: timeline.allocationConflicts,
+      lifecycle,
+      confirmed,
+      selected: selectedCandidateId != null,
+      budgetCap: normalized.goal.budgetCap,
+      unresolvedNecessary: costReport.unresolvedNecessary,
+      pendingCount: planPriced?.pendingReasons.length ?? 0,
+      planTarget,
+      overrun: costReport.cost.budgetOverrun,
+    }),
+    optimizationState: comparison.optimizationState,
+  }
   const dependencies = buildDependencies({
     feasible: (states.underlyingPlanState ?? states.planState) === 'FEASIBLE_UNDER_ASSUMPTIONS',
     data: normalized,
@@ -121,25 +128,8 @@ function skeleton(
     constraintIssues: { budgetOverrun: costReport.cost.budgetOverrun, allocationConflicts: timeline.allocationConflicts },
     cost: costReport.cost,
     dependencies,
-    candidates: data.candidates.map((candidate) => ({
-      candidateId: candidate.candidate_id,
-      planVersion: `${candidate.candidate_id}@v1`,
-      evaluable: false,
-      pendingReasons: priced.get(candidate.candidate_id)?.pendingReasons ?? [],
-      excludedReasons: priced.get(candidate.candidate_id)?.excludedReasons ?? [],
-      feasible: null,
-      netSpend: null,
-      netSpendIfReceived: null,
-      tieGroup: null,
-      rank: null,
-    })),
-    optimization: {
-      scope: data.candidates.map((candidate) => candidate.candidate_id),
-      evaluatedCount: 0,
-      pendingCount: 0,
-      excludedCount: 0,
-      topK: config.topK,
-    },
+    candidates: comparison.candidates,
+    optimization: { ...comparison.counts, topK: config.topK },
     confirmation: null,
     actionList: [],
     dailyReference,
