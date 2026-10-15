@@ -1,5 +1,6 @@
 import { compareCandidates } from './compare/index.ts'
 import type { EngineConfig } from './config.ts'
+import { applyConfirm, confirmView, initialSession, syncSession, type ConfirmSession } from './confirm/index.ts'
 import { buildCost } from './cost/index.ts'
 import { inputIssues, type InputIssue } from './issues/index.ts'
 import { normalize } from './normalize/index.ts'
@@ -52,6 +53,7 @@ function skeleton(
   lifecycle: PlanLifecycle,
   opIssues: readonly InputIssue[],
   config: EngineConfig,
+  session: ConfirmSession,
 ): ResultCore {
   const normalized = normalize(data)
   const pricedRows = priceCandidates(normalized)
@@ -99,6 +101,18 @@ function skeleton(
     }),
     optimizationState: comparison.optimizationState,
   }
+  const confirm = confirmView({
+    raw: data,
+    data: normalized,
+    priced: pricedRows,
+    lifecycle,
+    opIssues,
+    selectedCandidateId,
+    version: versionLabel(version),
+    session,
+  })
+  if (confirm.draft) states.confirmationState = 'DRAFT'
+  if (confirm.confirmation?.unallocatedNote != null) labels.push('PAID_BY_UNALLOCATED_LATER')
   const dependencies = buildDependencies({
     feasible: (states.underlyingPlanState ?? states.planState) === 'FEASIBLE_UNDER_ASSUMPTIONS',
     data: normalized,
@@ -130,10 +144,10 @@ function skeleton(
     dependencies,
     candidates: comparison.candidates,
     optimization: { ...comparison.counts, topK: config.topK },
-    confirmation: null,
-    actionList: [],
+    confirmation: confirm.confirmation,
+    actionList: confirm.actionList,
     dailyReference,
-    pendingDifferences: [],
+    pendingDifferences: confirm.pendingDifferences,
     userConfirmations: confirmations,
     states,
     labels,
@@ -142,8 +156,8 @@ function skeleton(
 
 /**
  * 纯函数：每个 EVALUATE 产生一个检查点；ops 中没有 EVALUATE 时在末尾补一个（ensureCheckpoint）。
- * 改变输入的操作使 input_version 加 1（rules.md §12.4）。
- * CONFIRM、CONFIRM_FORECASTS 在本模块先为空操作。
+ * 改变输入的操作使 input_version 加 1（rules.md §12.4），包括写入正式安排的 CONFIRM（R017、D46、D63）。
+ * CONFIRM_FORECASTS 在本模块先为空操作。
  */
 export function evaluate(caseData: CaseFile, ops: readonly Op[], config: EngineConfig): EvaluateOutput {
   let data = structuredClone(caseData)
@@ -152,12 +166,13 @@ export function evaluate(caseData: CaseFile, ops: readonly Op[], config: EngineC
   let version = 1
   let selectedCandidateId: string | null = null
   let lifecycle: PlanLifecycle = 'ACTIVE'
+  let session = initialSession(data)
   const checkpoints: Checkpoint[] = []
   for (const op of ensureCheckpoint(ops)) {
     if (op.type === 'EVALUATE') {
       checkpoints.push({
         label: op.label,
-        result: skeleton(data, version, selectedCandidateId, lifecycle, opIssues, config),
+        result: skeleton(data, version, selectedCandidateId, lifecycle, opIssues, config, session),
       })
       continue
     }
@@ -165,7 +180,18 @@ export function evaluate(caseData: CaseFile, ops: readonly Op[], config: EngineC
       selectedCandidateId = op.candidate_id
       continue
     }
-    if (op.type === 'CONFIRM' || op.type === 'CONFIRM_FORECASTS') continue
+    if (op.type === 'CONFIRM') {
+      const confirmed = applyConfirm({ raw: data, op, opIssues, lifecycle, version: versionLabel(version), session })
+      selectedCandidateId = op.candidate_id
+      session = confirmed.session
+      if (confirmed.issue !== null) opIssues = [...opIssues, confirmed.issue]
+      if (confirmed.written !== null) {
+        data = confirmed.written
+        version += 1
+      }
+      continue
+    }
+    if (op.type === 'CONFIRM_FORECASTS') continue
     if (op.type === 'PAUSE' && lifecycle === 'ACTIVE') lifecycle = 'PAUSED'
     if (op.type === 'CANCEL') lifecycle = 'CANCELLED'
     const next = applyMutation(data, op, createdReserves)
@@ -173,6 +199,7 @@ export function evaluate(caseData: CaseFile, ops: readonly Op[], config: EngineC
     createdReserves = next.createdReserves
     if (next.issue != null) opIssues = [...opIssues, next.issue]
     version += 1
+    session = syncSession(session, data, lifecycle)
   }
   return { checkpoints }
 }
