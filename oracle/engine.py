@@ -13,6 +13,7 @@ from .candidates import (
 from .confirmation import apply_confirmation, suggest_confirmation
 from .costs import CostComputation, compute_cost
 from .daily import compute_daily_reference
+from .dates import parse_time
 from .holt import compute_forecasts
 from .ops import Runtime, apply_direct_operation, schema_safe_case
 from .result import money, result_skeleton
@@ -108,9 +109,46 @@ def _base_pending_ids(case: dict[str, Any]) -> list[str]:
         item["cost_item_id"]
         for item in case["cost_items"]
         if item["necessary"]
-        and item["amount_status"] not in {"NOT_APPLICABLE", "CONFIRMED_FREE"}
+        and item["amount_status"] == "PENDING"
         and item["cost_item_id"] not in paid_or_scheduled
     ]
+
+
+def _base_future_complete(case: dict[str, Any]) -> bool:
+    goal_payments = [
+        event
+        for event in case["events"]
+        if event["event_kind"] == "GOAL_PAYMENT"
+    ]
+    if any(
+        event.get("amount") is None
+        or (
+            event["event_status"] != "ACTUAL"
+            and not event.get("in_snapshot")
+            and event.get("expected_at") is None
+        )
+        for event in goal_payments
+    ):
+        return False
+    paid_or_scheduled = {
+        event["cost_item_id"]
+        for event in goal_payments
+        if event.get("cost_item_id")
+        and event.get("amount") is not None
+        and (
+            event["event_status"] == "ACTUAL"
+            or (
+                not event.get("in_snapshot")
+                and event.get("expected_at") is not None
+            )
+        )
+    }
+    return all(
+        not item["necessary"]
+        or item["amount_status"] in {"CONFIRMED_FREE", "NOT_APPLICABLE"}
+        or item["cost_item_id"] in paid_or_scheduled
+        for item in case["cost_items"]
+    )
 
 
 def _find_evaluation(
@@ -148,6 +186,7 @@ def _relevant_candidate(
                 formal_case,
                 forecast_lookup={},
                 shared_input_incomplete=shared_input_incomplete,
+                allow_frozen_forecasts=True,
             )
             return formal.evaluations[0] if formal.evaluations else None
         return _find_evaluation(optimization, confirmed["candidate_id"])
@@ -160,7 +199,7 @@ def _relevant_timeline_cost(
     runtime: Runtime,
     candidate: CandidateEvaluation | None,
     calculation_case: dict[str, Any],
-) -> tuple[TimelineRun, CostComputation]:
+) -> tuple[TimelineRun, CostComputation, list[dict[str, Any]]]:
     cancelled = runtime.decision == "CANCELLED"
     if candidate is not None:
         if cancelled:
@@ -170,6 +209,7 @@ def _relevant_timeline_cost(
                 candidate.item_amounts,
                 returns_override=candidate.returns,
                 cancelled=True,
+                include_unknown=True,
             )
             timeline = run_timeline(
                 calculation_case,
@@ -182,17 +222,49 @@ def _relevant_timeline_cost(
                 for event in [*_base_future_goal_events(calculation_case), *plan_events]
                 if event.get("cancellable") is not True
             ]
-            cost = compute_cost(calculation_case, surviving, candidate.returns, [])
-            return timeline, cost
+            unresolved_events = [
+                event
+                for event in [
+                    *calculation_case["events"],
+                    *plan_events,
+                ]
+                if event["event_kind"] == "GOAL_PAYMENT"
+                and not event.get("in_snapshot")
+                and event.get("cancellable") is not True
+                and (
+                    event.get("amount") is None
+                    or event.get("expected_at") is None
+                )
+            ]
+            unresolved = [
+                event["cost_item_id"]
+                for event in unresolved_events
+                if event.get("cost_item_id")
+            ]
+            cost = compute_cost(
+                calculation_case,
+                surviving,
+                candidate.returns,
+                unresolved,
+                future_complete=not unresolved_events,
+            )
+            return timeline, cost, plan_events
         timeline = candidate.timeline
         if timeline is None:
+            timeline_events = candidate_timeline_events(
+                calculation_case,
+                candidate.candidate,
+                candidate.item_amounts,
+                returns_override=candidate.returns,
+                include_unknown=True,
+            )
             timeline = run_timeline(
                 calculation_case,
-                candidate.plan_events,
+                timeline_events,
                 candidate=candidate.candidate,
                 cancelled=cancelled,
             )
-        return timeline, candidate.cost
+        return timeline, candidate.cost, candidate.plan_events
     base_events = _base_future_goal_events(calculation_case)
     timeline = run_timeline(calculation_case, [], cancelled=cancelled)
     cost = compute_cost(
@@ -200,15 +272,23 @@ def _relevant_timeline_cost(
         base_events,
         [],
         _base_pending_ids(calculation_case),
+        future_complete=_base_future_complete(calculation_case),
     )
-    return timeline, cost
+    return timeline, cost, []
 
 
 def _dependencies(
-    case: dict[str, Any], candidate: CandidateEvaluation | None
+    case: dict[str, Any],
+    candidate: CandidateEvaluation | None,
+    underlying: str,
 ) -> list[dict[str, Any]]:
+    if underlying != "FEASIBLE_UNDER_ASSUMPTIONS":
+        return []
     result: list[dict[str, Any]] = []
-    for event in case["events"]:
+    cost_by_id = {
+        item["cost_item_id"]: item for item in case["cost_items"]
+    }
+    for event_index, event in enumerate(case["events"]):
         if (
             event["event_kind"] == "INCOME"
             and event["event_status"] == "EXPECTED"
@@ -226,12 +306,65 @@ def _dependencies(
                         rules=["R005", "D41"],
                     ),
                     "at": event["expected_at"],
+                    "_source_group": 0,
+                    "_source_index": event_index,
+                }
+            )
+        elif (
+            event["event_kind"] == "GOAL_PAYMENT"
+            and event["event_status"] == "EXPECTED"
+            and event.get("amount") is not None
+            and event.get("expected_at") is not None
+            and cost_by_id.get(event.get("cost_item_id"), {}).get("amount_status")
+            == "ESTIMATE"
+        ):
+            result.append(
+                {
+                    "kind": "ESTIMATE",
+                    "refs": [event["event_id"]],
+                    "amount": money(
+                        event["amount"],
+                        event_ids=[event["event_id"]],
+                        rules=["R010", "§11.1", "§12.7(24)"],
+                    ),
+                    "at": event["expected_at"],
+                    "_source_group": 0,
+                    "_source_index": event_index,
+                }
+            )
+        elif (
+            event["event_kind"] == "RETURN"
+            and event["event_status"] == "EXPECTED"
+            and event.get("amount") is not None
+            and event.get("expected_at") is not None
+            and not event.get("trigger_condition")
+        ):
+            result.append(
+                {
+                    "kind": "EXPECTED_RETURN",
+                    "refs": [event["event_id"]],
+                    "amount": money(
+                        event["amount"],
+                        event_ids=[event["event_id"]],
+                        rules=["R005", "D12"],
+                    ),
+                    "at": event["expected_at"],
+                    "_source_group": 0,
+                    "_source_index": event_index,
                 }
             )
     if candidate is not None:
-        result.extend(deepcopy(candidate.dependencies))
-        for returned in candidate.returns:
-            if returned.get("trigger_condition") and returned.get("amount") is not None:
+        for dependency_index, dependency in enumerate(candidate.dependencies):
+            item = deepcopy(dependency)
+            item["_source_group"] = 1
+            item["_source_index"] = dependency_index
+            result.append(item)
+        for return_index, returned in enumerate(candidate.returns):
+            if (
+                not returned.get("trigger_condition")
+                and returned.get("amount") is not None
+                and returned.get("expected_at") is not None
+            ):
                 result.append(
                     {
                         "kind": "EXPECTED_RETURN",
@@ -242,6 +375,8 @@ def _dependencies(
                             rules=["R005", "D12"],
                         ),
                         "at": returned.get("expected_at"),
+                        "_source_group": 2,
+                        "_source_index": return_index,
                     }
                 )
     unique: dict[tuple[Any, ...], dict[str, Any]] = {}
@@ -252,8 +387,26 @@ def _dependencies(
             None if item["amount"] is None else item["amount"]["value"],
             item["at"],
         )
-        unique[key] = item
-    return list(unique.values())
+        unique.setdefault(key, item)
+    kind_order = {
+        "EXPECTED_INCOME": 0,
+        "EXPECTED_RETURN": 1,
+        "CONFIRMED_FORECAST": 2,
+        "ESTIMATE": 3,
+    }
+    ordered = sorted(
+        unique.values(),
+        key=lambda item: (
+            kind_order[item["kind"]],
+            parse_time(item["at"]),
+            item["_source_group"],
+            item["_source_index"],
+        ),
+    )
+    for item in ordered:
+        item.pop("_source_group")
+        item.pop("_source_index")
+    return ordered
 
 
 def _user_confirmations(case: dict[str, Any], version: str) -> list[dict[str, Any]]:
@@ -349,14 +502,14 @@ def _labels(
         for item in scenarios
     ):
         labels.append("HISTORY_INSUFFICIENT")
-    if forecasts:
+    if any(item.get("amount") is not None for item in forecasts):
         labels.append("FORECAST_DISCLAIMER")
-    if candidate is not None and any(
-        kind in {"REFERENCE", "UNDATED_QUOTE"} for kind in candidate.price_kinds
+    if any(
+        item["status"]
+        in {"BACKTEST_INSUFFICIENT", "NOT_COMPARABLE", "INVALID_RESULT"}
+        for item in forecasts
     ):
         labels.append("FORECAST_UNAVAILABLE")
-    if candidate is not None and candidate.cost.net_spend_if_received != candidate.cost.net_spend:
-        labels.append("IF_RECEIVED")
     tie_groups = [
         item.tie_group
         for item in optimization.evaluations
@@ -372,30 +525,34 @@ def _labels(
         for event in runtime.case["events"]
     ):
         labels.append("PRE_RANGE_PAID")
-    if any(node["node_verdict"] == "PROTECTED_SHORTFALL" for node in nodes):
+    if any(
+        node["node_verdict"] == "PROTECTED_SHORTFALL"
+        and node["trigger"]["kind"] in {"OUTFLOW", "OUTFLOW_GROUP"}
+        for node in nodes
+    ):
         labels.append("PROTECTED_SQUEEZE")
-    if any(item["status"] == "NEEDS_RECONFIRM" for item in _user_confirmations(runtime.case, runtime.input_version)):
-        labels.append("NEED_RECONFIRM")
-    if (
-        runtime.case.get("confirmed_plan") is not None
-        and runtime.formalized_version_number is not None
-        and runtime.input_version_number > runtime.formalized_version_number
+    if any(
+        item["status"] == "NEEDS_RECONFIRM"
+        for item in _user_confirmations(runtime.case, runtime.input_version)
     ):
         labels.append("NEED_RECONFIRM")
-    if "label" in daily:
-        labels.append(daily["label"])
+    if daily.get("display") == "AMOUNT":
+        labels.append("DAILY_DISCLAIMER")
+    if "LIVING_ARRANGEMENT_MISSING" in daily.get("missing_reasons", []):
+        labels.append("LIVING_ARRANGEMENT_MISSING")
     return list(dict.fromkeys(labels))
 
 
-def _initial_no_plan_issue(case: dict[str, Any]) -> dict[str, Any] | None:
+def _initial_no_plan_issue(
+    runtime: Runtime, candidate: CandidateEvaluation | None
+) -> dict[str, Any] | None:
     if (
-        not case["candidates"]
-        and not case["cost_items"]
-        and not any(
-            event["event_kind"] == "GOAL_PAYMENT" for event in case["events"]
-        )
+        runtime.case.get("confirmed_plan") is None
+        and runtime.selected_candidate_id is None
+        and runtime.draft_candidate_id is None
+        and candidate is None
     ):
-        return issue("NO_PLAN", "D47", [case["goal"]["goal_id"]])
+        return issue("NO_PLAN", "§12.7(12)/D47", [runtime.case["goal"]["goal_id"]])
     return None
 
 
@@ -433,12 +590,14 @@ def build_result(runtime: Runtime) -> dict[str, Any]:
         forecast_lookup,
         shared_input_incomplete=shared_incomplete,
     )
-    timeline, cost = _relevant_timeline_cost(runtime, candidate, case)
+    timeline, cost, effective_plan_events = _relevant_timeline_cost(
+        runtime, candidate, case
+    )
 
     for timeline_issue in timeline.issues:
         if timeline_issue not in input_issues:
             input_issues.append(timeline_issue)
-    no_plan = _initial_no_plan_issue(case)
+    no_plan = _initial_no_plan_issue(runtime, candidate)
     if no_plan is not None and no_plan not in input_issues:
         input_issues.append(no_plan)
     if timeline.period.out_of_range and not any(
@@ -449,9 +608,10 @@ def build_result(runtime: Runtime) -> dict[str, Any]:
     relevant_issues = _relevant_input_issues(case, input_issues, candidate)
     underlying = underlying_plan_state(
         input_issues=relevant_issues,
-        candidate=None if runtime.decision == "CANCELLED" else candidate,
+        candidate=candidate,
         timeline=timeline,
         cost=cost,
+        cancelled=runtime.decision == "CANCELLED",
     )
     states = state_wire(runtime, optimization, candidate, underlying)
     result = result_skeleton(raw_case["snapshot"]["as_of"], runtime.input_version)
@@ -462,6 +622,8 @@ def build_result(runtime: Runtime) -> dict[str, Any]:
         initial_state(case, release_allocation=runtime.decision == "CANCELLED")
     )
     result["nodes"] = timeline.nodes
+    if result["nodes"]:
+        result["nodes"][0]["at"] = raw_case["snapshot"]["as_of"]
     result["earliest_gap"] = timeline.earliest_gap
     result["gap_list"] = timeline.gap_list
     result["constraint_issues"] = {
@@ -469,7 +631,7 @@ def build_result(runtime: Runtime) -> dict[str, Any]:
         "allocation_conflicts": timeline.allocation_conflicts,
     }
     result["cost"] = cost.wire
-    result["dependencies"] = _dependencies(case, candidate)
+    result["dependencies"] = _dependencies(case, candidate, underlying)
     result["candidates"] = [item.wire() for item in optimization.evaluations]
     result["optimization"] = optimization.wire()
     result["states"] = states
@@ -477,8 +639,11 @@ def build_result(runtime: Runtime) -> dict[str, Any]:
 
     if runtime.last_confirmation is not None:
         result["confirmation"] = deepcopy(runtime.last_confirmation)
-    elif candidate is not None and (
-        runtime.selected_candidate_id is not None or case.get("confirmed_plan") is not None
+    elif (
+        runtime.case.get("confirmed_plan") is None
+        and candidate is not None
+        and runtime.selected_candidate_id is not None
+        and underlying == "FEASIBLE_UNDER_ASSUMPTIONS"
     ):
         try:
             result["confirmation"] = suggest_confirmation(
@@ -491,7 +656,15 @@ def build_result(runtime: Runtime) -> dict[str, Any]:
     scenarios = build_scenarios(case, timeline.period)
     confirmed_candidate = candidate if case.get("confirmed_plan") is not None else None
     daily = compute_daily_reference(
-        case, confirmed_candidate, scenarios, input_issues=relevant_issues
+        case,
+        confirmed_candidate,
+        scenarios,
+        input_issues=relevant_issues,
+        cancelled=runtime.decision == "CANCELLED",
+        output_nodes=timeline.nodes,
+        effective_timeline=timeline,
+        effective_cost=cost,
+        effective_plan_events=effective_plan_events,
     )
     result["daily_reference"] = daily
     result["forecasts"] = forecasts

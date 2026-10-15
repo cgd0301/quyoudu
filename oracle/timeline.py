@@ -59,6 +59,10 @@ def _event_at(event: dict[str, Any]) -> str | None:
     return event.get("expected_at") or event.get("at")
 
 
+def _execution_at(event: dict[str, Any]) -> str | None:
+    return event.get("_execution_at") or _event_at(event)
+
+
 def _confirmed_income(event: dict[str, Any]) -> bool:
     # D64: a complete, unconditional EXPECTED INCOME is already user-confirmed.
     return (
@@ -133,6 +137,7 @@ def candidate_timeline_events(
     returns_override: list[dict[str, Any]] | None = None,
     *,
     cancelled: bool = False,
+    include_unknown: bool = False,
 ) -> list[dict[str, Any]]:
     if candidate is None:
         return []
@@ -141,7 +146,7 @@ def candidate_timeline_events(
     result: list[dict[str, Any]] = []
     for index, item in enumerate(candidate["items"]):
         amount = item["price"] if item_amounts is None else item_amounts[index]
-        if amount is None or index in alternate:
+        if index in alternate or (amount is None and not include_unknown):
             continue
         result.append(
             {
@@ -187,7 +192,7 @@ def candidate_timeline_events(
 def _activity_release_event(
     case: dict[str, Any], candidate: dict[str, Any] | None
 ) -> dict[str, Any] | None:
-    if not any(
+    if candidate is None or not any(
         reserve["reserve_kind"] == "CONTINGENCY" for reserve in case["reserves"]
     ):
         return None
@@ -242,11 +247,34 @@ def collect_timeline_events(
             continue
         event = deepcopy(original)
         at = _event_at(event)
-        if at is None or event.get("amount") is None:
+        kind = event["event_kind"]
+        if at is None:
+            if kind in OUTFLOWS:
+                issues.append(
+                    issue("MISSING_KEY_INFO", "R010", [event["event_id"]])
+                )
+                return [], issues
             continue
-        if event["event_kind"] != "CONTINGENCY_RELEASE" and event["amount"] <= 0:
+        try:
+            event_day = as_date(at)
+        except (ValueError, TypeError):
+            if kind in OUTFLOWS:
+                issues.append(
+                    issue("MISSING_KEY_INFO", "R010", [event["event_id"]])
+                )
+                return [], issues
             continue
-        event_day = as_date(at)
+        amount = event.get("amount")
+        if amount is None or (kind in OUTFLOWS and amount < 0):
+            if kind in OUTFLOWS:
+                if event_day < as_of_date:
+                    event["_execution_at"] = case["snapshot"]["as_of"]
+                if event_day <= period.end:
+                    event["_invalid_outflow"] = True
+                    events.append(event)
+            continue
+        if kind != "CONTINGENCY_RELEASE" and amount <= 0:
+            continue
         overdue = False
         if event.get("event_status") == "EXPECTED":
             if event_day < as_of_date:
@@ -258,8 +286,8 @@ def collect_timeline_events(
                     overdue = False
         if overdue:
             issues.append(issue("OVERDUE_EVENT", "D54", [event["event_id"]]))
-            if event["event_kind"] in OUTFLOWS:
-                event["expected_at"] = case["snapshot"]["as_of"]
+            if kind in OUTFLOWS:
+                event["_execution_at"] = case["snapshot"]["as_of"]
                 event["overdue"] = True
                 events.append(event)
             continue
@@ -293,7 +321,7 @@ def collect_timeline_events(
 def _same_day_steps(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
     by_day: dict[date, list[dict[str, Any]]] = {}
     for event in events:
-        by_day.setdefault(as_date(_event_at(event) or ""), []).append(event)
+        by_day.setdefault(as_date(_execution_at(event) or ""), []).append(event)
 
     steps: list[dict[str, Any]] = []
     for day in sorted(by_day):
@@ -362,7 +390,7 @@ def _write_off(
 ) -> int:
     total = 0
     amount = event["amount"]
-    event_day = as_date(_event_at(event) or "")
+    event_day = as_date(_execution_at(event) or "")
     if sum(item["covered_amount"] for item in event.get("coverage", [])) > amount:
         return 0
     for coverage in event.get("coverage", []):
@@ -580,6 +608,18 @@ def run_timeline(
         if event.get("in_snapshot")
     ]
     for step in _same_day_steps(events):
+        invalid_outflows = [
+            event for event in step["events"] if event.get("_invalid_outflow")
+        ]
+        if invalid_outflows:
+            missing = issue(
+                "MISSING_KEY_INFO",
+                "R010",
+                [event["event_id"] for event in invalid_outflows],
+            )
+            if missing not in issues:
+                issues.append(missing)
+            break
         previous = nodes[-1]
         trigger_kind, event_ids = _trigger(step)
         if step["kind"] == "OUTFLOW_GROUP" and _coverage_oversubscribed(

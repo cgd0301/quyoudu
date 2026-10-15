@@ -59,6 +59,8 @@ def compute_cost(
     future_events: list[dict[str, Any]],
     candidate_returns: list[dict[str, Any]],
     pending_cost_item_ids: list[str],
+    *,
+    future_complete: bool = True,
 ) -> CostComputation:
     paid = _historical_paid(case)
     historical_returns = _historical_returns(case)
@@ -69,7 +71,9 @@ def compute_cost(
         if event["event_kind"] == "GOAL_PAYMENT" and event.get("amount") is not None
     ]
     future_total = (
-        None if pending_cost_item_ids else sum(event["amount"] for event in future_goal)
+        None
+        if pending_cost_item_ids or not future_complete
+        else sum(event["amount"] for event in future_goal)
     )
 
     goal_id = case["goal"]["goal_id"]
@@ -123,6 +127,8 @@ def compute_cost(
             + future_total
             - sum(event["amount"] for event in historical_returns)
             - sum(item["amount"] for item in all_known_future_returns)
+            if conditional_future_returns
+            else None
         )
     budget = case["goal"]["budget_cap"]
     budget_overrun = (

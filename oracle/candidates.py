@@ -52,7 +52,7 @@ class CandidateEvaluation:
             "feasible": self.feasible,
             "net_spend": (
                 None
-                if self.cost.net_spend is None
+                if not self.evaluable or self.cost.net_spend is None
                 else money(
                     self.cost.net_spend,
                     event_ids=[event["event_id"] for event in self.plan_events],
@@ -61,7 +61,7 @@ class CandidateEvaluation:
             ),
             "net_spend_if_received": (
                 None
-                if self.cost.net_spend_if_received is None
+                if not self.evaluable or self.cost.net_spend_if_received is None
                 else money(
                     self.cost.net_spend_if_received,
                     event_ids=[
@@ -155,10 +155,17 @@ def _resolve_item_price(
     case: dict[str, Any],
     item: dict[str, Any],
     forecast_lookup: dict[tuple[str, str, str, str], dict[str, Any]],
+    *,
+    allow_frozen_forecast: bool = False,
 ) -> tuple[int | None, str, list[dict[str, Any]], list[dict[str, Any]]]:
     pending: list[dict[str, Any]] = []
     dependencies: list[dict[str, Any]] = []
-    refs = [item["cost_item_id"], item["channel"], item["purchase_date"]]
+    refs = [item["cost_item_id"]]
+    dependency_refs = [
+        item["cost_item_id"],
+        item["channel"],
+        item["purchase_date"],
+    ]
     if item["currency"] != "CNY":
         pending.append(reason("NON_CNY", "R008", refs))
         return None, item["price_basis"], pending, dependencies
@@ -208,7 +215,7 @@ def _resolve_item_price(
                 "kind": "CONFIRMED_FORECAST",
                 "refs": [forecast["series_id"], item["purchase_date"]],
                 "amount": money(amount, rules=["R020", "D13", "D14"]),
-                "at": item["purchase_date"],
+                "at": item["payment_at"],
             }
         )
         return amount, basis, pending, dependencies
@@ -242,13 +249,13 @@ def _resolve_item_price(
             ),
             None,
         )
-        if stored is not None and amount is not None:
+        if allow_frozen_forecast and stored is not None and amount is not None:
             dependencies.append(
                 {
                     "kind": "CONFIRMED_FORECAST",
                     "refs": [stored["series_id"], item["purchase_date"]],
                     "amount": money(amount, rules=["R020", "D13", "D14"]),
-                    "at": item["purchase_date"],
+                    "at": item["payment_at"],
                 }
             )
             return amount, basis, pending, dependencies
@@ -258,9 +265,9 @@ def _resolve_item_price(
         dependencies.append(
             {
                 "kind": "ESTIMATE",
-                "refs": refs,
+                "refs": dependency_refs,
                 "amount": money(amount, rules=["R009", "D13"]),
-                "at": item["purchase_date"],
+                "at": item["payment_at"],
             }
         )
         return amount, basis, pending, dependencies
@@ -268,9 +275,9 @@ def _resolve_item_price(
         dependencies.append(
             {
                 "kind": "ESTIMATE",
-                "refs": refs,
+                "refs": dependency_refs,
                 "amount": money(amount, rules=["R009", "D43"]),
-                "at": item["purchase_date"],
+                "at": item["payment_at"],
             }
         )
         return amount, basis, pending, dependencies
@@ -329,6 +336,7 @@ def _offers(
     uses = candidate["offers_used"]
     counts: dict[str, int] = {}
     by_order: dict[str, list[dict[str, Any]]] = {}
+    invalid_offer_ids: set[str] = set()
     for use in uses:
         counts[use["offer_id"]] = counts.get(use["offer_id"], 0) + 1
         by_order.setdefault(use["order_id"], []).append(use)
@@ -338,6 +346,7 @@ def _offers(
         if offer is None:
             pending.append(reason("OFFER_CONDITION_UNKNOWN", "R009", [offer_id]))
         elif count > offer["max_uses"]:
+            invalid_offer_ids.add(offer_id)
             excluded.append(
                 reason("OFFER_MAX_USES_EXCEEDED", "D17", [offer_id])
             )
@@ -366,7 +375,7 @@ def _offers(
         ordered_uses = sorted(order_uses, key=lambda use: use.get("sequence", 0))
         for use in ordered_uses:
             offer = offer_by_id.get(use["offer_id"])
-            if offer is None:
+            if offer is None or use["offer_id"] in invalid_offer_ids:
                 continue
             refs = [candidate["candidate_id"], offer["offer_id"], order_id]
             # AMBIGUOUS: D75/D45/D65 另一报价与订单优惠｜读法A：另一报价仍计入订单优惠前小计并承接冲减｜读法B：另一报价不计入小计、不承接冲减，优惠时点取订单中需付款的价格项｜采用B：D65 只冲减价格项的付款，另一报价没有付款，也不能帮助达到门槛或放大折扣基数；取消后改为正常计入的价格项不重算优惠，金额只高不低。
@@ -654,11 +663,57 @@ def _signature(
     )
 
 
+def _overdue_item_ids(
+    case: dict[str, Any],
+    candidate: dict[str, Any],
+    amounts: list[int | None],
+    alternate: set[int],
+) -> list[str]:
+    as_of = parse_time(case["snapshot"]["as_of"])
+    cash_as_of = parse_time(case["snapshot"]["cash_as_of"])
+    result: list[str] = []
+    for index, item in enumerate(candidate["items"]):
+        if index in alternate or amounts[index] is None:
+            continue
+        payment_at = item["payment_at"]
+        payment_day = as_date(payment_at)
+        overdue = payment_day < as_of.date()
+        if payment_day == as_of.date() and "T" in payment_at:
+            overdue = parse_time(payment_at) < cash_as_of
+        if overdue:
+            result.append(item["cost_item_id"])
+    return list(dict.fromkeys(result))
+
+
+def _pending_sort_key(item: dict[str, Any]) -> tuple[Any, ...]:
+    return (
+        1 if item["code"] == "SHARED_INPUT_INCOMPLETE" else 0,
+        tuple(item["refs"]),
+        item["code"],
+    )
+
+
+def _excluded_sort_key(item: dict[str, Any]) -> tuple[Any, ...]:
+    code = item["code"]
+    if code.startswith("OFFER_"):
+        group = 1
+    elif code == "BUDGET_EXCEEDED":
+        group = 2
+    elif code in {"PAYMENT_GAP", "ALLOCATION_CONFLICT"}:
+        group = 3
+    elif code == "DUPLICATE_CANDIDATE":
+        group = 4
+    else:
+        group = 0
+    return (group, tuple(item["refs"]), code)
+
+
 def evaluate_candidates(
     case: dict[str, Any],
     *,
     forecast_lookup: dict[tuple[str, str, str, str], dict[str, Any]] | None = None,
     shared_input_incomplete: bool = False,
+    allow_frozen_forecasts: bool = False,
 ) -> OptimizationResult:
     forecast_lookup = forecast_lookup or {}
     evaluations: list[CandidateEvaluation] = []
@@ -675,7 +730,10 @@ def evaluate_candidates(
         # AMBIGUOUS: D75/R009/D13 另一报价的报价检查｜读法A：另一报价仍按 R009、D13 解析，报价无效、待填或非人民币时候选计入待确认数，依赖条件与价格依据标签照常｜读法B：不计入 F 就不解析｜采用A：D75 只写明不计入 F、不付款，不放宽对候选所列报价的检查，只会多出待确认，不会多出完整结论。
         for item in candidate["items"]:
             amount, kind, item_pending, item_dependencies = _resolve_item_price(
-                case, item, forecast_lookup
+                case,
+                item,
+                forecast_lookup,
+                allow_frozen_forecast=allow_frozen_forecasts,
             )
             raw_amounts.append(amount)
             kinds.append(kind)
@@ -690,9 +748,22 @@ def evaluate_candidates(
         pending.extend(compatible_pending)
         excluded.extend(compatible_excluded)
         pending_ids = _pending_cost_ids(case, candidate, amounts, alternate)
+        item_reason_ids = {
+            item["refs"][0]
+            for item in pending
+            if item["code"] in {"NON_CNY", "QUOTE_EXPIRED", "PRICE_PENDING"}
+            and item["refs"]
+        }
         pending.extend(
             reason("PRICE_PENDING", "R010/R016", [candidate["candidate_id"], item_id])
             for item_id in pending_ids
+            if item_id not in item_reason_ids
+        )
+        pending.extend(
+            reason("PAYMENT_TIME_MISSING", "R010/R017", [item_id])
+            for item_id in _overdue_item_ids(
+                case, candidate, amounts, alternate
+            )
         )
 
         signature = _signature(candidate, amounts)
@@ -715,8 +786,13 @@ def evaluate_candidates(
         timeline: TimelineRun | None = None
         if excluded and pending:
             # A violation that is independent of the missing value is already
-            # a deterministic exclusion; it must not inflate pending_count.
-            pending = []
+            # a deterministic exclusion.  The H3 overdue rule is explicit:
+            # an overdue candidate item still counts as pending confirmation.
+            pending = [
+                item
+                for item in pending
+                if item["code"] == "PAYMENT_TIME_MISSING"
+            ]
         if shared_input_incomplete and not excluded:
             pending.append(
                 reason(
@@ -773,16 +849,16 @@ def evaluate_candidates(
             candidate=candidate,
             evaluable=evaluable,
             pending_reasons=list(
-                {
+                sorted({
                     (item["code"], item["rule"], tuple(item["refs"])): item
                     for item in pending
-                }.values()
+                }.values(), key=_pending_sort_key)
             ),
             excluded_reasons=list(
-                {
+                sorted({
                     (item["code"], item["rule"], tuple(item["refs"])): item
                     for item in excluded
-                }.values()
+                }.values(), key=_excluded_sort_key)
             ),
             feasible=feasible,
             item_amounts=amounts,

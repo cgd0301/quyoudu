@@ -300,10 +300,10 @@ def compute_forecasts(
                     series_id,
                     metadata["cost_item_id"],
                     purchase_date,
-                    horizon,
+                    0,
                     "NOT_COMPARABLE",
-                    len(rows),
-                    history_end,
+                    0,
+                    None,
                 )
             elif any(row["price"] <= 0 for row in rows):
                 result = _empty_forecast(

@@ -16,10 +16,13 @@ def underlying_plan_state(
     candidate: CandidateEvaluation | None,
     timeline: TimelineRun | None,
     cost: CostComputation,
+    cancelled: bool = False,
 ) -> str:
     if input_issues:
         return "INCOMPLETE"
-    if candidate is not None and not candidate.evaluable:
+    if candidate is None and not cancelled:
+        return "INCOMPLETE"
+    if candidate is not None and not candidate.evaluable and not cancelled:
         return "INCOMPLETE"
     if cost.pending_cost_item_ids or cost.future_payable is None or cost.net_spend is None:
         return "INCOMPLETE"
@@ -30,7 +33,11 @@ def underlying_plan_state(
     if (
         timeline.allocation_conflicts
         or cost.budget_overrun is not None
-        or (candidate is not None and candidate.excluded_reasons)
+        or (
+            not cancelled
+            and candidate is not None
+            and candidate.excluded_reasons
+        )
     ):
         return "CONSTRAINT_ISSUE"
     return "FEASIBLE_UNDER_ASSUMPTIONS"
@@ -61,9 +68,6 @@ def state_wire(
     elif runtime.selected_candidate_id is not None:
         confirmation_state = "PENDING_CONFIRMATION"
         plan_target = "SELECTED_CANDIDATE"
-    elif runtime.case["candidates"] or runtime.case["events"] or runtime.case["cost_items"]:
-        confirmation_state = "NOT_SELECTED"
-        plan_target = "INITIAL_DRAFT"
     else:
         confirmation_state = "NOT_SELECTED"
         plan_target = "NONE"

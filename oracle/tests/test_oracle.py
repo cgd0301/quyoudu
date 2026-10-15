@@ -313,7 +313,7 @@ def test_confirmed_plan_is_frozen_when_current_candidate_price_changes():
     assert result["action_list"][0]["amount"]["value"] == 60000
     assert result["daily_reference"]["amount"]["value"] == 10000
     assert result["candidates"][0]["net_spend"]["value"] == 90000
-    assert "NEED_RECONFIRM" in result["labels"]
+    assert "NEED_RECONFIRM" not in result["labels"]
 
 
 def test_shared_cash_missing_prevents_candidate_ranking():
@@ -353,9 +353,19 @@ def test_precheck_o_group_rulings():
     assert cancelled["cost"]["possible_refund"]["amount"]["value"] == 15000
     assert cancelled["cost"]["possible_refund"]["condition"] == "平台审核通过"
 
-    bounded = result_for(VECTORS / "T008-05.json")["forecasts"][0]
+    bounded_result = result_for(VECTORS / "T008-05.json")
+    assert bounded_result["input_issues"] == [
+        {
+            "code": "NO_PLAN",
+            "refs": ["G1"],
+            "rule": "§12.7(12)/D47",
+        }
+    ]
+    assert bounded_result["candidates"][0]["evaluable"] is True
+    bounded = bounded_result["forecasts"][0]
     assert bounded["sample_count"] == 0
     assert bounded["history_end"] is None
+    assert bounded["status"] == "HISTORY_INSUFFICIENT"
 
     conflict = result_for(VECTORS / "T004-07.json")
     assert conflict["constraint_issues"]["allocation_conflicts"][0]["related"] == [
@@ -615,4 +625,309 @@ def test_d75_inputs_without_purchased_items_keep_every_priced_item_as_payment():
             assert planned == expected, path
             checked += 1
     assert checked > 0
+
+
+def test_h3_no_plan_semantics_and_no_automatic_release():
+    result = result_for(CASES / "cA_gap.json")
+    assert result["states"]["plan_target"] == "NONE"
+    assert result["states"]["plan_state"] == "INCOMPLETE"
+    assert any(item["code"] == "NO_PLAN" for item in result["input_issues"])
+    assert result["cost"]["pending_cost_item_ids"] == []
+    assert result["cost"]["future_payable"] is None
+    assert result["cost"]["net_spend"] is None
+    assert result["dependencies"] == []
+    assert never_triggered(result, "AUTO:CONTINGENCY_RELEASE")
+
+
+@pytest.mark.parametrize(
+    ("folder", "name"),
+    [
+        (CASES, "cB_topk.json"),
+        (CASES, "cB_v1_two_feasible.json"),
+        (CASES, "cB_v2_zero_feasible.json"),
+        (CASES, "cB_v4_lodging_free.json"),
+        (VECTORS, "T016-03.json"),
+        (VECTORS, "T001-04.json"),
+    ],
+)
+def test_h3_no_plan_cost_never_uses_a_partial_or_zero_total(folder, name):
+    cost = result_for(folder / name)["cost"]
+    assert cost["future_payable"] is None
+    assert cost["net_spend"] is None
+
+
+@pytest.mark.parametrize(
+    "name",
+    [
+        "T001-01.json",
+        "T001-03.json",
+        "T001-05#1.json",
+        "T001-05#2.json",
+        "T003-01.json",
+        "T003-02.json",
+        "T004-03.json",
+        "T004-05.json",
+        "T005-05.json",
+        "T006-02.json",
+        "T008-01.json",
+        "T013-01.json",
+        "T013-02.json",
+        "T013-08.json",
+        "T015-07.json",
+    ],
+)
+def test_h3_no_plan_known_common_payments_keep_cost_complete(name):
+    for checkpoint in evaluate_payload(load(VECTORS / name))["checkpoints"]:
+        cost = checkpoint["result"]["cost"]
+        assert cost["future_payable"] is not None
+        assert cost["net_spend"] is not None
+        assert cost["net_spend"]["value"] == (
+            cost["paid_total"]["value"]
+            + cost["future_payable"]["value"]
+            - cost["eligible_return"]["value"]
+        )
+
+
+def test_h3_no_plan_empty_and_confirmed_common_payment_costs():
+    empty = result_for(CASES / "c01_base.json")["cost"]
+    assert empty["future_payable"]["value"] == 0
+    assert empty["net_spend"]["value"] == 0
+
+    confirmed = result_for(VECTORS / "T003-06.json")["cost"]
+    assert confirmed["pending_cost_item_ids"] == []
+    assert confirmed["future_payable"]["value"] == 30000
+    assert confirmed["net_spend"]["value"] == 30000
+    assert [item["event_id"] for item in confirmed["future_payments"]] == ["E1"]
+
+
+def test_h3_d74_truncation_raw_times_and_unknown_inflow():
+    pending = result_for(VECTORS / "T010-01.json")
+    assert any(
+        item["code"] == "MISSING_KEY_INFO" and item["rule"] == "R010"
+        for item in pending["input_issues"]
+    )
+    assert [ids for _, ids in triggers(pending)] == [
+        [],
+        ["PLAN:C01:0:TICKET"],
+    ]
+
+    malformed_time = result_for(VECTORS / "T001-06.json")
+    assert malformed_time["nodes"][0]["at"] == "2026-09-01 09:00"
+    overdue = result_for(VECTORS / "T017-06.json")
+    assert overdue["nodes"][1]["at"] == "2026-09-10"
+
+    unknown_return = result_for(VECTORS / "T005-03.json")
+    assert not [
+        item for item in unknown_return["input_issues"] if "E-DEP" in item["refs"]
+    ]
+
+
+def test_h3_forecast_eligibility_nets_offers_and_pending_reasons():
+    forecast = result_for(VECTORS / "T005-06.json")
+    by_id = {item["candidate_id"]: item for item in forecast["candidates"]}
+    assert forecast["states"]["plan_state"] == "INCOMPLETE"
+    assert forecast["states"]["optimization_state"] == "PARTIALLY_EVALUABLE"
+    assert by_id["C02"]["evaluable"] is False
+    assert by_id["C02"]["net_spend"] is None
+    assert by_id["C02"]["pending_reasons"][0]["code"] == "PRICE_PENDING"
+
+    offer = result_for(VECTORS / "T009-03#3.json")
+    c03 = next(item for item in offer["candidates"] if item["candidate_id"] == "C03")
+    assert [item["code"] for item in c03["excluded_reasons"]] == [
+        "OFFER_MAX_USES_EXCEEDED",
+        "PAYMENT_GAP",
+    ]
+    assert c03["net_spend"]["value"] == 60000
+
+    pending = result_for(VECTORS / "T008-02.json")
+    c02 = next(item for item in pending["candidates"] if item["candidate_id"] == "C02")
+    assert c02["pending_reasons"] == [
+        {"code": "NON_CNY", "rule": "R008", "refs": ["LODGING"]}
+    ]
+
+    overdue = load(VECTORS / "T017-06.json")
+    overdue["input"]["goal"]["refundable_required"] = ["OUTBOUND_TRANSPORT"]
+    overdue["input"]["candidates"][0]["items"][0]["refundable"] = False
+    overdue_result = final_result(overdue)
+    overdue_candidate = overdue_result["candidates"][0]
+    assert overdue_candidate["evaluable"] is False
+    assert overdue_candidate["pending_reasons"] == [
+        {
+            "code": "PAYMENT_TIME_MISSING",
+            "rule": "R010/R017",
+            "refs": ["TRAIN-OUT"],
+        }
+    ]
+    assert overdue_candidate["excluded_reasons"][0]["code"] == "NOT_REFUNDABLE"
+    assert overdue_result["optimization"]["pending_count"] == 1
+
+    ordered = load(CASES / "cB_topk.json")
+    candidate = next(
+        item for item in ordered["candidates"] if item["candidate_id"] == "C02"
+    )
+    ordered["candidates"] = [candidate]
+    by_cost_id = {item["cost_item_id"]: item for item in candidate["items"]}
+    by_cost_id["TICKET"]["price"] = None
+    by_cost_id["TICKET"]["price_basis"] = "PENDING"
+    by_cost_id["TRAIN-OUT"]["currency"] = "USD"
+    ordered_reasons = final_result(ordered)["candidates"][0]["pending_reasons"]
+    assert [(item["refs"], item["code"]) for item in ordered_reasons] == [
+        (["TICKET"], "PRICE_PENDING"),
+        (["TRAIN-OUT"], "NON_CNY"),
+    ]
+
+
+def test_h3_confirmation_dependencies_and_conditional_net_spend():
+    preconfirmed_case = load(CASES / "c00_r019_minimal.json")
+    preconfirmed = evaluate(preconfirmed_case)["checkpoints"][-1]["result"]
+    assert preconfirmed["confirmation"] is None
+    assert preconfirmed["cost"]["net_spend_if_received"] is None
+
+    selected_preconfirmed = evaluate(
+        preconfirmed_case,
+        [{"type": "SELECT_CANDIDATE", "candidate_id": "C01"}],
+    )["checkpoints"][-1]["result"]
+    assert selected_preconfirmed["confirmation"] is None
+
+    draft = result_for(VECTORS / "T017-08.json")
+    assert draft["states"]["confirmation_state"] == "DRAFT"
+    assert draft["confirmation"] is None
+
+    dependencies = result_for(CASES / "cB_v5_cancel.json")["dependencies"]
+    assert [item["kind"] for item in dependencies] == [
+        "EXPECTED_INCOME",
+        "EXPECTED_INCOME",
+        "EXPECTED_INCOME",
+        "EXPECTED_INCOME",
+        "ESTIMATE",
+        "ESTIMATE",
+    ]
+    assert [item["refs"][0] for item in dependencies] == [
+        "E-INC-1001",
+        "E-INC-1020",
+        "E-INC-1101",
+        "E-INC-1201",
+        "E-MEALS-1128",
+        "E-LOCAL-1128",
+    ]
+    assert all("E-TICKET-REFUND" not in item["refs"] for item in dependencies)
+    estimate = result_for(VECTORS / "T009-06.json")["dependencies"][0]
+    assert estimate["at"] == "2026-09-27"
+
+
+def test_h3_daily_forecast_and_scenario_output_contracts():
+    no_plan = result_for(CASES / "c01_base.json")
+    assert no_plan["daily_reference"] == {
+        "display": "NEED_CONFIRMED_PLAN",
+        "unavailable": [],
+        "missing_reasons": [],
+    }
+    assert no_plan["scenarios"][1]["observation_start"] is None
+    assert no_plan["scenarios"][1]["observation_end"] is None
+
+    limited = result_for(CASES / "c00_r019_minimal.json")
+    assert limited["daily_reference"]["limited_by"]["node_index"] == 1
+    cancelled_with_obligation = result_for(VECTORS / "T012-02.json")
+    assert (
+        cancelled_with_obligation["states"]["underlying_plan_state"]
+        == "FEASIBLE_UNDER_ASSUMPTIONS"
+    )
+    assert cancelled_with_obligation["daily_reference"]["display"] == "AMOUNT"
+    assert cancelled_with_obligation["daily_reference"]["amount"]["value"] == 30000
+    assert cancelled_with_obligation["daily_reference"]["label"] == "CONFIRMED_ONLY"
+    assert cancelled_with_obligation["daily_reference"]["limited_by"] == {
+        "scenario": "CONFIRMED_ONLY",
+        "node_index": 1,
+    }
+    assert cancelled_with_obligation["daily_reference"]["unavailable"] == [
+        {"scenario": "RECENT_MONTH", "reason": "HISTORY_INSUFFICIENT"}
+    ]
+    assert "DAILY_DISCLAIMER" in cancelled_with_obligation["labels"]
+    assert (
+        cancelled_with_obligation["scenarios"][0]["daily_reference"]
+        == cancelled_with_obligation["daily_reference"]["amount"]
+    )
+
+    cancelled_empty = result_for(VECTORS / "T012-03.json")
+    assert (
+        cancelled_empty["states"]["underlying_plan_state"]
+        == "FEASIBLE_UNDER_ASSUMPTIONS"
+    )
+    assert cancelled_empty["daily_reference"]["amount"]["value"] == 50000
+    assert cancelled_empty["scenarios"][0]["daily_reference"]["value"] == 50000
+
+    early = evaluate_payload(load(VECTORS / "T002-02.json"))["checkpoints"][0][
+        "result"
+    ]["scenarios"][1]
+    assert (early["observation_start"], early["observation_end"]) == (
+        "2026-09-01",
+        "2026-09-09",
+    )
+    assert early["complete_days"] == 0
+    assert early["unavailable_reason"] == "HISTORY_INSUFFICIENT"
+    september_11 = result_for(VECTORS / "T017-06.json")["scenarios"][1]
+    assert (september_11["observation_start"], september_11["observation_end"]) == (
+        "2026-09-01",
+        "2026-09-10",
+    )
+
+    incomparable = result_for(VECTORS / "T020-07#1.json")["forecasts"][0]
+    assert (
+        incomparable["sample_count"],
+        incomparable["history_end"],
+        incomparable["horizon"],
+    ) == (0, None, 0)
+
+    recent = result_for(VECTORS / "T018-10#1.json")["scenarios"][1]
+    assert [item["category"] for item in recent["groups"]] == [
+        "MEALS",
+        "LOCAL_TRANSPORT",
+        "DAILY_GOODS",
+        "ENTERTAINMENT",
+    ]
+    coverage = result_for(VECTORS / "T018-04.json")["scenarios"][1]["groups"][0]
+    assert coverage["coverage_end"] == "2026-10-31"
+
+
+def test_h3_label_predicates_and_no_daily_duplication():
+    amount = result_for(CASES / "c00_r019_minimal.json")
+    assert "DAILY_DISCLAIMER" in amount["labels"]
+    assert "CONFIRMED_ONLY" not in amount["labels"]
+    assert "IF_RECEIVED" not in amount["labels"]
+
+    unavailable = result_for(VECTORS / "T020-05.json")
+    assert "FORECAST_DISCLAIMER" in unavailable["labels"]
+    assert "FORECAST_UNAVAILABLE" in unavailable["labels"]
+    assert "NEED_CONFIRMED_PLAN" not in unavailable["labels"]
+
+    no_forecast = result_for(VECTORS / "T009-02.json")
+    assert "FORECAST_UNAVAILABLE" not in no_forecast["labels"]
+    no_confirmation = result_for(VECTORS / "T010-05.json")
+    assert "NEED_RECONFIRM" not in no_confirmation["labels"]
+
+    living_missing = result_for(CASES / "c00_v1_living_not_provided.json")
+    assert "LIVING_ARRANGEMENT_MISSING" in living_missing["labels"]
+    assert "UNAVAILABLE" not in living_missing["labels"]
+
+
+def test_h3_protected_squeeze_only_labels_outflow_shortfalls():
+    start_only = load(VECTORS / "T012-03.json")
+    start_only["input"]["snapshot"]["cash"] = 40000
+    start_only["input"]["snapshot"]["goal_allocation"] = 0
+    start_only["ops"] = []
+    start_result = final_result(start_only)
+    assert start_result["nodes"][0]["node_verdict"] == "PROTECTED_SHORTFALL"
+    assert start_result["nodes"][0]["trigger"]["kind"] == "START"
+    assert "PROTECTED_SQUEEZE" not in start_result["labels"]
+
+    outflow = load(CASES / "c00_r019_minimal.json")
+    outflow["snapshot"]["cash"] = 89000
+    outflow_result = final_result(outflow)
+    squeezed = next(
+        node
+        for node in outflow_result["nodes"]
+        if node["node_verdict"] == "PROTECTED_SHORTFALL"
+    )
+    assert squeezed["trigger"]["kind"] == "OUTFLOW"
+    assert "PROTECTED_SQUEEZE" in outflow_result["labels"]
 

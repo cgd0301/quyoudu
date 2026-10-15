@@ -11,6 +11,10 @@ from .dates import as_date, parse_date, parse_time
 from .settlement import settles_target_valid
 
 
+OUTFLOW_EVENT_KINDS = {"GOAL_PAYMENT", "OTHER_EXPENSE"}
+INFLOW_EVENT_KINDS = {"INCOME", "RETURN"}
+
+
 def issue(code: str, rule: str, refs: list[str] | tuple[str, ...]) -> dict[str, Any]:
     return {"code": code, "rule": rule, "refs": list(dict.fromkeys(refs))}
 
@@ -126,10 +130,19 @@ def validate_semantics(case: dict[str, Any]) -> list[dict[str, Any]]:
             )
         if event["currency"] != "CNY":
             _append_unique(issues, issue("NON_CNY", "R008", [event_id]))
-        if event["amount"] is None or (
-            event["event_kind"] != "CONTINGENCY_RELEASE" and event["amount"] <= 0
+        event_kind = event["event_kind"]
+        amount = event["amount"]
+        if amount is None or (
+            event_kind != "CONTINGENCY_RELEASE" and amount < 0
         ):
-            _append_unique(issues, issue("MISSING_KEY_INFO", "R005", [event_id]))
+            if event_kind in OUTFLOW_EVENT_KINDS:
+                _append_unique(
+                    issues, issue("MISSING_KEY_INFO", "R010", [event_id])
+                )
+            elif event_kind not in INFLOW_EVENT_KINDS:
+                _append_unique(
+                    issues, issue("MISSING_KEY_INFO", "R005", [event_id])
+                )
         covered_total = 0
         for coverage in event["coverage"]:
             covered_total += coverage["covered_amount"]
@@ -153,12 +166,24 @@ def validate_semantics(case: dict[str, Any]) -> list[dict[str, Any]]:
 
         value = _event_time(event)
         if value is None:
-            _append_unique(issues, issue("MISSING_KEY_INFO", "R005", [event_id]))
+            if event_kind in OUTFLOW_EVENT_KINDS:
+                _append_unique(
+                    issues, issue("MISSING_KEY_INFO", "R010", [event_id])
+                )
+            elif event_kind not in INFLOW_EVENT_KINDS:
+                _append_unique(
+                    issues, issue("MISSING_KEY_INFO", "R005", [event_id])
+                )
             continue
         try:
             day = as_date(value)
         except (ValueError, TypeError):
-            _append_unique(issues, issue("AS_OF_FORMAT", "D03", [event_id]))
+            if event_kind in OUTFLOW_EVENT_KINDS:
+                _append_unique(
+                    issues, issue("MISSING_KEY_INFO", "R010", [event_id])
+                )
+            elif event_kind not in INFLOW_EVENT_KINDS:
+                _append_unique(issues, issue("AS_OF_FORMAT", "D03", [event_id]))
             continue
         for coverage in event["coverage"]:
             reserve = reserve_by_id.get(coverage["reserve_id"])
@@ -355,7 +380,9 @@ def validate_semantics(case: dict[str, Any]) -> list[dict[str, Any]]:
                 issues, issue("MISSING_KEY_INFO", "R020", [row["series_id"]])
             )
         try:
-            if not _inside(parse_date(row["observed_on"])):
+            # F-01 / R008: range-before history is excluded from the
+            # observation window, not promoted to a plan input conflict.
+            if parse_date(row["observed_on"]) > parse_date(SUPPORTED_END):
                 _append_unique(
                     issues, issue("OUT_OF_RANGE", "R008", [row["series_id"]])
                 )

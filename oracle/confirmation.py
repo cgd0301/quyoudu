@@ -216,7 +216,6 @@ def apply_confirmation(
         runtime.draft_candidate_id = op["candidate_id"]
         return False
     suggestion = suggest_confirmation(runtime.case, candidate, runtime.input_version)
-    runtime.last_confirmation = suggestion.wire
     if candidate.feasible is not True or candidate.timeline is None:
         runtime.draft_candidate_id = op["candidate_id"]
         return False
@@ -239,6 +238,7 @@ def apply_confirmation(
     if not rerun.passes or candidate.cost.budget_overrun is not None:
         runtime.draft_candidate_id = op["candidate_id"]
         return False
+    runtime.last_confirmation = suggestion.wire
     runtime.case["snapshot"]["goal_allocation"] += suggestion.delta_a
     runtime.case["planned_allocation"] = planned
     runtime.case["confirmed_plan"] = {

@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from .candidates import CandidateEvaluation
+from .costs import CostComputation
 from .dates import as_date
 from .result import money
 from .scenarios import ScenarioComputation
@@ -23,8 +24,12 @@ class ProbeResult:
 def _probe(
     case: dict[str, Any],
     candidate: CandidateEvaluation,
+    plan_events: list[dict[str, Any]],
+    cost: CostComputation,
     scenario: ScenarioComputation,
     amount: int,
+    *,
+    cancelled: bool,
 ) -> ProbeResult:
     scenario_events = [
         deepcopy(event)
@@ -33,15 +38,16 @@ def _probe(
     ]
     run = run_timeline(
         case,
-        candidate.plan_events,
+        plan_events,
         candidate=candidate.candidate,
         scenario_events=scenario_events,
         probe_amount=amount,
+        cancelled=cancelled,
     )
     passed = (
         run.passes
-        and candidate.cost.budget_overrun is None
-        and candidate.cost.net_spend is not None
+        and cost.budget_overrun is None
+        and cost.net_spend is not None
     )
     return ProbeResult(passed, run)
 
@@ -64,49 +70,61 @@ def compute_daily_reference(
     confirmed_candidate: CandidateEvaluation | None,
     scenarios: list[ScenarioComputation],
     input_issues: list[dict[str, Any]] | None = None,
+    *,
+    cancelled: bool = False,
+    output_nodes: list[dict[str, Any]] | None = None,
+    effective_timeline: TimelineRun | None = None,
+    effective_cost: CostComputation | None = None,
+    effective_plan_events: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     if case.get("confirmed_plan") is None or confirmed_candidate is None:
         return {
             "display": "NEED_CONFIRMED_PLAN",
-            "label": "NEED_CONFIRMED_PLAN",
-            "unavailable": _unavailable_entries(scenarios),
+            "unavailable": [],
             "missing_reasons": [],
         }
     if case["snapshot"].get("living_arrangement", "PROVIDED") == "NOT_PROVIDED":
         return {
             "display": "UNAVAILABLE",
-            "label": "LIVING_ARRANGEMENT_MISSING",
-            "unavailable": _unavailable_entries(scenarios),
+            "unavailable": [],
             "missing_reasons": ["LIVING_ARRANGEMENT_MISSING"],
         }
+    timeline = (
+        effective_timeline
+        if effective_timeline is not None
+        else confirmed_candidate.timeline
+    )
+    cost = effective_cost if effective_cost is not None else confirmed_candidate.cost
+    plan_events = (
+        effective_plan_events
+        if effective_plan_events is not None
+        else confirmed_candidate.plan_events
+    )
     if (
         input_issues
-        or not confirmed_candidate.evaluable
-        or confirmed_candidate.cost.net_spend is None
-        or confirmed_candidate.timeline is None
-        or confirmed_candidate.timeline.period.out_of_range
-        or confirmed_candidate.timeline.issues
+        or (not cancelled and not confirmed_candidate.evaluable)
+        or cost.net_spend is None
+        or timeline is None
+        or timeline.period.out_of_range
+        or timeline.issues
     ):
         return {
             "display": "UNAVAILABLE",
-            "label": "UNAVAILABLE",
-            "unavailable": _unavailable_entries(scenarios),
+            "unavailable": [],
             "missing_reasons": [],
         }
-    if confirmed_candidate.feasible is False:
+    if not cancelled and confirmed_candidate.feasible is False:
         return {
             "display": "NOT_RECOMMENDED",
             "amount": money(0, rules=["R019", "§10.5"]),
-            "label": "NOT_RECOMMENDED",
             "unavailable": _unavailable_entries(scenarios),
             "missing_reasons": [],
         }
-    state = initial_state(case)
+    state = initial_state(case, release_allocation=cancelled)
     if state is None:
         return {
             "display": "UNAVAILABLE",
-            "label": "UNAVAILABLE",
-            "unavailable": _unavailable_entries(scenarios),
+            "unavailable": [],
             "missing_reasons": [],
         }
 
@@ -119,7 +137,6 @@ def compute_daily_reference(
     if not selected:
         return {
             "display": "UNAVAILABLE",
-            "label": "UNAVAILABLE",
             "unavailable": unavailable,
             "missing_reasons": [],
         }
@@ -127,13 +144,20 @@ def compute_daily_reference(
     upper = max(0, state.unallocated)
     results: list[tuple[ScenarioComputation, int, TimelineRun]] = []
     for scenario in selected:
-        zero = _probe(case, confirmed_candidate, scenario, 0)
+        zero = _probe(
+            case,
+            confirmed_candidate,
+            plan_events,
+            cost,
+            scenario,
+            0,
+            cancelled=cancelled,
+        )
         if not zero.passed:
             scenario.wire["daily_reference"] = money(0, rules=["R019", "§10.5"])
             return {
                 "display": "NOT_RECOMMENDED",
                 "amount": money(0, rules=["R019", "§10.5"]),
-                "label": "NOT_RECOMMENDED",
                 "unavailable": unavailable,
                 "missing_reasons": [],
             }
@@ -141,18 +165,40 @@ def compute_daily_reference(
         last_run = zero.run
         while low < high:
             middle = (low + high + 1) // 2
-            checked = _probe(case, confirmed_candidate, scenario, middle)
+            checked = _probe(
+                case,
+                confirmed_candidate,
+                plan_events,
+                cost,
+                scenario,
+                middle,
+                cancelled=cancelled,
+            )
             if checked.passed:
                 low = middle
                 last_run = checked.run
             else:
                 high = middle - 1
         optimum = low
-        optimum_check = _probe(case, confirmed_candidate, scenario, optimum)
+        optimum_check = _probe(
+            case,
+            confirmed_candidate,
+            plan_events,
+            cost,
+            scenario,
+            optimum,
+            cancelled=cancelled,
+        )
         assert optimum_check.passed, "D must pass the complete check"
         if optimum < upper:
             assert not _probe(
-                case, confirmed_candidate, scenario, optimum + 1
+                case,
+                confirmed_candidate,
+                plan_events,
+                cost,
+                scenario,
+                optimum + 1,
+                cancelled=cancelled,
             ).passed, "D+1 must fail before the U0 upper bound"
         scenario.wire["daily_reference"] = money(
             optimum, rules=["R019", "§4", "§10.5"]
@@ -164,24 +210,44 @@ def compute_daily_reference(
     )
     limiting_index: int | None = None
     if optimum < upper:
-        failed = _probe(case, confirmed_candidate, limiting_scenario, optimum + 1)
-        for index, node in enumerate(failed.run.nodes):
+        failed = _probe(
+            case,
+            confirmed_candidate,
+            plan_events,
+            cost,
+            limiting_scenario,
+            optimum + 1,
+            cancelled=cancelled,
+        )
+        failed_node = None
+        for node in failed.run.nodes:
             if node["node_verdict"] != "PASS":
-                limiting_index = index
+                failed_node = node
                 break
-    return {
+        if failed_node is not None:
+            failed_key = (
+                failed_node["trigger"]["kind"],
+                tuple(failed_node["trigger"]["event_ids"]),
+            )
+            for index, node in enumerate(output_nodes or []):
+                node_key = (
+                    node["trigger"]["kind"],
+                    tuple(node["trigger"]["event_ids"]),
+                )
+                if node_key == failed_key:
+                    limiting_index = index
+                    break
+    result = {
         "display": "AMOUNT",
         "amount": money(optimum, rules=["R019", "§4", "§10.5"]),
         "limited_by": {
             "scenario": limiting_scenario.wire["kind"],
             "node_index": limiting_index,
         },
-        "label": (
-            "CONFIRMED_ONLY"
-            if len(selected) == 1
-            else "DAILY_DISCLAIMER"
-        ),
         "unavailable": unavailable,
         "missing_reasons": [],
     }
+    if len(selected) == 1:
+        result["label"] = "CONFIRMED_ONLY"
+    return result
 

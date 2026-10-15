@@ -165,10 +165,14 @@ def recent_month_scenario(
     case: dict[str, Any], period: CheckPeriod
 ) -> ScenarioComputation:
     today = as_date(case["snapshot"]["as_of"])
+    support_start = parse_date(SUPPORTED_START)
+    if today == support_start:
+        return _unavailable("HISTORY_INSUFFICIENT", None, None, 0)
     observation_end = today - timedelta(days=1)
-    observation_start = observation_end - timedelta(days=SCENARIO_WINDOW_DAYS - 1)
-    if observation_start < parse_date(SUPPORTED_START):
-        return _unavailable("HISTORY_INSUFFICIENT", observation_start, observation_end, 0)
+    observation_start = max(
+        observation_end - timedelta(days=SCENARIO_WINDOW_DAYS - 1),
+        support_start,
+    )
 
     window_records = [
         record
@@ -266,10 +270,11 @@ def recent_month_scenario(
     today_scenario_same_scope = 0
     future_start = today
     future_end = period.end
+    reserve_by_id = {
+        reserve["reserve_id"]: reserve for reserve in case["reserves"]
+    }
 
     for category, historical_total in totals.items():
-        if historical_total == 0:
-            continue
         covered, same_scope = CATEGORY_RULES[category]
         if covered:
             periods = _split_living_periods(case, future_start, future_end)
@@ -296,16 +301,20 @@ def recent_month_scenario(
                         Decimal("1"), rounding=ROUND_HALF_UP
                     )
                 )
-            scheduled = [
-                event
-                for event in case["events"]
-                if event["event_kind"] == "OTHER_EXPENSE"
-                and not event["in_snapshot"]
-                and event.get("amount") is not None
-                and event.get("expected_at") is not None
-                and event.get("category") == category
-                and group_start <= as_date(event["expected_at"]) <= group_end
-            ]
+            scheduled = (
+                []
+                if historical_total == 0
+                else [
+                    event
+                    for event in case["events"]
+                    if event["event_kind"] == "OTHER_EXPENSE"
+                    and not event["in_snapshot"]
+                    and event.get("amount") is not None
+                    and event.get("expected_at") is not None
+                    and event.get("category") == category
+                    and group_start <= as_date(event["expected_at"]) <= group_end
+                ]
+            )
             eg = sum(event["amount"] for event in scheduled)
             delta = max(0, pg - eg)
             allocations = _allocate(delta, days)
@@ -317,7 +326,11 @@ def recent_month_scenario(
                 {
                     "category": category,
                     "coverage_start": group_start.isoformat(),
-                    "coverage_end": group_end.isoformat(),
+                    "coverage_end": (
+                        reserve_by_id[reserve_id]["coverage_end"]
+                        if reserve_id
+                        else group_end.isoformat()
+                    ),
                     "scenario_group_total": money(pg, rules=["R018", "§5", "D23"]),
                     "scheduled_group_total": money(
                         eg,
