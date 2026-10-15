@@ -71,8 +71,8 @@
 
 ### nodes[].at
 
-- 出现次数：597；缺失：0；不同取值：49
-- 形态：YYYY-MM-DD × 415；YYYY-MM-DDTHH:mm:ss+08:00 × 182
+- 出现次数：596；缺失：0；不同取值：49
+- 形态：YYYY-MM-DD × 414；YYYY-MM-DDTHH:mm:ss+08:00 × 182
 - 样例：
   - cases/c00_r019_minimal.json｜final｜"2026-09-01T09:00:00+08:00"
   - cases/c00_r019_minimal.json｜final｜"2026-09-10"
@@ -113,8 +113,8 @@
 
 ### 不在前 K 名的候选的 rank
 
-- 出现次数：124；缺失：0；不同取值：1
-- 取值：null × 124
+- 出现次数：123；缺失：0；不同取值：1
+- 取值：null × 123
 - 统计范围：rank 为 null、缺字段，或大于该检查点 optimization.top_k 的数字
 - top_k 不是数字的检查点：0
 - 样例：
@@ -125,7 +125,7 @@
 ### candidates[].rank（全部）
 
 - 出现次数：253；缺失：0；不同取值：4
-- 取值：null × 124；1 × 103；2 × 18；3 × 8
+- 取值：null × 123；1 × 103；2 × 19；3 × 8
 - 样例：
   - cases/c00_r019_minimal.json｜final｜1
   - cases/cA_gap.json｜final｜null

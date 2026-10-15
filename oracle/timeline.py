@@ -10,6 +10,7 @@ from typing import Any
 from .config import SUPPORTED_END
 from .dates import as_date, parse_date, parse_time
 from .result import money
+from .settlement import alternate_quote_indexes
 from .snapshot import BalanceState, initial_state
 from .validation import issue
 
@@ -130,13 +131,17 @@ def candidate_timeline_events(
     candidate: dict[str, Any] | None,
     item_amounts: list[int | None] | None = None,
     returns_override: list[dict[str, Any]] | None = None,
+    *,
+    cancelled: bool = False,
 ) -> list[dict[str, Any]]:
     if candidate is None:
         return []
+    # D75: another quote of an already purchased cost item is not in F and is never paid.
+    alternate = alternate_quote_indexes(case, candidate, cancelled=cancelled)
     result: list[dict[str, Any]] = []
     for index, item in enumerate(candidate["items"]):
         amount = item["price"] if item_amounts is None else item_amounts[index]
-        if amount is None:
+        if amount is None or index in alternate:
             continue
         result.append(
             {
@@ -191,6 +196,7 @@ def _activity_release_event(
         categories = {
             item["cost_item_id"]: item["category"] for item in case["cost_items"]
         }
+        # AMBIGUOUS: D75/D73 另一报价的返程到达｜读法A：另一报价的返程交通价格项仍以 arrive_at 参与活动结束日｜读法B：另一报价不付款，不参与｜采用A：D73 取计划对象全部返程交通价格项的较晚日，参与只会让机动预留同日或更晚释放，付款检查更保守。
         return_arrivals = [
             as_date(item["arrive_at"])
             for item in candidate["items"]

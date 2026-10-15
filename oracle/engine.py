@@ -18,9 +18,10 @@ from .ops import Runtime, apply_direct_operation, schema_safe_case
 from .result import money, result_skeleton
 from .schema import validate_case, validate_ops, validate_result
 from .scenarios import ScenarioComputation, build_scenarios
+from .settlement import alternate_quote_indexes
 from .snapshot import initial_state, snapshot_wire
 from .states import state_wire, underlying_plan_state
-from .timeline import TimelineRun, run_timeline
+from .timeline import TimelineRun, candidate_timeline_events, run_timeline
 from .validation import issue, validate_semantics
 
 
@@ -163,15 +164,22 @@ def _relevant_timeline_cost(
     cancelled = runtime.decision == "CANCELLED"
     if candidate is not None:
         if cancelled:
+            plan_events = candidate_timeline_events(
+                calculation_case,
+                candidate.candidate,
+                candidate.item_amounts,
+                returns_override=candidate.returns,
+                cancelled=True,
+            )
             timeline = run_timeline(
                 calculation_case,
-                candidate.plan_events,
+                plan_events,
                 candidate=candidate.candidate,
                 cancelled=True,
             )
             surviving = [
                 event
-                for event in [*_base_future_goal_events(calculation_case), *candidate.plan_events]
+                for event in [*_base_future_goal_events(calculation_case), *plan_events]
                 if event.get("cancellable") is not True
             ]
             cost = compute_cost(calculation_case, surviving, candidate.returns, [])
@@ -271,8 +279,14 @@ def _action_list(
         return []
     cost_by_id = {item["cost_item_id"]: item for item in case["cost_items"]}
     plan_version = case["confirmed_plan"]["plan_version"]
+    # D75 / R015 rule 4: an already purchased item never becomes a purchase task again.
+    alternate = alternate_quote_indexes(
+        case, candidate.candidate, cancelled=decision == "CANCELLED"
+    )
     actions: list[dict[str, Any]] = []
     for index, item in enumerate(candidate.candidate["items"]):
+        if index in alternate:
+            continue
         if decision == "CANCELLED" and item.get("cancellable") is True:
             continue
         kind = candidate.price_kinds[index]

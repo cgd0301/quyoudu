@@ -124,6 +124,7 @@ def _series_targets(
     keys = {
         (row["cost_item_id"], row["channel"], row["spec"]) for row in rows
     }
+    # AMBIGUOUS: D75/§12.7 另一报价的预测条目｜读法A：另一报价仍按其 purchase_date 生成 forecasts[] 条目｜读法B：另一报价不计入 F，不生成｜采用A：§12.7 以候选价格项为准，D75 只排除 F 与付款；条目只多出带“按假设测算”提示的输出，不改变金额与状态。
     targets = {
         item["purchase_date"]
         for candidate in case["candidates"]

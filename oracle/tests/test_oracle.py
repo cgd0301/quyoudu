@@ -5,10 +5,15 @@ from copy import deepcopy
 from decimal import Decimal, ROUND_DOWN, localcontext
 from pathlib import Path
 
+import pytest
+
 from oracle import evaluate, evaluate_payload
 from oracle.__main__ import _serialized, main
-from oracle.holt import holt_formula
+from oracle.candidates import evaluate_candidates
+from oracle.engine import _calculation_case
+from oracle.holt import compute_forecasts, holt_formula
 from oracle.schema import validate_result
+from oracle.validation import validate_semantics
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -404,4 +409,210 @@ def test_json_rendering_is_utf8_friendly_sorted_two_space_lf():
     assert rendered == '{\n  "a": {\n    "z": 2\n  },\n  "中": 1\n}\n'
     assert "\r" not in rendered
     assert rendered.encode("utf-8").decode("utf-8") == rendered
+
+
+def final_result(payload):
+    return evaluate_payload(payload)["checkpoints"][-1]["result"]
+
+
+def triggers(result):
+    return [(node["at"], node["trigger"]["event_ids"]) for node in result["nodes"]]
+
+
+def never_triggered(result, event_id):
+    return all(event_id not in ids for _, ids in triggers(result))
+
+
+def test_d75_expected_goal_payment_marks_the_cost_item_as_purchased():
+    vector = load(VECTORS / "T002-05.json")
+    ticket = vector["input"]["events"][0]
+    del ticket["actual_at"]
+    ticket.update(event_status="EXPECTED", expected_at="2026-09-05", in_snapshot=False)
+    result = final_result(vector)
+    assert ("2026-09-05", ["E0"]) in triggers(result)
+    assert never_triggered(result, "PLAN:C02:1:TICKET")
+    assert [item["event_id"] for item in result["cost"]["future_payments"]] == [
+        "E0",
+        "PLAN:C02:0:LODGING",
+    ]
+    assert result["cost"]["future_payable"]["value"] == 58000 + 30000
+
+
+def test_d75_goal_payment_without_cost_item_does_not_mark_any_item():
+    vector = load(VECTORS / "T002-05.json")
+    del vector["input"]["events"][0]["cost_item_id"]
+    result = final_result(vector)
+    assert ("2026-09-10", ["PLAN:C02:1:TICKET"]) in triggers(result)
+    assert result["cost"]["future_payable"]["value"] == 30000 + 52000
+
+
+def test_d75_cancel_stops_counting_cancellable_unpaid_payments():
+    vector = load(VECTORS / "T015-04.json")
+    case = vector["input"]
+    deposit = case["events"][0]
+    del deposit["actual_at"]
+    deposit.update(
+        event_status="EXPECTED",
+        expected_at="2026-09-05",
+        in_snapshot=False,
+        cancellable=True,
+    )
+    del case["candidates"][0]["items"][0]["settles_event_id"]
+    vector["ops"] = [
+        {"type": "EVALUATE", "label": "before"},
+        {"type": "CANCEL"},
+        {"type": "EVALUATE", "label": "after"},
+    ]
+    before, after = (
+        checkpoint["result"] for checkpoint in evaluate_payload(vector)["checkpoints"]
+    )
+    assert ("2026-09-05", ["E-DEPOSIT"]) in triggers(before)
+    assert never_triggered(before, "PLAN:C01:0:LODGING")
+    assert before["action_list"] == []
+    assert ("2026-09-27", ["PLAN:C01:0:LODGING"]) in triggers(after)
+    assert never_triggered(after, "E-DEPOSIT")
+    assert [item["task_id"] for item in after["action_list"]] == ["TASK:C01:0"]
+
+    paid = load(VECTORS / "T015-04.json")
+    paid["input"]["events"][0]["cancellable"] = True
+    del paid["input"]["candidates"][0]["items"][0]["settles_event_id"]
+    paid["ops"] = [{"type": "CANCEL"}]
+    cancelled = final_result(paid)
+    assert never_triggered(cancelled, "PLAN:C01:0:LODGING")
+    assert cancelled["action_list"] == []
+
+
+def test_d75_alternate_quote_is_not_counted_paid_or_tasked():
+    result = result_for(VECTORS / "T002-05.json")
+    by_id = {item["candidate_id"]: item for item in result["candidates"]}
+    assert result["cost"]["paid_total"]["value"] == 58000
+    assert result["cost"]["future_payable"]["value"] == 30000
+    assert [item["event_id"] for item in result["cost"]["future_payments"]] == [
+        "PLAN:C02:0:LODGING"
+    ]
+    assert never_triggered(result, "PLAN:C02:1:TICKET")
+    assert by_id["C02"]["net_spend"]["value"] == 58000 + 30000
+    assert result["confirmation"]["w"]["value"] == 30000
+
+    vector = load(VECTORS / "T002-05.json")
+    vector["input"]["confirmed_plan"] = {
+        "candidate_id": "C02",
+        "plan_version": "C02@v1",
+        "input_version": "v1",
+    }
+    vector["ops"] = []
+    confirmed = final_result(vector)
+    assert [
+        (item["task_id"], item["cost_item_id"]) for item in confirmed["action_list"]
+    ] == [("TASK:C02:0", "LODGING")]
+
+
+def test_d75_settling_item_is_paid_on_payment_at_and_keeps_its_task():
+    result = result_for(VECTORS / "T015-04.json")
+    assert not [
+        item for item in result["input_issues"] if item["code"] == "REFERENCE_INVALID"
+    ]
+    assert ("2026-09-27", ["PLAN:C01:0:LODGING"]) in triggers(result)
+    assert result["cost"]["net_spend"]["value"] == 10000 + 30000
+    action = result["action_list"][0]
+    assert (action["task_id"], action["payment_at"], action["amount"]["value"]) == (
+        "TASK:C01:0",
+        "2026-09-27",
+        30000,
+    )
+
+
+def test_d75_settling_item_with_unknown_price_keeps_future_payable_unknown():
+    vector = load(VECTORS / "T015-04.json")
+    vector["input"]["candidates"][0]["items"][0].update(
+        price=None, price_basis="PENDING"
+    )
+    result = final_result(vector)
+    assert result["cost"]["pending_cost_item_ids"] == ["LODGING"]
+    assert result["cost"]["future_payable"] is None
+
+
+@pytest.mark.parametrize("target", ["E-NOPE", "E-TICKET", "E-REFUND"])
+def test_d75_invalid_settles_reference_is_reported_and_still_paid(target):
+    vector = load(VECTORS / "T015-04.json")
+    case = vector["input"]
+    case["cost_items"].append(
+        {
+            "cost_item_id": "TICKET",
+            "category": "TICKET",
+            "necessary": True,
+            "amount_status": "CONFIRMED",
+        }
+    )
+    ticket = deepcopy(case["events"][0])
+    ticket.update(event_id="E-TICKET", cost_item_id="TICKET", amount=58000)
+    refund = {
+        "event_id": "E-REFUND",
+        "event_kind": "RETURN",
+        "event_status": "EXPECTED",
+        "amount": 1000,
+        "expected_at": "2026-09-20",
+        "time_precision": "DATE",
+        "in_snapshot": False,
+        "goal_id": "G1",
+        "cost_item_id": "LODGING",
+        "coverage": [],
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "currency": "CNY",
+    }
+    case["events"].extend([ticket, refund])
+    case["candidates"][0]["items"][0]["settles_event_id"] = target
+    result = final_result(vector)
+    assert any(
+        item["code"] == "REFERENCE_INVALID" and target in item["refs"]
+        for item in result["input_issues"]
+    )
+    assert ("2026-09-27", ["PLAN:C01:0:LODGING"]) in triggers(result)
+    assert result["cost"]["future_payable"]["value"] == 30000
+
+
+def test_d75_omitted_field_without_goal_payment_pays_every_item():
+    vector = load(VECTORS / "T002-05.json")
+    vector["input"]["events"] = []
+    result = final_result(vector)
+    assert result["cost"]["future_payable"]["value"] == 30000 + 52000
+    assert ("2026-09-10", ["PLAN:C02:1:TICKET"]) in triggers(result)
+
+
+def test_d75_inputs_without_purchased_items_keep_every_priced_item_as_payment():
+    checked = 0
+    for path in sorted(CASES.glob("*.json")) + sorted(VECTORS.glob("*.json")):
+        data = load(path)
+        case = data["input"] if "input" in data and "ops" in data else data
+        purchased = {
+            event["cost_item_id"]
+            for event in case["events"]
+            if event["event_kind"] == "GOAL_PAYMENT" and event.get("cost_item_id")
+        }
+        items = [item for candidate in case["candidates"] for item in candidate["items"]]
+        if any(
+            "settles_event_id" in item or item["cost_item_id"] in purchased
+            for item in items
+        ):
+            continue
+        issues = validate_semantics(case)
+        assert not [item for item in issues if item["rule"] == "D75"], path
+        working = _calculation_case(case, issues)
+        _, lookup = compute_forecasts(working)
+        for evaluation in evaluate_candidates(working, forecast_lookup=lookup).evaluations:
+            candidate_id = evaluation.candidate["candidate_id"]
+            expected = [
+                f"PLAN:{candidate_id}:{index}:{item['cost_item_id']}"
+                for index, item in enumerate(evaluation.candidate["items"])
+                if evaluation.item_amounts[index] is not None
+            ]
+            planned = [
+                event["event_id"]
+                for event in evaluation.plan_events
+                if event["event_kind"] == "GOAL_PAYMENT"
+            ]
+            assert planned == expected, path
+            checked += 1
+    assert checked > 0
 

@@ -8,6 +8,7 @@ from typing import Any
 
 from .config import SUPPORTED_END, SUPPORTED_START
 from .dates import as_date, parse_date, parse_time
+from .settlement import settles_target_valid
 
 
 def issue(code: str, rule: str, refs: list[str] | tuple[str, ...]) -> dict[str, Any]:
@@ -301,6 +302,12 @@ def validate_semantics(case: dict[str, Any]) -> list[dict[str, Any]]:
             refs = [candidate["candidate_id"], item["cost_item_id"]]
             if item["cost_item_id"] not in cost_ids:
                 _append_unique(issues, issue("REFERENCE_INVALID", "R016", refs))
+            if "settles_event_id" in item and not settles_target_valid(case, item):
+                # AMBIGUOUS: D75 引用无效的候选｜读法A：只报 REFERENCE_INVALID（refs 含候选编号，只在该候选为计划对象时使计划状态为暂无法完整判断、确认只能存草案），候选照常评估、排序｜读法B：该候选计入待确认数，不参与排序｜采用A：D75 写明该价格项仍计入并付款，pending_reasons 没有对应代码，与候选价格项其他 REFERENCE_INVALID 的处理一致。
+                _append_unique(
+                    issues,
+                    issue("REFERENCE_INVALID", "D75", refs + [item["settles_event_id"]]),
+                )
             if item["currency"] != "CNY":
                 _append_unique(issues, issue("NON_CNY", "R008", refs))
             cost_item = next(

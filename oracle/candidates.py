@@ -12,6 +12,7 @@ from .config import TOP_K
 from .costs import CostComputation, compute_cost
 from .dates import as_date, parse_date, parse_time
 from .result import money
+from .settlement import alternate_quote_indexes
 from .timeline import TimelineRun, candidate_timeline_events, run_timeline
 
 
@@ -312,6 +313,7 @@ def _offers(
     case: dict[str, Any],
     candidate: dict[str, Any],
     raw_amounts: list[int | None],
+    alternate: set[int],
 ) -> tuple[
     list[int | None],
     list[dict[str, Any]],
@@ -367,13 +369,18 @@ def _offers(
             if offer is None:
                 continue
             refs = [candidate["candidate_id"], offer["offer_id"], order_id]
+            # AMBIGUOUS: D75/D45/D65 另一报价与订单优惠｜读法A：另一报价仍计入订单优惠前小计并承接冲减｜读法B：另一报价不计入小计、不承接冲减，优惠时点取订单中需付款的价格项｜采用B：D65 只冲减价格项的付款，另一报价没有付款，也不能帮助达到门槛或放大折扣基数；取消后改为正常计入的价格项不重算优惠，金额只高不低。
+            order_items = [
+                item
+                for index, item in enumerate(candidate["items"])
+                if item["order_id"] == order_id and index not in alternate
+            ] or [item for item in candidate["items"] if item["order_id"] == order_id]
             point = next(
                 (
                     item["purchase_date"]
                     if offer["applies_at"] == "ORDER"
                     else item["payment_at"]
-                    for item in candidate["items"]
-                    if item["order_id"] == order_id
+                    for item in order_items
                 ),
                 None,
             )
@@ -390,6 +397,7 @@ def _offers(
                 index
                 for index, item in enumerate(candidate["items"])
                 if item["order_id"] == order_id
+                and index not in alternate
                 and cost_by_id.get(item["cost_item_id"], {}).get("category")
                 in offer["scope"]
             ]
@@ -460,6 +468,7 @@ def _compatibility(
     goal = case["goal"]
     cost_by_id = _cost_items(case)
     by_category: dict[str, list[dict[str, Any]]] = {}
+    # AMBIGUOUS: D75/D16/D44 另一报价的相容性｜读法A：另一报价仍参与相容性检查｜读法B：另一报价不购买，不参与｜采用A：D16 以候选为单位检查已填写的约束，events[] 没有规格和时刻，另一报价是候选中描述该项目的价格项；不因 D75 放宽任何约束。
     for item in candidate["items"]:
         category = cost_by_id.get(item["cost_item_id"], {}).get("category")
         if category is not None:
@@ -562,7 +571,10 @@ def _compatibility(
 
 
 def _pending_cost_ids(
-    case: dict[str, Any], candidate: dict[str, Any], amounts: list[int | None]
+    case: dict[str, Any],
+    candidate: dict[str, Any],
+    amounts: list[int | None],
+    alternate: set[int],
 ) -> list[str]:
     paid = _paid_cost_ids(case)
     base = {
@@ -574,7 +586,8 @@ def _pending_cost_ids(
     }
     item_indexes: dict[str, list[int]] = {}
     for index, item in enumerate(candidate["items"]):
-        item_indexes.setdefault(item["cost_item_id"], []).append(index)
+        if index not in alternate:
+            item_indexes.setdefault(item["cost_item_id"], []).append(index)
     pending: list[str] = []
     for cost in case["cost_items"]:
         if not cost["necessary"] or cost["amount_status"] in {
@@ -583,9 +596,12 @@ def _pending_cost_ids(
         }:
             continue
         cost_id = cost["cost_item_id"]
-        if cost_id in paid or cost_id in base:
-            continue
         indexes = item_indexes.get(cost_id, [])
+        if cost_id in paid or cost_id in base:
+            # D75: the unfulfilled part after a goal payment counts as usual.
+            if any(amounts[index] is None for index in indexes):
+                pending.append(cost_id)
+            continue
         if not indexes or any(amounts[index] is None for index in indexes):
             pending.append(cost_id)
     return pending
@@ -594,6 +610,7 @@ def _pending_cost_ids(
 def _signature(
     candidate: dict[str, Any], amounts: list[int | None]
 ) -> tuple[Any, ...]:
+    # AMBIGUOUS: D75/R016第6条 重复候选｜读法A：另一报价与 settles_event_id 都参与重复判定｜读法B：忽略另一报价，只比较需付款的价格项｜采用A：R016 第6条针对重复记录，列有不同价格项的候选不是重复记录，不因 D75 推定新的排除；settles_event_id 不同时付款不同，必须区分。
     normalized_items = sorted(
         (
             item["cost_item_id"],
@@ -610,6 +627,7 @@ def _signature(
             tuple(sorted(item.get("lodging_nights", []))),
             item.get("refundable"),
             item.get("cancellable", False),
+            item.get("settles_event_id"),
             item["quote"]["valid_from"],
             item["quote"]["valid_to"],
         )
@@ -648,11 +666,13 @@ def evaluate_candidates(
     base_future = _base_future_goal_events(case)
 
     for candidate in case["candidates"]:
+        alternate = alternate_quote_indexes(case, candidate)
         pending: list[dict[str, Any]] = []
         excluded: list[dict[str, Any]] = []
         dependencies: list[dict[str, Any]] = []
         raw_amounts: list[int | None] = []
         kinds: list[str] = []
+        # AMBIGUOUS: D75/R009/D13 另一报价的报价检查｜读法A：另一报价仍按 R009、D13 解析，报价无效、待填或非人民币时候选计入待确认数，依赖条件与价格依据标签照常｜读法B：不计入 F 就不解析｜采用A：D75 只写明不计入 F、不付款，不放宽对候选所列报价的检查，只会多出待确认，不会多出完整结论。
         for item in candidate["items"]:
             amount, kind, item_pending, item_dependencies = _resolve_item_price(
                 case, item, forecast_lookup
@@ -662,14 +682,14 @@ def evaluate_candidates(
             pending.extend(item_pending)
             dependencies.extend(item_dependencies)
         amounts, offer_pending, offer_excluded, offer_returns = _offers(
-            case, candidate, raw_amounts
+            case, candidate, raw_amounts, alternate
         )
         pending.extend(offer_pending)
         excluded.extend(offer_excluded)
         compatible_pending, compatible_excluded = _compatibility(case, candidate)
         pending.extend(compatible_pending)
         excluded.extend(compatible_excluded)
-        pending_ids = _pending_cost_ids(case, candidate, amounts)
+        pending_ids = _pending_cost_ids(case, candidate, amounts, alternate)
         pending.extend(
             reason("PRICE_PENDING", "R010/R016", [candidate["candidate_id"], item_id])
             for item_id in pending_ids
