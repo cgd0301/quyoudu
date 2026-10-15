@@ -3,7 +3,7 @@ import { DEMO_CFG_1 } from '../config.ts'
 import type { InputIssue } from '../issues/index.ts'
 import { normalize, type NormalizedCase } from '../normalize/index.ts'
 import type { Op } from '../ops/index.ts'
-import { priceCandidates, type PricedCandidate } from '../pricing/index.ts'
+import { applyConfirmedPlanPrices, priceCandidates, type PricedCandidate } from '../pricing/index.ts'
 import type { ResultCore } from '../result.ts'
 import type { CaseFile } from '../schema.ts'
 import type { PlanLifecycle } from '../timeline/index.ts'
@@ -89,7 +89,10 @@ function freeze(raw: CaseFile, lifecycle: PlanLifecycle, config: EngineConfig): 
   if (plan === undefined) return null
   const data = normalize(raw)
   const ref = { candidateId: plan.candidate_id, planVersion: plan.plan_version }
-  return { ...ref, inputVersion: plan.input_version, tasks: deriveTasks(data, priceCandidates(data, config), ref, lifecycle) }
+  const priced = priceCandidates(data, config).map((row) =>
+    row.candidateId === plan.candidate_id ? applyConfirmedPlanPrices(data, row, config) : row,
+  )
+  return { ...ref, inputVersion: plan.input_version, tasks: deriveTasks(data, priced, ref, lifecycle) }
 }
 
 function matches(formal: FormalPlan, raw: CaseFile): boolean {

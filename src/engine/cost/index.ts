@@ -93,6 +93,27 @@ function isGoalPayment(event: CaseEvent, goalId: string): boolean {
   return event.eventKind === 'GOAL_PAYMENT' && event.currency === 'CNY' && goalScoped(event, goalId)
 }
 
+/** D61：取消后仍有效的付款。未购买、也没有未取消价格项的必要费用不是仍有效义务 */
+function obligedCostItems(
+  data: NormalizedCase,
+  candidate: Candidate | undefined,
+  lifecycle: PlanLifecycle,
+  goalId: string,
+): Set<string> {
+  const ids = new Set<string>()
+  for (const event of data.events) {
+    if (!isGoalPayment(event, goalId) || event.costItemId === undefined) continue
+    const settled = event.inSnapshot && event.eventStatus === 'ACTUAL'
+    if (lifecycle === 'CANCELLED' && event.cancellable === true && !settled) continue
+    ids.add(event.costItemId)
+  }
+  for (const item of candidate?.items ?? []) {
+    if (lifecycle === 'CANCELLED' && item.cancellable === true) continue
+    ids.add(item.costItemId)
+  }
+  return ids
+}
+
 function fact(
   item: CostItem,
   amount: number | null,
@@ -222,12 +243,18 @@ export function buildCost(input: CostInput): CostReport {
 
   const facts: CostItemFact[] = []
   const pendingIds: string[] = []
+  const obliged = obligedCostItems(data, candidate, lifecycle, goalId)
+  const waived = (id: string) => lifecycle === 'CANCELLED' && !obliged.has(id)
   for (const item of data.costItems) {
     if (item.amountStatus === 'NOT_APPLICABLE') {
       facts.push(fact(item, null, false, false, false, null))
       continue
     }
     if (item.amountStatus === 'PENDING') {
+      if (waived(item.costItemId)) {
+        facts.push(fact(item, null, false, false, false, null))
+        continue
+      }
       if (item.necessary) unresolved = true
       pendingIds.push(item.costItemId)
       facts.push(fact(item, null, true, false, false, null))
@@ -239,7 +266,15 @@ export function buildCost(input: CostInput): CostReport {
     }
     const known = track.get(item.costItemId)
     if (known === undefined) {
-      if (item.necessary) unresolved = true
+      if (waived(item.costItemId)) {
+        facts.push(fact(item, null, false, item.amountStatus === 'ESTIMATE', false, null))
+        continue
+      }
+      // R016：有计划对象时，缺金额的必要项目列入待填；没有计划对象时只列 amount_status 为 PENDING 的（§12.7（12））
+      if (item.necessary) {
+        unresolved = true
+        if (input.candidateId != null) pendingIds.push(item.costItemId)
+      }
       facts.push(fact(item, null, false, item.amountStatus === 'ESTIMATE', false, null))
       continue
     }

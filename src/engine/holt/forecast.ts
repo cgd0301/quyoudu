@@ -100,11 +100,15 @@ export function forecastSeries(input: SeriesInput, config: EngineConfig): HoltFo
       backtestCount: tested.count,
     }
     const { predicted } = forecast(fit, h)
-    // R020 第11条、§7.2：负值和零值停止该预测成本的使用；SPEC-GAP SG-50：此时不给出预测值
-    if (predicted.lt(MIN_PREDICTED) || predicted.gte(Number.MAX_SAFE_INTEGER)) return { ...assessed, status: 'INVALID_RESULT' }
-    // §7.2：有效回测误差不足时该步长回测不足；SPEC-GAP SG-50：此时不给出预测值
-    if (tested.count < settings.minBacktestErrors) return { ...assessed, status: 'BACKTEST_INSUFFICIENT' }
-    return { ...assessed, predicted: fmt12(predicted), amount: makeMoney(toCents(predicted), AMOUNT_RULES) }
+    const predictedText = fmt12(predicted)
+    // R020 第11条、§7.2：负值和零值停止把该预测用作成本；§6 仍保存预测中间值
+    if (predicted.lt(MIN_PREDICTED) || predicted.gte(Number.MAX_SAFE_INTEGER)) {
+      return { ...assessed, status: 'INVALID_RESULT', predicted: predictedText }
+    }
+    const saved = { ...assessed, predicted: predictedText, amount: makeMoney(toCents(predicted), AMOUNT_RULES) }
+    // §7.2：有效回测误差不足时该步长不用于候选比较，预测中间值和整数分金额仍保存
+    if (tested.count < settings.minBacktestErrors) return { ...saved, status: 'BACKTEST_INSUFFICIENT' }
+    return saved
   })
 }
 

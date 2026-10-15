@@ -126,20 +126,66 @@ function pendingOf(input: CompareInput, shared: Shared, priced: PricedCandidate,
   if (pending.length === 0 && (branch.planState === 'INCOMPLETE' || branch.cost.cost.netSpend === null)) {
     addReason(pending, { code: 'PRICE_PENDING', rule: 'R010', refs: [priced.candidateId] })
   }
-  return pending
+  return sortPending(pending)
+}
+
+/** §12.7（20）：价格项原因在前，SHARED_INPUT_INCOMPLETE 在后；同一代码按 refs 字典序 */
+function sortPending(reasons: Pending[]): Pending[] {
+  const rank = (code: string) => (code === 'SHARED_INPUT_INCOMPLETE' ? 1 : 0)
+  return reasons
+    .map((reason, index) => ({ reason, index }))
+    .sort((left, right) => {
+      const group = rank(left.reason.code) - rank(right.reason.code)
+      if (group !== 0) return group
+      if (left.reason.code !== right.reason.code) return left.index - right.index
+      const refs = left.reason.refs.join('\u0000').localeCompare(right.reason.refs.join('\u0000'))
+      return refs !== 0 ? refs : left.index - right.index
+    })
+    .map((item) => item.reason)
 }
 
 /** R016 第2、4条：M2 的相容、优惠和重复组合检查之后，信息完整的候选再按分支检查付款节点、分配和预算 */
+const COMPATIBILITY = new Set([
+  'ARRIVAL_TOO_LATE',
+  'RETURN_TOO_EARLY',
+  'LODGING_NIGHTS_NOT_COVERED',
+  'SEAT_TIER_NOT_ALLOWED',
+  'LODGING_TOO_FAR',
+  'NOT_REFUNDABLE',
+])
+
+/** §12.7（20）：相容性、优惠、预算、付款节点，最后是重复候选 */
+function excludedRank(code: string): number {
+  if (COMPATIBILITY.has(code)) return 0
+  if (code.startsWith('OFFER_')) return 1
+  if (code === 'BUDGET_EXCEEDED') return 2
+  if (code === 'PAYMENT_GAP') return 3
+  if (code === 'ALLOCATION_CONFLICT') return 4
+  if (code === 'DUPLICATE_CANDIDATE') return 5
+  return 6
+}
+
+function sortExcluded(reasons: Excluded[]): Excluded[] {
+  return reasons
+    .map((reason, index) => ({ reason, index }))
+    .sort((left, right) => {
+      const rank = excludedRank(left.reason.code) - excludedRank(right.reason.code)
+      return rank !== 0 ? rank : left.index - right.index
+    })
+    .map((item) => item.reason)
+}
+
 function excludedOf(priced: PricedCandidate, branch: Branch, complete: boolean): Excluded[] {
   const excluded: Excluded[] = priced.excludedReasons.map((reason) => ({ ...reason, refs: [...reason.refs] }))
-  if (!complete) return excluded
-  const gap = branch.timeline.earliestGap
-  if (gap !== null) addReason(excluded, { code: 'PAYMENT_GAP', rule: 'R016', refs: [...gap.related] })
-  const conflict = branch.timeline.allocationConflicts[0]
-  if (conflict !== undefined) addReason(excluded, { code: 'ALLOCATION_CONFLICT', rule: 'R016', refs: [...conflict.related] })
-  const overrun = branch.cost.cost.budgetOverrun
-  if (overrun !== null) addReason(excluded, { code: 'BUDGET_EXCEEDED', rule: 'R016', refs: [...overrun.basis.eventIds] })
-  return excluded
+  if (complete) {
+    const gap = branch.timeline.earliestGap
+    if (gap !== null) addReason(excluded, { code: 'PAYMENT_GAP', rule: 'R016', refs: [...gap.related] })
+    const conflict = branch.timeline.allocationConflicts[0]
+    if (conflict !== undefined) addReason(excluded, { code: 'ALLOCATION_CONFLICT', rule: 'R016', refs: [...conflict.related] })
+    const overrun = branch.cost.cost.budgetOverrun
+    if (overrun !== null) addReason(excluded, { code: 'BUDGET_EXCEEDED', rule: 'R016', refs: [...overrun.basis.eventIds] })
+  }
+  return sortExcluded(excluded)
 }
 
 function judge(input: CompareInput, shared: Shared, index: number, priced: PricedCandidate): CandidateResult {

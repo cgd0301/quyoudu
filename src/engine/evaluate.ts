@@ -8,7 +8,7 @@ import { caseForecasts, type HoltForecast } from './holt/index.ts'
 import { inputIssues, type InputIssue } from './issues/index.ts'
 import { normalize, type NormalizedCase } from './normalize/index.ts'
 import { applyMutation, ensureCheckpoint, type Op } from './ops/index.ts'
-import { priceCandidates } from './pricing/index.ts'
+import { applyConfirmedPlanPrices, priceCandidates } from './pricing/index.ts'
 import type { ResultCore } from './result.ts'
 import type { CaseFile } from './schema.ts'
 import { buildSnapshot } from './snapshot/index.ts'
@@ -60,6 +60,20 @@ function addLabel(labels: LabelCode[], code: LabelCode): void {
   if (!labels.includes(code)) labels.push(code)
 }
 
+/** §12.7（30）：检查期间内由流出或流出组触发的保护性资金缺口 */
+function hasProtectedSqueeze(nodes: ResultCore['nodes'], period: ResultCore['checkPeriod']): boolean {
+  if (period.end == null) return false
+  const start = period.start.slice(0, 10)
+  const end = period.end
+  return nodes.some((node) => {
+    const kind = node.trigger.kind
+    if (kind !== 'OUTFLOW' && kind !== 'OUTFLOW_GROUP') return false
+    if (node.nodeVerdict !== 'PROTECTED_SHORTFALL') return false
+    const day = node.at.slice(0, 10)
+    return day >= start && day <= end
+  })
+}
+
 function attachConfirmed(rows: readonly HoltForecast[], data: NormalizedCase): NonNullable<ResultCore['forecasts']> {
   return rows.map((row) => ({
     ...row,
@@ -76,7 +90,8 @@ function forecastLabels(forecasts: readonly HoltForecast[], scenarios: ResultCor
   ) {
     labels.push('HISTORY_INSUFFICIENT')
   }
-  if (forecasts.some((row) => row.status === 'AVAILABLE')) labels.push('FORECAST_DISCLAIMER')
+  // §12.7（29）：给出了预测估算金额就附免责声明，不限 AVAILABLE
+  if (forecasts.some((row) => row.amount != null)) labels.push('FORECAST_DISCLAIMER')
   if (forecasts.some((row) => FORECAST_FAILURES.has(row.status))) labels.push('FORECAST_UNAVAILABLE')
   return labels
 }
@@ -123,7 +138,10 @@ function skeleton(
   const report = inputIssues(data, opIssues)
   // D47：已确认方案，否则当前选中的候选
   const planCandidateId = data.confirmed_plan?.candidate_id ?? selectedCandidateId
-  const planPriced = planCandidateId == null ? undefined : priced.get(planCandidateId)
+  const rawPlan = planCandidateId == null ? undefined : priced.get(planCandidateId)
+  // §12.7（15）：已确认方案按确认价做计划检查；候选比较仍用 pricedRows
+  const planPriced =
+    data.confirmed_plan != null && rawPlan !== undefined ? applyConfirmedPlanPrices(normalized, rawPlan, config) : rawPlan
   const timeline = runTimeline(
     timelineInput(normalized, {
       candidateId: planCandidateId,
@@ -136,6 +154,7 @@ function skeleton(
   const confirmations = userConfirmations(data, version)
   const labels = withStateLabels(['SIMULATED_DATA', 'TOP_K_DEMO'], planTarget, confirmations)
   if (report.preRangePaid) labels.push('PRE_RANGE_PAID')
+  if (hasProtectedSqueeze(timeline.nodes, timeline.checkPeriod)) addLabel(labels, 'PROTECTED_SQUEEZE')
   const snapshot = buildSnapshot(normalized)
   const comparison = compareCandidates({ raw: data, data: normalized, priced: pricedRows, opIssues, snapshot, topK: config.topK })
   if (comparison.samePrice) labels.push('SAME_PRICE')
@@ -222,7 +241,7 @@ function skeleton(
     pendingDifferences: confirm.pendingDifferences,
     userConfirmations: confirmations,
     states,
-    ...(forecasts.length > 0 ? { forecasts } : {}),
+    forecasts,
     scenarios,
     labels,
   }

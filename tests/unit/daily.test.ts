@@ -465,7 +465,7 @@ describe('§10.5 每日参考的前提与展示', () => {
     expect(cancelled.dailyReference.amount?.value).toBeLessThan(50000)
   })
 
-  test('D13、D14 9月1日只有一条观测时预测不合格，已确认价格不进入 FORECAST 档', () => {
+  test('§12.7（15）序列不再合格时，候选比较仍待填，计划与每日参考用确认价', () => {
     const data = structuredClone(loadVector('T019-10').input)
     data.price_series = [
       {
@@ -483,12 +483,14 @@ describe('§10.5 每日参考的前提与展示', () => {
     const result = run(data)
     expect(result.forecasts?.[0]?.status).toBe('HISTORY_INSUFFICIENT')
     expect(result.forecasts?.[0]?.confirmed).toBe(true)
-    expect(result.actionList.map((task) => [task.costItemId, task.amount])).toEqual([['TICKET', null]])
-    expect(result.dailyReference.display).toBe('UNAVAILABLE')
+    expect(result.candidates[0]?.pendingReasons.map((reason) => reason.code)).toContain('PRICE_PENDING')
+    expect(result.actionList.map((task) => [task.costItemId, task.amount?.value ?? null])).toEqual([['TICKET', 60000]])
+    expect(result.actionList[0]?.pendingChecks).toEqual(['RECHECK_PRICE', 'RECHECK_OFFER_CONDITIONS'])
+    expect(result.dailyReference.display).toBe('AMOUNT')
+    expect(result.dailyReference.amount?.value).toBe(10000)
     const raised = run(data, [{ type: 'PATCH', path: '/forecast_confirmations/0/price', value: 65000 }])
-    expect(raised.pendingDifferences).toEqual([])
-    expect(raised.actionList.map((task) => task.amount)).toEqual([null])
-    expect(raised.dailyReference.display).toBe('UNAVAILABLE')
+    expect(raised.cost.netSpend?.value).toBe(65000)
+    expect(raised.dailyReference.display).toBe('AMOUNT')
   })
 
   test('每日参考的输出：各展示都通过 resultCoreSchema，可省略的键不写 undefined；与直接调用 dailyReference 的结果相同', () => {

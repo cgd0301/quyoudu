@@ -65,13 +65,13 @@ function phaseIssues(data: CaseFile): InputIssue[] {
   const { as_of: asOf, cash_as_of: cashAsOf, snapshot_phase: phase } = data.snapshot
   const asOfOk = OFFSET_INSTANT.test(asOf)
   const cashOk = OFFSET_INSTANT.test(cashAsOf)
+  // §12.7（13）：格式不符时只报 AS_OF_FORMAT，两者都能解析才比较是否对应
   if (!asOfOk || !cashOk) {
     const refs: string[] = []
     if (!asOfOk) refs.push('as_of')
     if (!cashOk) refs.push('cash_as_of')
     issues.push({ code: 'AS_OF_FORMAT', rule: 'D03', refs })
-  }
-  if (asOf !== cashAsOf) issues.push({ code: 'CASH_AS_OF_MISMATCH', rule: 'R001', refs: ['cash_as_of'] })
+  } else if (asOf !== cashAsOf) issues.push({ code: 'CASH_AS_OF_MISMATCH', rule: 'R001', refs: ['cash_as_of'] })
   if (phase == null) {
     issues.push({ code: 'SNAPSHOT_PHASE_MISSING', rule: 'D03', refs: ['snapshot_phase'] })
     return issues
@@ -81,33 +81,33 @@ function phaseIssues(data: CaseFile): InputIssue[] {
   const day = asOf.slice(0, 10)
   const dayEvents = data.events.filter((event) => PAYMENT_KINDS.has(event.event_kind) && eventDay(event) === day)
   const counted = dayEvents.filter((event) => event.in_snapshot)
-  const mismatchRefs: string[] = []
-  if (phase === 'DAY_START' && counted.length !== 0) {
-    for (const event of counted) mismatchRefs.push(event.event_id)
-  }
-  if (phase === 'DAY_END') {
-    for (const event of dayEvents) if (!event.in_snapshot) mismatchRefs.push(event.event_id)
-  }
+  // §12.7（14）：三种情形各报一条，阶段不符的 refs 只写快照阶段
+  let phaseMismatch = false
+  if (phase === 'DAY_START' && counted.length !== 0) phaseMismatch = true
+  if (phase === 'DAY_END' && dayEvents.some((event) => !event.in_snapshot)) phaseMismatch = true
   const after = /^AFTER_EVENT\(([1-9][0-9]*)\)$/.exec(phase)
-  if (after != null && Number(after[1]) !== counted.length) {
-    for (const event of dayEvents) mismatchRefs.push(event.event_id)
-    if (dayEvents.length === 0) mismatchRefs.push('snapshot_phase')
-  }
+  if (after != null && Number(after[1]) !== counted.length) phaseMismatch = true
+  if (phaseMismatch) issues.push({ code: 'SNAPSHOT_PHASE_MISMATCH', rule: 'D03', refs: ['snapshot.snapshot_phase'] })
+
+  const countedWrong: string[] = []
+  const omitted: string[] = []
   for (const event of data.events) {
-    if (event.in_snapshot && event.event_status !== 'ACTUAL') mismatchRefs.push(event.event_id)
+    if (event.in_snapshot && event.event_status !== 'ACTUAL') countedWrong.push(event.event_id)
     if (event.in_snapshot && event.event_status === 'ACTUAL') {
-      if (event.actual_at == null) mismatchRefs.push(event.event_id)
+      if (event.actual_at == null) countedWrong.push(event.event_id)
       else {
         const compared = compareInstants(event.actual_at, cashAsOf)
-        if (compared === 'after' || compared === 'unknown') mismatchRefs.push(event.event_id)
+        if (compared === 'after' || compared === 'unknown') countedWrong.push(event.event_id)
       }
     }
     if (!event.in_snapshot && event.event_status === 'ACTUAL' && event.actual_at != null && cashOk) {
-      if (compareInstants(event.actual_at, cashAsOf) === 'before_or_equal') mismatchRefs.push(event.event_id)
+      if (compareInstants(event.actual_at, cashAsOf) === 'before_or_equal') omitted.push(event.event_id)
     }
   }
-  const refs = unique(mismatchRefs)
-  if (refs.length > 0) issues.push({ code: 'SNAPSHOT_PHASE_MISMATCH', rule: 'D03', refs })
+  const wrongRefs = unique(countedWrong)
+  if (wrongRefs.length > 0) issues.push({ code: 'SNAPSHOT_PHASE_MISMATCH', rule: 'D03', refs: wrongRefs })
+  const omittedRefs = unique(omitted)
+  if (omittedRefs.length > 0) issues.push({ code: 'SNAPSHOT_PHASE_MISMATCH', rule: 'D03', refs: omittedRefs })
   return issues
 }
 
@@ -126,24 +126,33 @@ function nonCnyIssue(data: CaseFile): InputIssue | null {
   return { code: 'NON_CNY', rule: 'R008', refs: unique(refs) }
 }
 
-function visitDates(value: unknown, exemptLower: boolean, ref: string, refs: string[], markEarly: () => void): void {
+function visitDates(
+  value: unknown,
+  exemptLower: boolean,
+  ref: string,
+  refs: string[],
+  markEarly: () => void,
+  ignoreEarly = false,
+): void {
   if (typeof value === 'string') {
     const date = dateOf(value)
     if (date == null) return
     if (date < RANGE_START) {
+      // R008：价格与消费的早于窗口记录不进入观察窗口，也不构成超界
+      if (ignoreEarly) return
       if (exemptLower) markEarly()
       else refs.push(ref)
     } else if (date > RANGE_END) refs.push(ref)
     return
   }
   if (Array.isArray(value)) {
-    for (const item of value) visitDates(item, exemptLower, ref, refs, markEarly)
+    for (const item of value) visitDates(item, exemptLower, ref, refs, markEarly, ignoreEarly)
     return
   }
   if (value !== null && typeof value === 'object') {
     for (const [key, inner] of Object.entries(value)) {
       if (key === 'created_at_real') continue
-      visitDates(inner, exemptLower, ref, refs, markEarly)
+      visitDates(inner, exemptLower, ref, refs, markEarly, ignoreEarly)
     }
   }
 }
@@ -164,8 +173,8 @@ function rangeIssue(data: CaseFile): { issue: InputIssue | null; preRangePaid: b
   visitDates(data.cost_items, false, 'cost_items', refs, markEarly)
   visitDates(data.candidates, false, 'candidates', refs, markEarly)
   visitDates(data.offers, false, 'offers', refs, markEarly)
-  visitDates(data.price_series, false, 'price_series', refs, markEarly)
-  visitDates(data.consumption_records, false, 'consumption_records', refs, markEarly)
+  visitDates(data.price_series, false, 'price_series', refs, markEarly, true)
+  visitDates(data.consumption_records, false, 'consumption_records', refs, markEarly, true)
   visitDates(data.planned_allocation, false, 'planned_allocation', refs, markEarly)
   visitDates(data.confirmed_plan, false, 'confirmed_plan', refs, markEarly)
   visitDates(data.forecast_confirmations, false, 'forecast_confirmations', refs, markEarly)
@@ -190,6 +199,8 @@ function coverageIssue(data: CaseFile): InputIssue | null {
 /** 不依赖时间轴和报价的输入冲突 */
 export function inputIssues(data: CaseFile, opIssues: readonly InputIssue[]): IssueReport {
   const issues = phaseIssues(data)
+  // §11.1、R010：预算未填写单独列明，不并进其他缺失
+  if (data.goal.budget_cap == null) issues.push({ code: 'MISSING_KEY_INFO', rule: 'R010', refs: ['goal.budget_cap'] })
   const currency = nonCnyIssue(data)
   if (currency != null) issues.push(currency)
   const range = rangeIssue(data)

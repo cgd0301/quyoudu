@@ -1,14 +1,1 @@
-[
-  {
-    "test_id": "T019-10",
-    "checkpoint": "final",
-    "path": "daily_reference.amount.value",
-    "op": "eq"
-  },
-  {
-    "test_id": "T019-10",
-    "checkpoint": "final",
-    "path": "action_list[cost_item_id=TICKET].amount.value",
-    "op": "eq"
-  }
-]
+[]

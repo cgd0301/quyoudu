@@ -223,7 +223,6 @@ describe('输入冲突', () => {
   test('as_of 缺少时区偏移（T001-06）', () => {
     const data = withCase((draft) => {
       draft.snapshot.as_of = '2026-09-01 09:00'
-      draft.snapshot.cash_as_of = '2026-09-01 09:00'
     })
     const found = codes(run(data))
     expect(found).toContain('AS_OF_FORMAT')
@@ -254,7 +253,11 @@ describe('输入冲突', () => {
         )
       })
     expect(codes(run(spent('DAY_START', true)))).toContain('SNAPSHOT_PHASE_MISMATCH')
-    expect(codes(run(spent('AFTER_EVENT(1)', false)))).toContain('SNAPSHOT_PHASE_MISMATCH')
+    const omitted = run(spent('AFTER_EVENT(1)', false))
+    expect(omitted.inputIssues.filter((issue) => issue.code === 'SNAPSHOT_PHASE_MISMATCH')).toEqual([
+      expect.objectContaining({ refs: ['snapshot.snapshot_phase'] }),
+      expect.objectContaining({ refs: ['E1'] }),
+    ])
     const matched = run(spent('AFTER_EVENT(1)', true))
     expect(codes(matched)).not.toContain('SNAPSHOT_PHASE_MISMATCH')
     expect(matched.snapshot?.goalAvailable.value).toBe(70000)

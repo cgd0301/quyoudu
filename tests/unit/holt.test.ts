@@ -163,7 +163,13 @@ describe('滚动回测与简单基线', () => {
     expect(entries.map((entry) => entry.backtestCount)).toEqual(days(1, 13).map((h) => 30 - h - 13))
     expect(entries[0]).toMatchObject({ horizon: 1, backtestCount: 16, status: 'AVAILABLE' })
     expect(entries[11]).toMatchObject({ horizon: 12, backtestCount: 5, status: 'AVAILABLE' })
-    expect(entries[12]).toMatchObject({ horizon: 13, backtestCount: 4, status: 'BACKTEST_INSUFFICIENT', amount: null })
+    expect(entries[12]).toMatchObject({
+      horizon: 13,
+      backtestCount: 4,
+      status: 'BACKTEST_INSUFFICIENT',
+      predicted: '58000.000000000000',
+    })
+    expect(entries[12]?.amount?.value).toBe(58000)
   })
 
   test(
@@ -188,7 +194,7 @@ describe('滚动回测与简单基线', () => {
 
       const firstTwenty = selectParams(prices.slice(0, 20), GRID).best
       expect(originFits(prices, GRID, MIN_SAMPLES).find((item) => item.t === 20)?.fit).toEqual(firstTwenty)
-      expect(before?.predicted.toFixed()).toBe(forecast(firstTwenty, 3).predicted.toFixed())
+      expect(before?.predicted.toFixed()).toBe(forecast(firstTwenty, 3, true).predicted.toFixed())
     },
     30_000,
   )
@@ -265,8 +271,9 @@ describe('状态判定', () => {
   test('T020-07② 某步预测值为负：结果无效，停止使用该预测成本', () => {
     const prices = extractSamples(declining, SERIES_ID, AS_OF).samples.map((sample) => sample.price)
     expect(forecast(selectParams(prices, GRID).best, 12).predicted.isNegative()).toBe(true)
+    const projected = forecast(selectParams(prices, GRID).best, 12)
     const [entry] = run(declining, [12])
-    expect(entry).toMatchObject({ horizon: 12, status: 'INVALID_RESULT', amount: null })
+    expect(entry).toMatchObject({ horizon: 12, status: 'INVALID_RESULT', predicted: fmt12(projected.predicted), amount: null })
   })
 
   test('T020-07③ 预测结果未引用配置版本：预测配置未冻结，不给出预测成本', () => {
@@ -291,7 +298,7 @@ describe('状态判定', () => {
       expect(forecastSchema.safeParse({ ...entry, confirmed: false }).error).toBeUndefined()
       expect(Object.values(entry)).not.toContain(undefined)
       expect(entry.amount === null || Number.isSafeInteger(entry.amount.value)).toBe(true)
-      expect(entry.amount === null).toBe(entry.status !== 'AVAILABLE')
+      expect(entry.amount === null).toBe(entry.status !== 'AVAILABLE' && entry.status !== 'BACKTEST_INSUFFICIENT')
     }
     expect(constant()[0]?.configVersion).toBe('DEMO-CFG-1')
     expect(constant()[0]?.amount?.basis.rules).toContain('R020')

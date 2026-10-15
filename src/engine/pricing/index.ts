@@ -184,6 +184,51 @@ function confirmedForecast(
   return confirmation.price
 }
 
+/**
+ * §12.7（15）：已确认方案的 FORECAST 价格项按确认价计算，当前序列缺失或不再合格时不改为待填。
+ * 只用于计划检查、行动清单和每日参考；candidates[] 的比较仍走 confirmedForecast（D13）。
+ */
+export function applyConfirmedPlanPrices(
+  data: NormalizedCase,
+  priced: PricedCandidate,
+  config: EngineConfig,
+): PricedCandidate {
+  const candidate = data.candidates.find((row) => row.candidateId === priced.candidateId)
+  if (candidate === undefined) return priced
+  const filled = new Set<string>()
+  const items = priced.items.map((row) => {
+    const item = candidate.items[row.index]
+    if (item === undefined || item.priceBasis !== 'FORECAST') return row
+    const price = confirmedPlanPrice(data, item, config)
+    if (price == null) return row
+    filled.add(item.costItemId)
+    const money = makeMoney(price, ['R009', 'D14'])
+    return { ...row, listPrice: money, payment: money, priceBasis: 'FORECAST' as const, estimate: true }
+  })
+  if (filled.size === 0) return priced
+  return {
+    ...priced,
+    items,
+    pendingReasons: priced.pendingReasons.filter(
+      (reason) => reason.code !== 'PRICE_PENDING' || reason.refs.some((ref) => !filled.has(ref)),
+    ),
+  }
+}
+
+/** 序列能对上时还要同 series_id；一条观测都没有时，购买日与配置版本都一致的确认只取唯一一条 */
+function confirmedPlanPrice(data: NormalizedCase, item: Item, config: EngineConfig): number | null {
+  const series = new Set<string>()
+  for (const row of data.priceSeries) {
+    if (row.costItemId === item.costItemId && row.channel === item.channel && row.spec === item.spec) series.add(row.seriesId)
+  }
+  const sameDay = data.forecastConfirmations.filter(
+    (row) => row.purchaseDate === item.purchaseDate && row.configVersion === config.configVersion,
+  )
+  const matched = series.size > 0 ? sameDay.filter((row) => series.has(row.seriesId)) : sameDay
+  if (matched.length !== 1) return null
+  return matched[0]?.price ?? null
+}
+
 function resolvePrice(data: NormalizedCase, item: Item, forecasts: readonly HoltForecast[], config: EngineConfig): Resolved {
   const refs = [item.costItemId]
   if (item.currency !== 'CNY') {

@@ -105,8 +105,11 @@ export function selectParams(samples: readonly number[], grid: ParamGrid): Selec
   return { best, grid: entries }
 }
 
-/** §6：预测(n+h | n) = ln + bn × (φ + φ² + … + φ^h) */
-export function forecast(fit: HoltFit, h: number): Projection {
+/**
+ * §6：预测(n+h | n) = ln + bn × (φ + φ² + … + φ^h)。
+ * 前向预测式内用未舍入的幂和（SG-47）。回测传 useRoundedPowerSum，先把幂和保留 12 位再代入（D25）。
+ */
+export function forecast(fit: HoltFit, h: number, useRoundedPowerSum = false): Projection {
   if (!Number.isSafeInteger(h) || h < 1) throw new RangeError('步长 h 须为正整数')
   const p = new Dec(fit.phi)
   let power = new Dec(1)
@@ -115,6 +118,7 @@ export function forecast(fit: HoltFit, h: number): Projection {
     power = power.times(p)
     sum = sum.plus(power)
   }
-  // SPEC-GAP SG-47：φ 幂和单独保留 12 位，预测式内用未舍入的和
-  return { powerSum: q12(sum), predicted: q12(fit.level.plus(fit.trend.times(sum))) }
+  const powerSum = q12(sum)
+  const factor = useRoundedPowerSum ? powerSum : sum
+  return { powerSum, predicted: q12(fit.level.plus(fit.trend.times(factor))) }
 }
