@@ -101,12 +101,12 @@ export function forecastSeries(input: SeriesInput, config: EngineConfig): HoltFo
     }
     const { predicted } = forecast(fit, h)
     const predictedText = fmt12(predicted)
-    // R020 第11条、§7.2：负值和零值停止把该预测用作成本；§6 仍保存预测中间值
+    // D76、R020 第11条、§7.2：负值和零值停止把该预测用作成本；predicted 仍保存，amount 为 null
     if (predicted.lt(MIN_PREDICTED) || predicted.gte(Number.MAX_SAFE_INTEGER)) {
       return { ...assessed, status: 'INVALID_RESULT', predicted: predictedText }
     }
     const saved = { ...assessed, predicted: predictedText, amount: makeMoney(toCents(predicted), AMOUNT_RULES) }
-    // §7.2：有效回测误差不足时该步长不用于候选比较，预测中间值和整数分金额仍保存
+    // D76、§7.2：有效回测误差不足时该步长不用于候选比较，predicted 与 amount 仍保存
     if (tested.count < settings.minBacktestErrors) return { ...saved, status: 'BACKTEST_INSUFFICIENT' }
     return saved
   })

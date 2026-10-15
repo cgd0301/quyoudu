@@ -92,7 +92,7 @@ export function visibleTasks(tasks: readonly FormalTask[], lifecycle: PlanLifecy
   return lifecycle === 'CANCELLED' ? tasks.filter((task) => !task.cancellable) : [...tasks]
 }
 
-/** R017 第10条：同一任务按当前输入算出的金额与已确认金额不同时，按费用项目汇总新估算减去已确认金额（§9.4） */
+/** D77、R017 第10条：同一任务按当前输入算出的金额与已确认金额不同时，按费用项目汇总新估算减去已确认金额（§9.4） */
 export function pendingDifferences(formal: readonly FormalTask[], current: readonly FormalTask[]): Difference[] {
   const latest = new Map(current.map((task) => [task.item.taskId, task.item.amount]))
   const totals = new Map<string, { delta: number; eventIds: string[] }>()

@@ -206,7 +206,7 @@
   7. 行动清单至少包含购买项目和规格、购买日期或窗口、渠道、优惠使用步骤、预计支付金额、付款日期或截止时间、待核价条件、任务状态及关联方案版本。
   8. 购买日与付款日分开；到达日期不自动标记已购买、已付款或已到账；行动清单不执行下单。
   9. 风险、可行性和每日参考金额可以自动更新；更换渠道、改变购买或付款日期、改变优惠安排、替换正式方案、暂停或取消，均须再次确认。
-  10. 新价格估算可用于风险重评，但须保留已确认方案原依据和版本，显示待确认差异，不静默改写正式行动安排。
+  10. 新价格估算可用于风险重评，但须保留已确认方案原依据和版本，显示待确认差异，不静默改写正式行动安排。新估算的来源见 D77。
   11. 经确认的实际支出和到账必须如实更新记录，即使因此使计划失效；如实记账不等于获得自动修改购买策略的权限。
 - 输出：正式方案版本、账面分配变化、购买行动清单、确认记录或待确认差异。
 - 异常：版本过期、分配冲突、必要条件缺失时提示核对，不绕过限制写入超额资金安排。
@@ -660,6 +660,8 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 - D73 机动预留释放的生成条件：引擎只在有计划对象（D47）、且 reserves[] 中有 CONTINGENCY 预留时生成机动预留释放；没有计划对象时时间轴只含共同事件，不生成（§12.7）。活动结束日按 D39 取演出结束日与计划对象全部返程交通价格项 arrive_at 的较晚日；取消后仍按取消前的计划对象计算（D55）。有返程交通价格项但缺 arrive_at 时不生成释放，M 保留。events[] 中有 CONTINGENCY_RELEASE 事件时视为案例另有规定（D09），按其日期日终释放，不再生成；生成的释放日早于 as_of 所在日时不生成。（DEMO-CFG-1｜依 SG-54 裁决）
 - D74 金额或日期未知的事件：时间轴遇到金额或日期未知（含无法解析）或金额为负的流出时，报 MISSING_KEY_INFO（R010），局部检查在该笔处截断：按 §10.2 排在它之前的节点照常判定，该笔及其后的事件不再执行和判定；它在流出组中时整组不执行。日期未知的流出无法定位，局部检查在起始节点之后截断。日期已知的这类流出仍参与按 D04、D41、D56 确定检查期间。金额或日期未知的流入不计入，也不报问题（R005）。现金未知时不逐节点计算，报 MISSING_KEY_INFO。覆盖关系、funding_event_id、计划分配或所选候选指向不存在的对象时报 REFERENCE_INVALID，覆盖按 q = 0，所选候选不存在按没有计划对象；计划分配所挂的不是无条件的 INCOME 时不转入 A（D64）。金额为 0 的事件不成节点。（DEMO-CFG-1｜依 SG-55 裁决）
 - D75 已有本目标付款的项目：events[] 中已有某费用项目的本目标付款（GOAL_PAYMENT，已付或预计）时，候选中同一项目的价格项默认是已购项目的另一报价，不计入后续应付F，也不在时间轴上付款（R015第4条“已购项目不能重复生成待购”，T002-05）。价格项带可选字段 settles_event_id 时，表示它是该笔付款之后的未履行部分（如定金之后的尾款），照常计入F并在 payment_at 付款（R015第4条“部分付款只保留未履行部分”，T015-04）。settles_event_id 须指向同一 cost_item_id 的本目标付款事件，否则报 REFERENCE_INVALID，该价格项仍计入并付款。已取消时，cancellable 为 true 的未付事件不再算作该项目的付款（D61）。（DEMO-CFG-1｜依 SG-63 裁决）
+- D76 回测不足与结果无效的预测值：status 为 BACKTEST_INSUFFICIENT 时，forecasts[] 保留 predicted 与转为整数分的 amount。status 为 INVALID_RESULT 时保留 predicted，amount 为 null。两种状态都只说明该预测不能使用，不把它用于候选比较或成本（§6、§7.2、R020 第11条）。（DEMO-CFG-1｜依 SG-50 裁决）
+- D77 待确认差异的新估算：新估算只取已确认价格项按当前输入重算的金额。与确认时冻结的金额不同时，按费用项目汇总 delta＝新金额－已确认金额，行动清单不改。其他候选的价格，包括未经 D14 确认的预测，不计入。因此 T013-07、T017-07 不产生待确认差异。（DEMO-CFG-1｜依 SG-67 裁决）
 
 #### 8.9 提交版数据约束
 
@@ -914,7 +916,7 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 
 1. 不存在已确认方案时，不计算D，显示“确认方案后可计算”，不显示0。
 2. 关键资金、付款、生活安排、用途或检查期间不足时，显示“暂无法给出建议金额”及原因（R019）。living_arrangement=NOT_PROVIDED 即生活安排不足，missing_reasons 含 LIVING_ARRANGEMENT_MISSING，不给出金额（D59）。省略该字段按已提供处理。
-3. 否则按§4计算：检查期间按10.1；方案金额取已确认方案版本，尚未确认的新价格估算只用于R017第10条的风险重评和待确认差异，不进入D的计算（R019输入为已确认方案）；情景集合S按D26；x作为as_of时刻不属于本目标、无预留覆盖的流出，排在时间轴最前，按10.3、10.4检查；今日同口径情景支出按D22替换。
+3. 否则按§4计算：检查期间按10.1；方案金额取已确认方案版本，尚未确认的新价格估算（D77）只用于R017第10条的风险重评和待确认差异，不进入D的计算（R019输入为已确认方案）；情景集合S按D26；x作为as_of时刻不属于本目标、无预留覆盖的流出，排在时间轴最前，按10.3、10.4检查；今日同口径情景支出按D22替换。
 4. D26所选的近月情景因历史不足、记录不完整、配置版本缺失、类别标注缺失或覆盖关系不清而不可用时（R018异常），从S中移出，不按0元或缺口处理；结果按“仅已确认安排”给出，标“仅依据已确认安排”，并列出不可用的情景及原因（R019异常、R010）。“仅已确认安排”本身无法评估的，按第2步处理。
 5. S中任一情景在x = 0时检查不通过（出现缺口、冲突或预算超限），显示“当前不建议新增非计划支出”，可以显示0元并说明原因（R019）。
 6. 否则，每个情景的D为满足x ≤ U0且检查通过的最大整数分x；主展示各情景D中的较低者，并注明限制来源（D26、R019第7条）。
@@ -1238,7 +1240,7 @@ ResultCore另用的代码（节点触发、方案来源、情景、每日参考�
 | earliest_gap、gap_list[] | node_index、at、node_verdict、amount、related（D11、D35） |
 | constraint_issues | budget_overrun、allocation_conflicts[] |
 | cost | paid_total、future_payable、eligible_return、net_spend、net_spend_if_received、budget_overrun、paid_payments[]、future_payments[]、protected_reserves、contingency_reserve、pending_cost_item_ids、possible_refund{amount, condition}或null（§3、§11.1、政策卡第四节） |
-| pending_differences[] | cost_item_id、delta（R017第10条：新估算与已确认金额的差额，不改正式行动清单） |
+| pending_differences[] | cost_item_id、delta（R017第10条、D77：新估算与已确认金额的差额，不改正式行动清单） |
 | dependencies[] | kind、refs、amount、at（“按当前假设可行”的依赖条件） |
 | candidates[] | candidate_id、plan_version、evaluable、pending_reasons、excluded_reasons、feasible、net_spend、net_spend_if_received、tie_group、rank |
 | optimization | scope、evaluated_count、pending_count、excluded_count、top_k |
@@ -1247,7 +1249,7 @@ ResultCore另用的代码（节点触发、方案来源、情景、每日参考�
 | daily_reference | display、amount?、limited_by?、label?、unavailable[]、missing_reasons[]（R019、D26、D27、D59） |
 | user_confirmations[] | field、value、input_version、status（D60） |
 | states | plan_state、underlying_plan_state（只在已暂停、已取消时给出）、optimization_state、confirmation_state、plan_target（§11、D47） |
-| forecasts?、scenarios? | 预测与情景结果，字段名取§9.5、§9.6的TS列（R018、R020） |
+| forecasts?、scenarios? | 预测与情景结果，字段名取§9.5、§9.6的TS列（R018、R020）。回测不足与结果无效的 predicted、amount 见 D76 |
 | labels | 标签代码；文字见result.ts的LABEL_TEXT，与§11.4原文一致。未确认方案同时含 DRAFT_PREVIEW 与 PREVIEW_UNCONFIRMED（D62）。结果中出现§11.4的“同价”“历史不足”时，顶层 labels 须含对应代码，见§12.7 |
 
 #### 12.6 evaluate

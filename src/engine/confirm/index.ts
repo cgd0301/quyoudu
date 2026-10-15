@@ -211,7 +211,7 @@ export function confirmView(input: ViewInput): ConfirmView {
     return {
       confirmation: recorded ? structuredClone(record) : null,
       actionList: formal.map((task) => structuredClone(task.item)),
-      // SPEC-GAP SG-67：新估算只取已确认价格项按当前输入算出的金额
+      // D77：新估算只取已确认价格项按当前输入算出的金额
       pendingDifferences: pendingDifferences(formal, current),
       draft: false,
     }
