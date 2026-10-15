@@ -1286,3 +1286,8 @@ evaluate(caseData, ops, config)返回{checkpoints: [{label, result}]}。每个EV
 - （28）近月情景可用时，餐饮、本地交通、日用、娱乐四类在各自覆盖期间都列出一组。窗口内没有记录的类别，组总额、已列安排和情景增量都为 0，组内每日都列出（含 0）。groups 先按餐饮、本地交通、日用、娱乐，再按 coverage_start 排序。（DEMO-CFG-1｜依 H3 写定）
 - （29）forecasts[] 中有 amount 不为 null 的条目时，labels 含 FORECAST_DISCLAIMER；没有给出预测估算金额时不加。（DEMO-CFG-1｜依 H3 写定）
 - （30）检查期间内存在由流出或流出组触发的保护性资金缺口节点时，labels 含 PROTECTED_SQUEEZE。文案中的金额取其中最早一个这种节点的 -U。（DEMO-CFG-1｜依 H3 写定）
+- （31）每日参考已经用 display 或 label 写出的句子，不重复写入顶层 labels。display 为 NEED_CONFIRMED_PLAN、UNAVAILABLE 或 NOT_RECOMMENDED 时，顶层 labels 不含这些代码。label 为 CONFIRMED_ONLY 时，顶层 labels 不含 CONFIRMED_ONLY。生活安排未提供仍只由 LIVING_ARRANGEMENT_MISSING 表示。（DEMO-CFG-1｜依 H3 写定）
+- （32）labels 含 FORECAST_UNAVAILABLE，仅当 forecasts[] 中有已经算出但不能使用的条目，status 为 BACKTEST_INSUFFICIENT、NOT_COMPARABLE 或 INVALID_RESULT。status 为 HISTORY_INSUFFICIENT 时只含 HISTORY_INSUFFICIENT，不含 FORECAST_UNAVAILABLE。没有预测序列、因而改用有效参考价、有效期未知的报价或待填时，不因此写入 FORECAST_UNAVAILABLE。（DEMO-CFG-1｜依 H3 写定）
+- （33）依赖后续条件的返还仍按（16）给出 net_spend_if_received。顶层 labels 不含 IF_RECEIVED；“若到账”只出现在该净支出旁边。（DEMO-CFG-1｜依 H3 写定）
+- （34）dependencies[] 先按 kind 排列：EXPECTED_INCOME、EXPECTED_RETURN、CONFIRMED_FORECAST、ESTIMATE；同一 kind 内按 at 升序；at 也相同时，来自共同事件的按 events[] 中的先后排在前，来自计划对象价格项或返还的按其在 items[]、returns[] 中的先后排在后。（DEMO-CFG-1｜依 H3 写定）
+- （35）近月情景的观察窗口为 as_of 所在日之前、不早于 2026-09-01 的最近至多 30 个自然日：observation_end 为 as_of 所在日的前一日，observation_start 为 observation_end 前推 29 日与 2026-09-01 中的较晚者；as_of 所在日为 2026-09-01 时两者为 null。complete_days 为窗口内 COMPLETE 或 NO_SPEND 的天数，不足 30 个时近月情景不可用（HISTORY_INSUFFICIENT），仍给出该窗口及覆盖情况。（DEMO-CFG-1｜依 H3 写定）
