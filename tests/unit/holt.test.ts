@@ -122,6 +122,17 @@ describe('§6 公式与 §7.2 网格选参', () => {
     expect(fitHolt([10000, 11000, 11500], '0.2', '0.2', '0.80')).toEqual(fit)
   })
 
+  test('T020-07② 最终预测先把 φ 幂和保留 12 位小数，再与 b 相乘（D25）', () => {
+    const fit = {
+      ...fitHolt([10000, 11000, 11500], '0.2', '0.2', '0.98'),
+      level: new Dec('50124.378109437492'),
+      trend: new Dec('-19900.497512450860'),
+    }
+    const { powerSum, predicted } = forecast(fit, 12)
+    expect(fmt12(powerSum)).toBe('10.548880536995')
+    expect(fmt12(predicted)).toBe('-159803.592776172798')
+  })
+
   test('T020-02 gap 常量序列 64 组参数的训练 SSE 都为 0', () => {
     const { best, grid } = selectParams(Array<number>(30).fill(58000), GRID)
     expect(grid.map((entry) => fmt12(entry.sse))).toEqual(Array<string>(64).fill('0.000000000000'))
@@ -194,7 +205,7 @@ describe('滚动回测与简单基线', () => {
 
       const firstTwenty = selectParams(prices.slice(0, 20), GRID).best
       expect(originFits(prices, GRID, MIN_SAMPLES).find((item) => item.t === 20)?.fit).toEqual(firstTwenty)
-      expect(before?.predicted.toFixed()).toBe(forecast(firstTwenty, 3, true).predicted.toFixed())
+      expect(before?.predicted.toFixed()).toBe(forecast(firstTwenty, 3).predicted.toFixed())
     },
     30_000,
   )

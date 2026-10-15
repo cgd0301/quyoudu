@@ -50,8 +50,8 @@ export function rollingBacktest(samples: readonly number[], h: number, fits: rea
   for (const { t, fit } of fits) {
     if (t + h > samples.length) continue
     const actual = samples[t + h - 1]
-    // D25：回测预测用已保留 12 位的幂和，误差再保留 12 位后才汇总成 MAE
-    const { predicted } = forecast(fit, h, true)
+    // D25：误差保留 12 位后再汇总成 MAE
+    const { predicted } = forecast(fit, h)
     points.push({ t, predicted, actual, error: q12(new Dec(actual).minus(predicted)), baselineError: actual - samples[t - 1] })
   }
   return {
