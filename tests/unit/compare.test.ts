@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import fc from 'fast-check'
 import { describe, expect, test } from 'vitest'
-import { compareCandidates } from '../../src/engine/compare/index.ts'
+import { compareCandidates, sortPending } from '../../src/engine/compare/index.ts'
 import { DEMO_CFG_1, type EngineConfig } from '../../src/engine/config.ts'
 import { evaluate } from '../../src/engine/evaluate.ts'
 import { normalize } from '../../src/engine/normalize/index.ts'
@@ -15,6 +15,7 @@ import { REPO_ROOT } from '../lib/vector.ts'
 import { c01 } from './samples.ts'
 
 type Row = ResultCore['candidates'][number]
+type Pending = Row['pendingReasons'][number]
 type Item = CaseFile['candidates'][number]['items'][number]
 type OptimizationState = ResultCore['states']['optimizationState']
 
@@ -24,6 +25,10 @@ function loadVector(id: string): { input: CaseFile; ops: Op[] } {
     ops: unknown
   }
   return { input: caseFileSchema.parse(raw.input), ops: opsSchema.parse(raw.ops) }
+}
+
+function loadCase(id: string): CaseFile {
+  return caseFileSchema.parse(JSON.parse(readFileSync(path.join(REPO_ROOT, 'fixtures/cases', `${id}.json`), 'utf8')))
 }
 
 function run(data: CaseFile, ops: readonly Op[] = [], config: EngineConfig = DEMO_CFG_1): ResultCore {
@@ -46,6 +51,10 @@ function candidate(result: ResultCore, id: string): Row {
 
 function codes(reasons: readonly { code: string }[]): string[] {
   return reasons.map((reason) => reason.code)
+}
+
+function reasonsOf(reasons: readonly Pending[]): { code: string; refs: string[] }[] {
+  return reasons.map(({ code, refs }) => ({ code, refs }))
 }
 
 function rankedRows(result: ResultCore): Row[] {
@@ -528,6 +537,46 @@ describe('R011 比较覆盖范围与优化状态', () => {
     expect(result.candidates).toEqual([])
     expect(result.optimization).toEqual({ scope: [], evaluatedCount: 0, pendingCount: 0, excludedCount: 0, topK: 3 })
     expect(result.states.optimizationState).toBe('NOT_COMPARED')
+  })
+})
+
+describe('§12.7（36） pending_reasons 的排列', () => {
+  test('cB_v3_lodging_unknown 住宿未覆盖的 PRICE_PENDING 排在最前，两条 COMPARISON_FIELD_MISSING 按 refs 字典序在后', () => {
+    const result = run(loadCase('cB_v3_lodging_unknown'))
+    for (const id of ['C01', 'C02', 'C05']) {
+      expect(reasonsOf(candidate(result, id).pendingReasons), id).toEqual([
+        { code: 'PRICE_PENDING', refs: ['LODGING'] },
+        { code: 'COMPARISON_FIELD_MISSING', refs: ['lodging_max_distance_m'] },
+        { code: 'COMPARISON_FIELD_MISSING', refs: ['lodging_nights_required'] },
+      ])
+    }
+  })
+
+  test('四类依次排列；同一类内按 refs 的字典序，refs 相同时按代码次序（SG-75）', () => {
+    const reasons: Pending[] = [
+      { code: 'SHARED_INPUT_INCOMPLETE', rule: 'R016', refs: ['budget_cap'] },
+      { code: 'OFFER_ORDER_MISSING', rule: 'D45', refs: ['O1', 'O2'] },
+      { code: 'OFFER_CONDITION_UNKNOWN', rule: 'R009', refs: ['O1'] },
+      { code: 'ROUNDING_UNKNOWN', rule: 'D17', refs: ['O1'] },
+      { code: 'COMPARISON_FIELD_MISSING', rule: 'D16', refs: ['lodging_nights_required'] },
+      { code: 'COMPARISON_FIELD_MISSING', rule: 'D16', refs: ['TICKET'] },
+      { code: 'PRICE_PENDING', rule: 'R016', refs: ['TRAIN'] },
+      { code: 'PAYMENT_TIME_MISSING', rule: 'D54', refs: ['TICKET'] },
+      { code: 'QUOTE_EXPIRED', rule: 'R009', refs: ['LODGING'] },
+      { code: 'NON_CNY', rule: 'R008', refs: ['LODGING'] },
+    ]
+    expect(reasonsOf(sortPending(reasons))).toEqual([
+      { code: 'NON_CNY', refs: ['LODGING'] },
+      { code: 'QUOTE_EXPIRED', refs: ['LODGING'] },
+      { code: 'PAYMENT_TIME_MISSING', refs: ['TICKET'] },
+      { code: 'PRICE_PENDING', refs: ['TRAIN'] },
+      { code: 'COMPARISON_FIELD_MISSING', refs: ['TICKET'] },
+      { code: 'COMPARISON_FIELD_MISSING', refs: ['lodging_nights_required'] },
+      { code: 'ROUNDING_UNKNOWN', refs: ['O1'] },
+      { code: 'OFFER_CONDITION_UNKNOWN', refs: ['O1'] },
+      { code: 'OFFER_ORDER_MISSING', refs: ['O1', 'O2'] },
+      { code: 'SHARED_INPUT_INCOMPLETE', refs: ['budget_cap'] },
+    ])
   })
 })
 

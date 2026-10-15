@@ -1,4 +1,4 @@
-import type { InputIssueCode, OptimizationState } from '../enums.ts'
+import type { InputIssueCode, OptimizationState, PendingReasonCode } from '../enums.ts'
 import type { InputIssue } from '../issues/index.ts'
 import type { NormalizedCase } from '../normalize/index.ts'
 import type { PricedCandidate } from '../pricing/index.ts'
@@ -129,17 +129,40 @@ function pendingOf(input: CompareInput, shared: Shared, priced: PricedCandidate,
   return sortPending(pending)
 }
 
-/** §12.7（20）：价格项原因在前，SHARED_INPUT_INCOMPLETE 在后；同一代码按 refs 字典序 */
-function sortPending(reasons: Pending[]): Pending[] {
-  const rank = (code: string) => (code === 'SHARED_INPUT_INCOMPLETE' ? 1 : 0)
+/** §12.7（36）：价格项原因、相容性比较字段缺失、优惠条件不完整、SHARED_INPUT_INCOMPLETE 四类依次排列 */
+const PENDING_ORDER: Record<PendingReasonCode, readonly [group: number, order: number]> = {
+  PRICE_PENDING: [0, 0],
+  NON_CNY: [0, 1],
+  QUOTE_EXPIRED: [0, 2],
+  PAYMENT_TIME_MISSING: [0, 3],
+  COMPARISON_FIELD_MISSING: [1, 0],
+  ROUNDING_UNKNOWN: [2, 0],
+  OFFER_ORDER_MISSING: [2, 1],
+  OFFER_CONDITION_UNKNOWN: [2, 2],
+  SHARED_INPUT_INCOMPLETE: [3, 0],
+}
+
+// SPEC-GAP SG-75：refs 逐个元素按 UTF-16 码元比较，较短的前缀在前
+function compareRefs(left: readonly string[], right: readonly string[]): number {
+  for (let index = 0; index < left.length && index < right.length; index += 1) {
+    const a = left[index] ?? ''
+    const b = right[index] ?? ''
+    if (a !== b) return a < b ? -1 : 1
+  }
+  return left.length - right.length
+}
+
+/** §12.7（36）：同一类内按 refs 的字典序，refs 相同时按代码次序 */
+export function sortPending(reasons: readonly Pending[]): Pending[] {
   return reasons
     .map((reason, index) => ({ reason, index }))
     .sort((left, right) => {
-      const group = rank(left.reason.code) - rank(right.reason.code)
-      if (group !== 0) return group
-      if (left.reason.code !== right.reason.code) return left.index - right.index
-      const refs = left.reason.refs.join('\u0000').localeCompare(right.reason.refs.join('\u0000'))
-      return refs !== 0 ? refs : left.index - right.index
+      const [leftGroup, leftOrder] = PENDING_ORDER[left.reason.code]
+      const [rightGroup, rightOrder] = PENDING_ORDER[right.reason.code]
+      if (leftGroup !== rightGroup) return leftGroup - rightGroup
+      const refs = compareRefs(left.reason.refs, right.reason.refs)
+      if (refs !== 0) return refs
+      return leftOrder !== rightOrder ? leftOrder - rightOrder : left.index - right.index
     })
     .map((item) => item.reason)
 }
