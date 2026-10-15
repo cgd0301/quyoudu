@@ -127,8 +127,11 @@ describe('exportOracle', () => {
     write(source, 'tests/unit/vectors.test.ts', 'export {}\n')
     write(source, 'tests/golden/vectors/T001-07#1.json', '{}\n')
     write(source, 'scripts/oracle-template/AGENTS.md', '')
+    write(source, 'docs/_work/oracle_fixes/h3-r1.md', '# 修正\n')
+    write(source, 'docs/_work/oracle_fixes/notes.txt', '不复制\n')
     write(target, 'fixtures/vectors/T999-01.json', '{}\n')
     write(target, 'fixtures/cases/old.json', '{}\n')
+    write(target, 'fixes/old.md', '旧修正\n')
     write(target, 'oracle/engine.py', 'print(1)\n')
     written = await exportOracle(source, target)
   })
@@ -148,6 +151,7 @@ describe('exportOracle', () => {
       'docs/rules.md',
       'docs/scope.md',
       'docs/traceability_noexpect.csv',
+      'fixes/h3-r1.md',
       'fixtures/cases/c01_base.json',
       'fixtures/vectors/T001-07#1.json',
       'oracle_inputs.json',
@@ -199,9 +203,41 @@ describe('exportOracle', () => {
     }
   })
 
-  test('目标中 fixtures 两个目录的旧文件被清掉，其他目录不动', () => {
+  test('目标中 fixtures 两个目录和 fixes 的旧文件被清掉，其他目录不动', () => {
     expect(exists('fixtures/vectors/T999-01.json')).toBe(false)
     expect(exists('fixtures/cases/old.json')).toBe(false)
+    expect(exists('fixes/old.md')).toBe(false)
+    expect(exists('fixes/notes.txt')).toBe(false)
+    expect(read('fixes/h3-r1.md')).toBe('# 修正\n')
     expect(read('oracle/engine.py')).toBe('print(1)\n')
+  })
+})
+
+describe('没有修正单时仍清空目标 fixes', () => {
+  test('源目录不存在时，目标 fixes 被清空且清单不含 fixes', async () => {
+    const source = mkdtempSync(path.join(tmpdir(), 'oracle-src-empty-'))
+    const target = mkdtempSync(path.join(tmpdir(), 'oracle-dst-empty-'))
+    const write = (relativePath: string, text: string) => {
+      const file = path.join(source, relativePath)
+      mkdirSync(path.dirname(file), { recursive: true })
+      writeFileSync(file, text, 'utf8')
+    }
+    try {
+      for (const name of ['rules.md', 'policy_card.md', 'scope.md']) write(`docs/${name}`, `# ${name}\n`)
+      write('docs/traceability.csv', CSV)
+      write('docs/_work/schema.json', '{}\n')
+      write('fixtures/cases/c01_base.json', '{}\n')
+      write('fixtures/vectors/T001-07#1.json', `${JSON.stringify(vector, null, 2)}\n`)
+      write('scripts/oracle-template/AGENTS.md', '')
+      mkdirSync(path.join(target, 'fixes'), { recursive: true })
+      writeFileSync(path.join(target, 'fixes', 'old.md'), '旧\n', 'utf8')
+      const written = await exportOracle(source, target)
+      expect(written).not.toContain('fixes/old.md')
+      expect(written.some((file) => file.startsWith('fixes/'))).toBe(false)
+      expect(existsSync(path.join(target, 'fixes', 'old.md'))).toBe(false)
+    } finally {
+      rmSync(source, { recursive: true, force: true })
+      rmSync(target, { recursive: true, force: true })
+    }
   })
 })

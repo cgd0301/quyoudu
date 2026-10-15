@@ -86,6 +86,11 @@ function isComparedPath(file: string): boolean {
   return (DOC_FILES as readonly string[]).includes(file) || file.startsWith('fixtures/cases/') || file.startsWith('fixtures/vectors/')
 }
 
+/** 修正单写入清单，但不参与过期比较 */
+function isFixManifestPath(file: string): boolean {
+  return file === 'fixes' || file.startsWith('fixes/')
+}
+
 async function readOptional(file: string): Promise<string | null> {
   try {
     return await readFile(file, 'utf8')
@@ -146,9 +151,11 @@ export async function listStale(root: string): Promise<string[]> {
   if (manifest === null) return [...current.keys()].sort()
   const stale = new Set<string>()
   for (const [file, fingerprint] of current) {
+    if (isFixManifestPath(file)) continue
     if (manifest[file] !== fingerprint) stale.add(file)
   }
   for (const file of Object.keys(manifest)) {
+    if (isFixManifestPath(file)) continue
     if (isComparedPath(file) && !current.has(file)) stale.add(file)
   }
   return [...stale].sort()

@@ -1267,3 +1267,22 @@ evaluate(caseData, ops, config)返回{checkpoints: [{label, result}]}。每个EV
 - candidates[] 保留案例输入中的全部候选，顺序与输入 candidates[] 相同，不按 rank 重排。进入前 K 名的 rank 为从 1 起、不重复、不缺号、且不超过 optimization.top_k 的正整数；不在前 K 名的 rank 为 null。（DEMO-CFG-1｜依 A4-0 写定）
 - 每个检查点的 labels 以 SIMULATED_DATA、TOP_K_DEMO 开头。（DEMO-CFG-1｜依 A4-0 写定）
 - scenarios[] 的顺序固定为 CONFIRMED_ONLY、RECENT_MONTH。（DEMO-CFG-1｜依 A4-0 写定）
+- （12）CaseFile 不单独表示“用户初始描述形成的草案”，用户描述的方案写成候选。没有 confirmed_plan 且本次 ops 未执行 SELECT_CANDIDATE 时，plan_target 为 NONE，input_issues 报 NO_PLAN，计划状态为“暂无法完整判断”（尚未形成方案）。此时 cost.pending_cost_item_ids 只列 amount_status 为 PENDING 的必要项目。（DEMO-CFG-1｜依 H3 写定）
+- （13）as_of 或 cash_as_of 不符合 D03 格式时只报 AS_OF_FORMAT，不再判断两者是否对应；两者都能解析时才比较，不对应报 CASH_AS_OF_MISMATCH。（DEMO-CFG-1｜依 H3 写定）
+- （14）D03 列出的三种快照冲突情形各报一条 SNAPSHOT_PHASE_MISMATCH，同一情形只报一次。快照阶段与计入标记不符的 refs 为 snapshot.snapshot_phase；已实际发生且实际时刻不晚于 cash_as_of 的事件未计入快照的 refs 为相关事件编号。in_snapshot 为 true 但事件不是实际发生、或实际时刻晚于 cash_as_of 时，另报一条。（DEMO-CFG-1｜依 H3 写定）
+- （15）已确认方案中 price_basis 为 FORECAST、且有同 series_id 与 purchase_date 的 forecast_confirmations 的价格项，计划检查、行动清单和每日参考按该确认的 price 计算。当前序列缺失或不再合格时不改为待填，只在 forecasts[] 和待确认差异中体现。candidates[] 的比较仍按 D13 判断。（DEMO-CFG-1｜依 H3 写定）
+- （16）只有存在依赖后续条件、不计入 R 的返还（D12 的返现、带 trigger_condition 的 RETURN）时，cost 与 candidates[] 才给出 net_spend_if_received，取这些返还到账后的净支出；否则为 null，不显示“若到账”。（DEMO-CFG-1｜依 H3 写定）
+- （17）evaluable 为 false 的候选，net_spend 与 net_spend_if_received 为 null，不给出未完整评估的净支出。（DEMO-CFG-1｜依 H3 写定）
+- （18）因优惠条件被排除（excluded_reasons 含 OFFER_ 开头的原因）的候选，net_spend 不计违规使用的优惠减免；其他确定性排除的候选照常按其组合计算。（DEMO-CFG-1｜依 H3 写定）
+- （19）pending_reasons 每个价格项每种原因只报一条，refs 为该价格项的 cost_item_id。价格项已有 NON_CNY、QUOTE_EXPIRED 或 PRICE_PENDING 时，不另加候选级 PRICE_PENDING。（DEMO-CFG-1｜依 H3 写定）
+- （20）excluded_reasons 按 R016 第2条的检查次序排列：相容性、优惠、预算（BUDGET_EXCEEDED）、付款节点（PAYMENT_GAP、ALLOCATION_CONFLICT），最后是 DUPLICATE_CANDIDATE。pending_reasons 先列价格项原因，后列 SHARED_INPUT_INCOMPLETE；同类按 refs 的字典序。（DEMO-CFG-1｜依 H3 写定）
+- （21）候选自身的价格项逾期未履行时，该候选计入待确认数，原因记 PAYMENT_TIME_MISSING，refs 为该价格项，不记 SHARED_INPUT_INCOMPLETE。只有快照、共同事件等共同输入有问题时才记 SHARED_INPUT_INCOMPLETE。（DEMO-CFG-1｜依 H3 写定）
+- （22）confirmation 只在确认前模拟的计划状态为“按当前假设可行”时给出：待用户确认时的预览，或本次 ops 中已写入正式安排的 CONFIRM（含重复确认）。只能存为草案时为 null；界面按 §11.3 显示问题和风险，不显示拟发生的分配差额。（DEMO-CFG-1｜依 H3 写定）
+- （23）案例输入自带 confirmed_plan、且本次 ops 没有执行 CONFIRM 时，confirmation 为 null，不按当前输入重算 W、m 和 ΔA。§11.3 已确认所需的方案版本取 candidates[].plan_version，输入版本取 confirmed_plan.input_version。（DEMO-CFG-1｜依 H3 写定）
+- （24）dependencies[].at：预计收入与预计返还取到账日；估算费用与已确认的预测估算取对应价格项的 payment_at，与节点 at、cost.future_payments 的日期一致。（DEMO-CFG-1｜依 H3 写定）
+- （25）daily_reference.limited_by.node_index 为 x＝D＋1 时第一个未通过的节点在 nodes[] 中的下标，按触发类型与事件编号对应。D 已到 U0 上界，或该节点只在情景、探测时间轴中时为 null。（DEMO-CFG-1｜依 H3 写定）
+- （26）forecasts 总是输出；没有可生成的条目时为 []，不省略。（DEMO-CFG-1｜依 H3 写定）
+- （27）forecasts[] 的 status 为 NOT_COMPARABLE 时不认定有效样本：sample_count 为 0，history_end 为 null，horizon 为 0，不拟合、不回测，限制由 status 表示。（DEMO-CFG-1｜依 H3 写定）
+- （28）近月情景可用时，餐饮、本地交通、日用、娱乐四类在各自覆盖期间都列出一组。窗口内没有记录的类别，组总额、已列安排和情景增量都为 0，组内每日都列出（含 0）。groups 先按餐饮、本地交通、日用、娱乐，再按 coverage_start 排序。（DEMO-CFG-1｜依 H3 写定）
+- （29）forecasts[] 中有 amount 不为 null 的条目时，labels 含 FORECAST_DISCLAIMER；没有给出预测估算金额时不加。（DEMO-CFG-1｜依 H3 写定）
+- （30）检查期间内存在由流出或流出组触发的保护性资金缺口节点时，labels 含 PROTECTED_SQUEEZE。文案中的金额取其中最早一个这种节点的 -U。（DEMO-CFG-1｜依 H3 写定）

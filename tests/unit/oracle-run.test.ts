@@ -68,6 +68,16 @@ describe('listStale', () => {
       rmSync(root, { recursive: true, force: true })
     }
   })
+
+  test('fixes/ 写入清单也不参与比较', async () => {
+    const root = makeRoot()
+    try {
+      manifest(root, { 'fixes/h3-r1.md': 'wrong' })
+      expect(await listStale(root)).toEqual([])
+    } finally {
+      rmSync(root, { recursive: true, force: true })
+    }
+  })
 })
 
 describe('runOracle', () => {

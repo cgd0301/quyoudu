@@ -7,8 +7,9 @@
  * 存为 docs/traceability_noexpect.csv；
  * docs/_work 下的 JSON Schema；fixtures/cases/*.json；fixtures/vectors/*.json（删去 expect 与 source_text）；
  * scripts/oracle-template/AGENTS.md 放到目标根目录。
+ * docs/_work/oracle_fixes/*.md 复制到目标根目录 fixes/。
  * 每个导出文件的指纹写入目标根目录 oracle_inputs.json。不复制 src/ 和 tests/。
- * 目标中的 fixtures/cases、fixtures/vectors 先清空再写，其他目录不动。
+ * 目标中的 fixtures/cases、fixtures/vectors、fixes 先清空再写，其他目录不动。
  */
 import { createHash } from 'node:crypto'
 import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises'
@@ -27,6 +28,8 @@ const SCHEMA_DIR = 'docs/_work'
 const CASES_DIR = 'fixtures/cases'
 const VECTORS_DIR = 'fixtures/vectors'
 const TEMPLATE = 'scripts/oracle-template/AGENTS.md'
+const FIXES_SRC = 'docs/_work/oracle_fixes'
+const FIXES_TARGET = 'fixes'
 const INPUTS_MANIFEST = 'oracle_inputs.json'
 const EXPECTED_COLUMN = '预期结果'
 const TEST_COLUMN = '拟建测试'
@@ -90,6 +93,10 @@ function isSchemaFile(name: string): boolean {
   return name === 'schema.json' || name.endsWith('.schema.json')
 }
 
+function isEnoent(error: unknown): boolean {
+  return typeof error === 'object' && error !== null && 'code' in error && error.code === 'ENOENT'
+}
+
 function fingerprintManifest(files: ReadonlyMap<string, string>): string {
   const body: Record<string, string> = {}
   for (const file of [...files.keys()].sort()) body[file] = contentFingerprint(files.get(file) ?? '')
@@ -108,8 +115,17 @@ export async function exportOracle(sourceRoot: string, targetRoot: string): Prom
     outputs.set(file, stripVector(await read(file)))
   }
   outputs.set('AGENTS.md', await read(TEMPLATE))
+  let fixFiles: string[] = []
+  try {
+    fixFiles = await listFiles(sourceRoot, FIXES_SRC, (name) => name.endsWith('.md'))
+  } catch (error) {
+    if (!isEnoent(error)) throw error
+  }
+  for (const file of fixFiles) {
+    outputs.set(`${FIXES_TARGET}/${path.basename(file)}`, await read(file))
+  }
 
-  for (const dir of [CASES_DIR, VECTORS_DIR]) await rm(path.join(targetRoot, dir), { recursive: true, force: true })
+  for (const dir of [CASES_DIR, VECTORS_DIR, FIXES_TARGET]) await rm(path.join(targetRoot, dir), { recursive: true, force: true })
   for (const [file, text] of outputs) {
     const target = path.join(targetRoot, file)
     await mkdir(path.dirname(target), { recursive: true })
