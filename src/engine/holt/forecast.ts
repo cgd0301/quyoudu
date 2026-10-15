@@ -1,6 +1,7 @@
 import type { EngineConfig } from '../config.ts'
 import type { ForecastStatus } from '../enums.ts'
 import { makeMoney } from '../money.ts'
+import type { NormalizedCase } from '../normalize/index.ts'
 import type { ResultCore } from '../result.ts'
 import { originFits, rollingBacktest, type Backtest, type OriginFit } from './backtest.ts'
 import { Dec, fmt12, toCents } from './decimal.ts'
@@ -105,4 +106,35 @@ export function forecastSeries(input: SeriesInput, config: EngineConfig): HoltFo
     if (tested.count < settings.minBacktestErrors) return { ...assessed, status: 'BACKTEST_INSUFFICIENT' }
     return { ...assessed, predicted: fmt12(predicted), amount: makeMoney(toCents(predicted), AMOUNT_RULES) }
   })
+}
+
+/**
+ * §12.7：price_series 按 series_id 成序列。观测与候选价格项的项目、渠道、规格都相同时，
+ * 按该价格项的购买日生成一条；同一序列、同一购买日只一条。没有匹配的序列不产生条目。
+ */
+export function caseForecasts(data: NormalizedCase, config: EngineConfig): HoltForecast[] {
+  const bySeries = new Map<string, PriceObservation[]>()
+  for (const row of data.priceSeries) {
+    const list = bySeries.get(row.seriesId)
+    if (list === undefined) bySeries.set(row.seriesId, [row])
+    else list.push(row)
+  }
+  const forecasts: HoltForecast[] = []
+  for (const [seriesId, observations] of bySeries) {
+    const targets: ForecastTarget[] = []
+    const seen = new Set<string>()
+    for (const candidate of data.candidates) {
+      for (const item of candidate.items) {
+        const matched = observations.some(
+          (row) => row.costItemId === item.costItemId && row.channel === item.channel && row.spec === item.spec,
+        )
+        if (!matched || seen.has(item.purchaseDate)) continue
+        seen.add(item.purchaseDate)
+        targets.push({ costItemId: item.costItemId, purchaseDate: item.purchaseDate })
+      }
+    }
+    if (targets.length === 0) continue
+    forecasts.push(...forecastSeries({ seriesId, observations, asOf: data.snapshot.asOf, targets }, config))
+  }
+  return forecasts
 }

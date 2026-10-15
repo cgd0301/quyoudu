@@ -474,7 +474,7 @@ describe('今日情景替换额（D22）与配置版本（§7.3）', () => {
 })
 
 describe('SPEC-GAP 暂定处理', () => {
-  test('SG-51 当日有记录晚于 as_of 才可获得时该日不算完整历日，该记录不进入统计（T018-07）', () => {
+  test('SG-70 当日有记录晚于 as_of 才可获得时该日不算完整历日，该记录不进入统计（T018-07）', () => {
     const records = history(SEPTEMBER, [['MEALS', 90000]])
     const availableAt = (text: string) => editDay(records, '2026-09-30', (record) => editItems(record, (item) => ({ ...item, availableAt: text })))
     const late = availableAt('2026-10-03T08:00:00+08:00')
@@ -494,12 +494,12 @@ describe('SPEC-GAP 暂定处理', () => {
     ['同一日有两条日记录', (record) => [record, editItems(record, (item) => ({ ...item, eventId: `${item.eventId}-2` }))]],
     ['日常类别记录不是人民币', (record) => editItems(record, (item) => ({ ...item, currency: 'USD' }))],
     ['日常类别记录为负数', (record) => editItems(record, (item) => ({ ...item, amount: -100 }))],
-  ])('SG-51 %s的日子不算完整历日', (_name, edit) => {
+  ])('SG-70 %s的日子不算完整历日', (_name, edit) => {
     const records = editDay(history(SEPTEMBER, [['MEALS', 90000]]), '2026-09-15', edit)
     expect(run({ consumptionRecords: records }).scenario).toMatchObject({ available: false, completeDays: 29 })
   })
 
-  test('SG-51 非日常类别记录的币种和正负不影响该日是否完整', () => {
+  test('SG-70 非日常类别记录的币种和正负不影响该日是否完整', () => {
     const records = editDay(history(SEPTEMBER, [['MEALS', 90000]]), '2026-09-15', (record) => ({
       ...record,
       items: [
@@ -511,14 +511,14 @@ describe('SPEC-GAP 暂定处理', () => {
     expect(run({ consumptionRecords: records }).scenario).toMatchObject({ available: true, completeDays: 30 })
   })
 
-  test('SG-51 不足 30 个完整历日时观察窗口为 9/1 至 as_of 前一日；as_of 之前没有范围内的日子时为 null', () => {
+  test('SG-70 不足 30 个完整历日时观察窗口为 9/1 至 as_of 前一日；as_of 之前没有范围内的日子时为 null', () => {
     const short = run({ consumptionRecords: history(SEPTEMBER, [['MEALS', 87000]], { '2026-09-15': 'MISSING' }) })
     expect(short.scenario).toMatchObject({ observationStart: '2026-09-01', observationEnd: '2026-09-30' })
     const first = run({ asOf: '2026-09-01T09:00:00+08:00', checkPeriodEnd: '2026-09-30' })
     expect(first.scenario).toMatchObject({ observationStart: null, observationEnd: null, completeDays: 0 })
   })
 
-  test('SG-51 as_of 无法解析或配置版本缺失时不给观察窗口', () => {
+  test('SG-70 as_of 无法解析或配置版本缺失时不给观察窗口', () => {
     const records = history(SEPTEMBER, [['MEALS', 90000]])
     expect(run({ asOf: '2026-10-01 09:00', consumptionRecords: records }).scenario).toMatchObject({
       available: false,
@@ -534,7 +534,7 @@ describe('SPEC-GAP 暂定处理', () => {
     })
   })
 
-  test('SG-52 窗口内记录的两个标记与 D48 不一致时近月情景不可用（类别标注）', () => {
+  test('SG-71 窗口内记录的两个标记与 D48 不一致时近月情景不可用（类别标注）', () => {
     const records = history(SEPTEMBER, [
       ['MEALS', 60000],
       ['ENTERTAINMENT', 30000],
@@ -551,14 +551,14 @@ describe('SPEC-GAP 暂定处理', () => {
     expect(run({ consumptionRecords: withFlags(records) }).scenario.available).toBe(true)
   })
 
-  test('SG-53 日常四类都出组，组内每日都列出（含 0）', () => {
+  test('SG-72 日常四类都出组，组内每日都列出（含 0）', () => {
     const result = run({ consumptionRecords: history(SEPTEMBER, [['MEALS', 90000]]) })
     expect(result.scenario.groups.map((item) => item.category)).toEqual(['MEALS', 'LOCAL_TRANSPORT', 'DAILY_GOODS', 'ENTERTAINMENT'])
     expect(daily(group(result, 'LOCAL_TRANSPORT'))).toEqual(OCT_1_TO_10.map((date) => [date, 0]))
     expect(result.expenses.every((expense) => expense.category === 'MEALS')).toBe(true)
   })
 
-  test('SG-53 由生活预留覆盖的类别在没有对应生活预留的日子按连续日段成组，情景支出不带覆盖（T008-06 十月无生活预留仍可用）', () => {
+  test('SG-72 由生活预留覆盖的类别在没有对应生活预留的日子按连续日段成组，情景支出不带覆盖（T008-06 十月无生活预留仍可用）', () => {
     const noReserve = run({
       consumptionRecords: history(SEPTEMBER, [['MEALS', 78000]]),
       reserves: [living('R-LIV-09', '2026-09-01', '2026-09-30')],
@@ -588,7 +588,7 @@ describe('SPEC-GAP 暂定处理', () => {
     ])
   })
 
-  test('SG-53 Eg 只取同类别、未计入快照、EXPECTED、人民币、可获得时间不晚于 as_of、日期在组内的 OTHER_EXPENSE', () => {
+  test('SG-72 Eg 只取同类别、未计入快照、EXPECTED、人民币、可获得时间不晚于 as_of、日期在组内的 OTHER_EXPENSE', () => {
     const result = run({
       consumptionRecords: history(SEPTEMBER, [
         ['MEALS', 90000],
@@ -609,7 +609,7 @@ describe('SPEC-GAP 暂定处理', () => {
     expect(group(result, 'LOCAL_TRANSPORT').scheduledGroupTotal).toMatchObject({ value: 800, basis: { eventIds: ['E-TRANSPORT'] } })
   })
 
-  test('SG-53 检查期间内同类别安排的金额或日期未知时 Pg、Eg 不可比，近月情景不可用', () => {
+  test('SG-72 检查期间内同类别安排的金额或日期未知时 Pg、Eg 不可比，近月情景不可用', () => {
     const records = history(SEPTEMBER, [['MEALS', 90000]])
     const unknownAmount = run({ consumptionRecords: records, events: [arrangement('E-UNKNOWN', '2026-10-05', 'MEALS', null)] })
     expect(unknownAmount.scenario.unavailableReason).toBe('COVERAGE_UNCLEAR')
@@ -619,7 +619,7 @@ describe('SPEC-GAP 暂定处理', () => {
     expect(outside.scenario.available).toBe(true)
   })
 
-  test('SG-54 今日已发生同口径支出只取 as_of 当日、已可获得的 ACTUAL 同口径 OTHER_EXPENSE', () => {
+  test('SG-73 今日已发生同口径支出只取 as_of 当日、已可获得的 ACTUAL 同口径 OTHER_EXPENSE', () => {
     const base = entertainmentCase(2000)
     const result = run({
       ...base,
@@ -633,7 +633,7 @@ describe('SPEC-GAP 暂定处理', () => {
     expect(result.scenario.todayReplacement).toEqual({ value: 1334, basis: { eventIds: ['E-ENT'], reserveIds: [], rules: ['D22'] } })
   })
 
-  test('SG-54 供每日参考的情景支出不含 as_of 当日的同口径部分（T019-03 不重复计入今日情景额）', () => {
+  test('SG-73 供每日参考的情景支出不含 as_of 当日的同口径部分（T019-03 不重复计入今日情景额）', () => {
     const result = run(entertainmentCase(2000))
     const entertainment = result.expenses.filter((expense) => expense.category === 'ENTERTAINMENT')
     expect(entertainment.map((expense) => expense.expectedAt)).toEqual(dates('2026-10-02', 9))
@@ -649,7 +649,7 @@ describe('SPEC-GAP 暂定处理', () => {
     })
   })
 
-  test('SG-55 不可用原因的先后：配置版本缺失、历史不足、类别标注、覆盖关系不清', () => {
+  test('SG-74 不可用原因的先后：配置版本缺失、历史不足、类别标注、覆盖关系不清', () => {
     const noConfig = { ...DEMO_CFG_1, configVersion: null }
     const overlap = [living('R-LIV-A', '2026-10-01', '2026-10-05'), living('R-LIV-B', '2026-10-05', '2026-10-31')]
     const short = history(SEPTEMBER, [['MEALS', 87000]], { '2026-09-15': 'MISSING' })
@@ -661,7 +661,7 @@ describe('SPEC-GAP 暂定处理', () => {
     expect(run({ consumptionRecords: conflicting, reserves: overlap }).scenario.unavailableReason).toBe('CATEGORY_FLAGS_MISSING')
   })
 
-  test('SG-55 检查期间终点未定或早于 as_of 当日时覆盖关系不清，仍报观察窗口', () => {
+  test('SG-74 检查期间终点未定或早于 as_of 当日时覆盖关系不清，仍报观察窗口', () => {
     const records = history(SEPTEMBER, [['MEALS', 90000]])
     for (const checkPeriodEnd of [null, '2026-09-30']) {
       expect(run({ consumptionRecords: records, checkPeriodEnd }).scenario).toMatchObject({

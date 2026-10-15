@@ -1,4 +1,4 @@
-import type { LabelCode } from '../enums.ts'
+import type { LabelCode, ScenarioKind } from '../enums.ts'
 import { makeMoney } from '../money.ts'
 import type { Money, ResultCore } from '../result.ts'
 import type { NodeRecord, TimelineEvent } from '../timeline/index.ts'
@@ -8,16 +8,23 @@ import { maxPassing } from './search.ts'
 
 export { PROBE_ID, checkDaily, confirmedPricing, dailyProbe } from './check.ts'
 export type { DailyCheck, DailyContext, DailyPlan, DailyProbe, ProbeInput } from './check.ts'
-export { CONFIRMED_ONLY_SCENARIO, dailyScenarios } from './scenarios.ts'
-export type { DailyScenario } from './scenarios.ts'
+export { CONFIRMED_ONLY_SCENARIO, buildScenarios, dailyScenarios } from './scenarios.ts'
+export type { DailyScenario, ScenarioSet } from './scenarios.ts'
 export { maxPassing } from './search.ts'
 
 type DailyReference = ResultCore['dailyReference']
+
+export type ScenarioAmount = {
+  kind: ScenarioKind
+  amount: Money
+}
 
 export type DailyOutcome = {
   dailyReference: DailyReference
   /** 追加到顶层 labels 的代码（SPEC-GAP SG-68） */
   labels: LabelCode[]
+  /** 已搜索出 D 的情景；提前返回时为空，对应 scenarios[].dailyReference 保持 null */
+  scenarioAmounts: ScenarioAmount[]
 }
 
 type Probed = {
@@ -47,8 +54,8 @@ function labelsOf(reference: DailyReference): LabelCode[] {
   return labels
 }
 
-function outcome(reference: DailyReference): DailyOutcome {
-  return { dailyReference: reference, labels: labelsOf(reference) }
+function outcome(reference: DailyReference, scenarioAmounts: ScenarioAmount[] = []): DailyOutcome {
+  return { dailyReference: reference, labels: labelsOf(reference), scenarioAmounts }
 }
 
 /** §10.5 第5步的 0 元：依据为 x=0 时第一个未通过的节点，或预算超限额 */
@@ -96,18 +103,42 @@ export function dailyReference(ctx: DailyContext): DailyOutcome {
     const upper = item.zero.timeline.nodes[0]?.unallocated.value ?? 0
     return { ...item, upper, amount: maxPassing(upper, (x) => checkDaily(item.probe, x).pass) }
   })
+  const scenarioAmounts = results.map((item) => ({ kind: item.scenario.kind, amount: scenarioMoney(item) }))
   const lowest = results.reduce((best, item) => (item.amount < best.amount ? item : best))
-  // SPEC-GAP SG-68：限制节点为 x=D+1 时第一个未通过的节点；D 已到 U0 时没有
-  const limiting = lowest.amount < lowest.upper ? checkDaily(lowest.probe, lowest.amount + 1) : null
-  const failing = limiting?.failingNode == null ? undefined : limiting.timeline.nodes[limiting.failingNode]
-  const anchor = failing ?? lowest.zero.timeline.nodes[0]
-  return outcome({
-    display: 'AMOUNT',
-    amount: makeMoney(lowest.amount, ['R019', '§4', '§10.5'], anchor?.unallocated.basis.reserveIds ?? [], failing?.trigger.eventIds ?? []),
-    limitedBy: { scenario: lowest.scenario.kind, nodeIndex: failing === undefined ? null : nodeIndexOf(ctx.nodes, failing) },
-    // R019 异常、D26：只用已确认安排时标“仅依据已确认安排”
-    ...(probed.length === 1 ? { label: 'CONFIRMED_ONLY' as const } : {}),
-    unavailable,
-    missingReasons: [],
-  })
+  const shown = scenarioAmounts.find((item) => item.kind === lowest.scenario.kind)
+  return outcome(
+    {
+      display: 'AMOUNT',
+      amount: shown?.amount ?? scenarioMoney(lowest),
+      limitedBy: {
+        scenario: lowest.scenario.kind,
+        nodeIndex: nodeIndexOfAmount(lowest, ctx.nodes),
+      },
+      // R019 异常、D26：只用已确认安排时标“仅依据已确认安排”
+      ...(probed.length === 1 ? { label: 'CONFIRMED_ONLY' as const } : {}),
+      unavailable,
+      missingReasons: [],
+    },
+    scenarioAmounts,
+  )
+}
+
+type Searched = Probed & { upper: number; amount: number }
+
+/** SPEC-GAP SG-68：限制节点为 x=D+1 时第一个未通过的节点；D 已到 U0 时没有 */
+function limitingNode(item: Searched): NodeRecord | undefined {
+  if (item.amount >= item.upper) return undefined
+  const limiting = checkDaily(item.probe, item.amount + 1)
+  return limiting.failingNode == null ? undefined : limiting.timeline.nodes[limiting.failingNode]
+}
+
+function scenarioMoney(item: Searched): Money {
+  const failing = limitingNode(item)
+  const anchor = failing ?? item.zero.timeline.nodes[0]
+  return makeMoney(item.amount, ['R019', '§4', '§10.5'], anchor?.unallocated.basis.reserveIds ?? [], failing?.trigger.eventIds ?? [])
+}
+
+function nodeIndexOfAmount(item: Searched, nodes: readonly NodeRecord[]): number | null {
+  const failing = limitingNode(item)
+  return failing === undefined ? null : nodeIndexOf(nodes, failing)
 }

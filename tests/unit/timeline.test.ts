@@ -1056,7 +1056,7 @@ describe('已有本目标付款的项目（D75）', () => {
 })
 
 describe('T005-06 gap', () => {
-  test('T005-06 gap 预测降价不生成流入，只体现为 C02 的预计消费净支出较低', () => {
+  test('T005-06 gap 一条观测不是合格预测，确认价不进入比较，也不生成流入', () => {
     const { input, ops } = loadVector('T005-06')
     const data = structuredClone(input)
     data.price_series = [
@@ -1073,19 +1073,12 @@ describe('T005-06 gap', () => {
       },
     ]
     const priced = priceCandidates(normalize(data))
-    const net = (id: string) => priced.find((row) => row.candidateId === id)?.netSpend?.value ?? null
-    expect(net('C01')).not.toBeNull()
-    expect((net('C01') ?? 0) - (net('C02') ?? 0)).toBe(5000)
+    expect(priced.find((row) => row.candidateId === 'C01')?.netSpend?.value).toBe(60000)
+    expect(priced.find((row) => row.candidateId === 'C02')?.netSpend).toBeNull()
     const result = run(data, ops)
     const start = nth(result, 0)
     expect([start.cash.value, start.unallocated.value]).toEqual([100000, 10000])
     expect(result.nodes.some((node) => node.trigger.kind === 'INCOME')).toBe(false)
-    expect(result.nodes.filter((node) => node.trigger.kind === 'OTHER').map((node) => node.trigger.eventIds)).toEqual([[RELEASE_ID]])
-    const lodging = only(
-      result.nodes.filter((node) => node.trigger.kind === 'OUTFLOW'),
-      'C02 的住宿付款',
-    )
-    expect(start.cash.value - lodging.cash.value).toBe(net('C02'))
   })
 })
 

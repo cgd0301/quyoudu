@@ -69,7 +69,7 @@ function arrangementDate(event: EventInput): string | null {
   return event.expectedAt === null ? null : (parseInstant(event.expectedAt)?.date ?? null)
 }
 
-// SPEC-GAP SG-53：检查期间内同类别安排的金额或日期未知时 Pg、Eg 不可比（§5），不机械相减
+// SPEC-GAP SG-72：检查期间内同类别安排的金额或日期未知时 Pg、Eg 不可比（§5），不机械相减
 function comparable(events: readonly EventInput[], asOf: Instant, first: string, last: string): boolean {
   return events
     .filter((event) => isArrangement(event, asOf))
@@ -96,7 +96,7 @@ function buildGroup(category: ConsumptionCategory, segment: Segment, params: Gro
   // D67：窗口合计 × 组内天数 ÷ 30，一次取整，不先把日均取整
   const scenarioTotal = roundHalfUpDiv(sum(records.map((item) => item.amount)) * segment.days.length, params.windowDays)
   const inSegment = new Set(segment.days)
-  // SPEC-GAP SG-53：Eg 只取同类别、人民币、日期在组内的已列安排；预留余额不是已列安排
+  // SPEC-GAP SG-72：Eg 只取同类别、人民币、日期在组内的已列安排；预留余额不是已列安排
   const scheduled = params.events.filter((event) => {
     const date = arrangementDate(event)
     return isArrangement(event, params.asOf) && event.category === category && event.currency === 'CNY' && date !== null && inSegment.has(date)
@@ -112,7 +112,7 @@ function buildGroup(category: ConsumptionCategory, segment: Segment, params: Gro
     reserveId: segment.reserve?.reserveId ?? null,
     result: {
       category,
-      // D67：由生活预留覆盖的组取该预留的覆盖期间；SPEC-GAP SG-53：没有对应生活预留的日段取该日段
+      // D67：由生活预留覆盖的组取该预留的覆盖期间；SPEC-GAP SG-72：没有对应生活预留的日段取该日段
       coverageStart: segment.reserve?.coverageStart ?? segment.days[0],
       coverageEnd: segment.reserve?.coverageEnd ?? segment.days[segment.days.length - 1],
       scenarioGroupTotal: money(scenarioTotal, recordIds, reserveIds, ['§5', '§7.1', 'D23', 'D67']),
@@ -140,7 +140,7 @@ export function buildGroups(params: GroupParams): BuiltGroup[] | null {
   }
   if (!comparable(params.events, params.asOf, days[0], params.checkPeriodEnd)) return null
   return DAILY_CATEGORIES.flatMap((category) => {
-    // SPEC-GAP SG-53：没有对应生活预留的日子按连续日段成组，情景支出不带覆盖
+    // SPEC-GAP SG-72：没有对应生活预留的日子按连续日段成组，情景支出不带覆盖
     const segments: Segment[] =
       CATEGORY_FLAGS[category]?.coveredByLivingReserve === true ? segmentsByReserve(days, cover) : [{ reserve: null, days }]
     return segments.map((segment) => buildGroup(category, segment, params))

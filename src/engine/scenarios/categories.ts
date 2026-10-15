@@ -30,7 +30,7 @@ export function isSameScope(category: ConsumptionCategory): boolean {
   return CATEGORY_FLAGS[category]?.sameScopeAsDiscretionary === true
 }
 
-// SPEC-GAP SG-52：记录上写明的标记与 D48 不一致，即类别标注不清
+// SPEC-GAP SG-71：记录上写明的标记与 D48 不一致，即类别标注不清
 export function flagsConflict(item: ConsumptionItemInput): boolean {
   const flags = CATEGORY_FLAGS[item.category]
   if (flags === null) return false

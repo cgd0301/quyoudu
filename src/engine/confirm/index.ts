@@ -1,3 +1,5 @@
+import type { EngineConfig } from '../config.ts'
+import { DEMO_CFG_1 } from '../config.ts'
 import type { InputIssue } from '../issues/index.ts'
 import { normalize, type NormalizedCase } from '../normalize/index.ts'
 import type { Op } from '../ops/index.ts'
@@ -37,6 +39,7 @@ export type ConfirmInput = {
   lifecycle: PlanLifecycle
   /** 当前输入版本 vN */
   version: string
+  config: EngineConfig
   session: ConfirmSession
 }
 
@@ -81,12 +84,12 @@ function keyOf(candidateId: string, planVersion: string, inputVersion: string): 
   return [candidateId, planVersion, inputVersion].join('\u001f')
 }
 
-function freeze(raw: CaseFile, lifecycle: PlanLifecycle): FormalPlan | null {
+function freeze(raw: CaseFile, lifecycle: PlanLifecycle, config: EngineConfig): FormalPlan | null {
   const plan = raw.confirmed_plan
   if (plan === undefined) return null
   const data = normalize(raw)
   const ref = { candidateId: plan.candidate_id, planVersion: plan.plan_version }
-  return { ...ref, inputVersion: plan.input_version, tasks: deriveTasks(data, priceCandidates(data), ref, lifecycle) }
+  return { ...ref, inputVersion: plan.input_version, tasks: deriveTasks(data, priceCandidates(data, config), ref, lifecycle) }
 }
 
 function matches(formal: FormalPlan, raw: CaseFile): boolean {
@@ -100,25 +103,30 @@ function matches(formal: FormalPlan, raw: CaseFile): boolean {
 }
 
 /** 案例自带的已确认方案视为已写入的确认，按载入时的数据冻结行动清单 */
-export function initialSession(raw: CaseFile): ConfirmSession {
+export function initialSession(raw: CaseFile, config: EngineConfig = DEMO_CFG_1): ConfirmSession {
   const plan = raw.confirmed_plan
   return {
     applied: plan === undefined ? [] : [keyOf(plan.candidate_id, plan.plan_version, plan.input_version)],
     record: null,
     draft: null,
-    formal: freeze(raw, 'ACTIVE'),
+    formal: freeze(raw, 'ACTIVE', config),
   }
 }
 
 /** 改变输入的操作之后调用：PATCH 换了 confirmed_plan 时按当前数据重新冻结 */
-export function syncSession(session: ConfirmSession, raw: CaseFile, lifecycle: PlanLifecycle): ConfirmSession {
+export function syncSession(
+  session: ConfirmSession,
+  raw: CaseFile,
+  lifecycle: PlanLifecycle,
+  config: EngineConfig = DEMO_CFG_1,
+): ConfirmSession {
   const plan = raw.confirmed_plan
   if (plan === undefined) return session.formal === null ? session : { ...session, formal: null }
   if (session.formal !== null && matches(session.formal, raw)) return session
   return {
     ...session,
     applied: uniq([...session.applied, keyOf(plan.candidate_id, plan.plan_version, plan.input_version)]),
-    formal: freeze(raw, lifecycle),
+    formal: freeze(raw, lifecycle, config),
   }
 }
 
@@ -155,7 +163,7 @@ export function applyConfirm(input: ConfirmInput): ConfirmResult {
   const proposal = propose({
     raw,
     data,
-    priced: priceCandidates(data),
+    priced: priceCandidates(data, input.config),
     candidateId: op.candidate_id,
     lifecycle: input.lifecycle,
     opIssues: input.opIssues,
@@ -171,7 +179,7 @@ export function applyConfirm(input: ConfirmInput): ConfirmResult {
       applied: uniq([...session.applied, key, keyOf(op.candidate_id, op.plan_version, input.version)]),
       record: recordOf(proposal, op.candidate_id, op.plan_version, input.version),
       draft: null,
-      formal: freeze(written, input.lifecycle),
+      formal: freeze(written, input.lifecycle, input.config),
     },
     written,
     issue: null,

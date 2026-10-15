@@ -66,7 +66,7 @@ describe('快照公式 §1', () => {
     expect(result.configVersion).toBe('DEMO-CFG-1')
     expect(result.topKLabel).toBe('K=3（演示配置v1）')
     expect(result.checkPeriod).toEqual({ start: AS_OF, end: '2027-01-01', outOfRange: false })
-    expect(result.labels).toEqual(['SIMULATED_DATA', 'TOP_K_DEMO', 'DRAFT_PREVIEW', 'PREVIEW_UNCONFIRMED'])
+    expect(result.labels).toEqual(['SIMULATED_DATA', 'TOP_K_DEMO', 'DRAFT_PREVIEW', 'PREVIEW_UNCONFIRMED', 'HISTORY_INSUFFICIENT'])
     expect(resultCoreSchema.safeParse(result).success).toBe(true)
   })
 

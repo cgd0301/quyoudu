@@ -2,9 +2,11 @@ import { compareCandidates } from './compare/index.ts'
 import type { EngineConfig } from './config.ts'
 import { applyConfirm, confirmView, initialSession, syncSession, type ConfirmSession } from './confirm/index.ts'
 import { buildCost } from './cost/index.ts'
-import { confirmedPricing, dailyReference, dailyScenarios } from './daily/index.ts'
+import { buildScenarios, confirmedPricing, dailyReference } from './daily/index.ts'
+import type { LabelCode } from './enums.ts'
+import { caseForecasts, type HoltForecast } from './holt/index.ts'
 import { inputIssues, type InputIssue } from './issues/index.ts'
-import { normalize } from './normalize/index.ts'
+import { normalize, type NormalizedCase } from './normalize/index.ts'
 import { applyMutation, ensureCheckpoint, type Op } from './ops/index.ts'
 import { priceCandidates } from './pricing/index.ts'
 import type { ResultCore } from './result.ts'
@@ -47,6 +49,64 @@ function userConfirmations(data: CaseFile, version: number): ResultCore['userCon
   })
 }
 
+const FORECAST_FAILURES: ReadonlySet<HoltForecast['status']> = new Set([
+  'NOT_COMPARABLE',
+  'BACKTEST_INSUFFICIENT',
+  'FIT_FAILED',
+  'INVALID_RESULT',
+])
+
+function addLabel(labels: LabelCode[], code: LabelCode): void {
+  if (!labels.includes(code)) labels.push(code)
+}
+
+function attachConfirmed(rows: readonly HoltForecast[], data: NormalizedCase): NonNullable<ResultCore['forecasts']> {
+  return rows.map((row) => ({
+    ...row,
+    confirmed: data.forecastConfirmations.some((item) => item.seriesId === row.seriesId && item.purchaseDate === row.purchaseDate),
+  }))
+}
+
+function forecastLabels(forecasts: readonly HoltForecast[], scenarios: ResultCore['scenarios']): LabelCode[] {
+  const labels: LabelCode[] = []
+  if (forecasts.some((row) => row.status === 'CONFIG_NOT_FROZEN')) labels.push('FORECAST_CONFIG_NOT_FROZEN')
+  if (
+    forecasts.some((row) => row.status === 'HISTORY_INSUFFICIENT') ||
+    (scenarios ?? []).some((row) => row.unavailableReason === 'HISTORY_INSUFFICIENT')
+  ) {
+    labels.push('HISTORY_INSUFFICIENT')
+  }
+  if (forecasts.some((row) => row.status === 'AVAILABLE')) labels.push('FORECAST_DISCLAIMER')
+  if (forecasts.some((row) => FORECAST_FAILURES.has(row.status))) labels.push('FORECAST_UNAVAILABLE')
+  return labels
+}
+
+/** D14：只把合格预测写入确认；已经确认过的不重复写。没有任何新确认时返回 null */
+function confirmForecasts(data: CaseFile, op: Extract<Op, { type: 'CONFIRM_FORECASTS' }>, config: EngineConfig): CaseFile | null {
+  if (config.configVersion === null) return null
+  const configVersion = config.configVersion
+  const forecasts = caseForecasts(normalize(data), config)
+  const added: CaseFile['forecast_confirmations'] = []
+  for (const request of op.forecasts) {
+    const already = data.forecast_confirmations.some(
+      (row) => row.series_id === request.series_id && row.purchase_date === request.purchase_date,
+    )
+    if (already) continue
+    const row = forecasts.find(
+      (item) => item.seriesId === request.series_id && item.purchaseDate === request.purchase_date && item.status === 'AVAILABLE',
+    )
+    if (row?.amount == null) continue
+    added.push({
+      series_id: request.series_id,
+      purchase_date: request.purchase_date,
+      price: row.amount.value,
+      config_version: configVersion,
+    })
+  }
+  if (added.length === 0) return null
+  return { ...data, forecast_confirmations: [...data.forecast_confirmations, ...added] }
+}
+
 function skeleton(
   data: CaseFile,
   version: number,
@@ -57,7 +117,8 @@ function skeleton(
   session: ConfirmSession,
 ): ResultCore {
   const normalized = normalize(data)
-  const pricedRows = priceCandidates(normalized)
+  const forecastRows = caseForecasts(normalized, config)
+  const pricedRows = priceCandidates(normalized, config, forecastRows)
   const priced = new Map(pricedRows.map((row) => [row.candidateId, row]))
   const report = inputIssues(data, opIssues)
   // D47：已确认方案，否则当前选中的候选
@@ -121,6 +182,7 @@ function skeleton(
     futureReturns: costReport.futureReturns,
   })
   const confirmedPlan = data.confirmed_plan
+  const scenarioSet = buildScenarios(normalized, config, timeline.checkPeriod.end)
   const daily = dailyReference({
     data: normalized,
     plan:
@@ -129,9 +191,15 @@ function skeleton(
         : { candidateId: confirmedPlan.candidate_id, priced: confirmedPricing(planPriced, confirm.actionList), lifecycle },
     issues: report.issues,
     nodes: timeline.nodes,
-    scenarios: dailyScenarios(normalized, config),
+    scenarios: scenarioSet.daily,
   })
-  for (const code of daily.labels) if (!labels.includes(code)) labels.push(code)
+  const scenarios = scenarioSet.records.map((record) => {
+    const amount = daily.scenarioAmounts.find((item) => item.kind === record.kind)?.amount
+    return amount === undefined ? record : { ...record, dailyReference: amount }
+  })
+  for (const code of daily.labels) addLabel(labels, code)
+  for (const code of forecastLabels(forecastRows, scenarios)) addLabel(labels, code)
+  const forecasts = attachConfirmed(forecastRows, normalized)
   return {
     asOf: data.snapshot.as_of,
     inputVersion: versionLabel(version),
@@ -154,6 +222,8 @@ function skeleton(
     pendingDifferences: confirm.pendingDifferences,
     userConfirmations: confirmations,
     states,
+    ...(forecasts.length > 0 ? { forecasts } : {}),
+    scenarios,
     labels,
   }
 }
@@ -161,7 +231,7 @@ function skeleton(
 /**
  * 纯函数：每个 EVALUATE 产生一个检查点；ops 中没有 EVALUATE 时在末尾补一个（ensureCheckpoint）。
  * 改变输入的操作使 input_version 加 1（rules.md §12.4），包括写入正式安排的 CONFIRM（R017、D46、D63）。
- * CONFIRM_FORECASTS 在本模块先为空操作。
+ * CONFIRM_FORECASTS 只确认合格预测；写入时输入版本加 1，空操作和重复确认不加（D14、§12.4）。
  */
 export function evaluate(caseData: CaseFile, ops: readonly Op[], config: EngineConfig): EvaluateOutput {
   let data = structuredClone(caseData)
@@ -170,7 +240,7 @@ export function evaluate(caseData: CaseFile, ops: readonly Op[], config: EngineC
   let version = 1
   let selectedCandidateId: string | null = null
   let lifecycle: PlanLifecycle = 'ACTIVE'
-  let session = initialSession(data)
+  let session = initialSession(data, config)
   const checkpoints: Checkpoint[] = []
   for (const op of ensureCheckpoint(ops)) {
     if (op.type === 'EVALUATE') {
@@ -185,7 +255,7 @@ export function evaluate(caseData: CaseFile, ops: readonly Op[], config: EngineC
       continue
     }
     if (op.type === 'CONFIRM') {
-      const confirmed = applyConfirm({ raw: data, op, opIssues, lifecycle, version: versionLabel(version), session })
+      const confirmed = applyConfirm({ raw: data, op, opIssues, lifecycle, version: versionLabel(version), config, session })
       selectedCandidateId = op.candidate_id
       session = confirmed.session
       if (confirmed.issue !== null) opIssues = [...opIssues, confirmed.issue]
@@ -195,7 +265,15 @@ export function evaluate(caseData: CaseFile, ops: readonly Op[], config: EngineC
       }
       continue
     }
-    if (op.type === 'CONFIRM_FORECASTS') continue
+    if (op.type === 'CONFIRM_FORECASTS') {
+      const written = confirmForecasts(data, op, config)
+      if (written !== null) {
+        data = written
+        version += 1
+        session = syncSession(session, data, lifecycle, config)
+      }
+      continue
+    }
     if (op.type === 'PAUSE' && lifecycle === 'ACTIVE') lifecycle = 'PAUSED'
     if (op.type === 'CANCEL') lifecycle = 'CANCELLED'
     const next = applyMutation(data, op, createdReserves)
@@ -203,7 +281,7 @@ export function evaluate(caseData: CaseFile, ops: readonly Op[], config: EngineC
     createdReserves = next.createdReserves
     if (next.issue != null) opIssues = [...opIssues, next.issue]
     version += 1
-    session = syncSession(session, data, lifecycle)
+    session = syncSession(session, data, lifecycle, config)
   }
   return { checkpoints }
 }

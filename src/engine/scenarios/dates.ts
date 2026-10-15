@@ -47,7 +47,7 @@ export function parseInstant(text: string): Instant | null {
 
 /**
  * 可获得时间不晚于 as_of（R008）。
- * SPEC-GAP SG-51：无法解析的按不可获得；只给日期的可获得时间按当日结束计，只给日期的 as_of 按当日开始计。
+ * SPEC-GAP SG-70：无法解析的按不可获得；只给日期的可获得时间按当日结束计，只给日期的 as_of 按当日开始计。
  */
 export function isAvailableBy(availableAt: string, asOf: Instant): boolean {
   const available = parseInstant(availableAt)

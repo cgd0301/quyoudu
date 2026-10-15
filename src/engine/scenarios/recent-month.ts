@@ -29,7 +29,7 @@ function unavailable(reason: ScenarioUnavailableReason, configVersion: string | 
   }
 }
 
-// SPEC-GAP SG-54：今日已发生同口径支出取 as_of 当日、已可获得的 ACTUAL 同口径 OTHER_EXPENSE
+// SPEC-GAP SG-73：今日已发生同口径支出取 as_of 当日、已可获得的 ACTUAL 同口径 OTHER_EXPENSE
 function spentToday(event: EventInput, asOf: Instant): boolean {
   const at = event.actualAt ?? event.expectedAt
   return (
@@ -45,7 +45,7 @@ function spentToday(event: EventInput, asOf: Instant): boolean {
   )
 }
 
-// SPEC-GAP SG-54：as_of 当日的同口径情景支出不进每日参考的时间轴：已发生的部分在快照中，其余由 x 替换（D22）
+// SPEC-GAP SG-73：as_of 当日的同口径情景支出不进每日参考的时间轴：已发生的部分在快照中，其余由 x 替换（D22）
 function expensesOf(groups: readonly BuiltGroup[], today: string): ScenarioExpense[] {
   const expenses = groups.flatMap(({ result, reserveId }) =>
     result.dailyAmounts
@@ -71,18 +71,18 @@ function expensesOf(groups: readonly BuiltGroup[], today: string): ScenarioExpen
  * 每日参考用 expenses 构造情景时间轴，并填写 scenario.dailyReference。
  */
 export function recentMonthScenario(input: ScenarioInput, config: EngineConfig): RecentMonthScenario {
-  // SPEC-GAP SG-55：只报一个原因，先后为配置版本、历史、类别标注、覆盖关系
-  // §7.3：缺少配置版本时不启用该统计口径；SPEC-GAP SG-51：也不给观察窗口
+  // SPEC-GAP SG-74：只报一个原因，先后为配置版本、历史、类别标注、覆盖关系
+  // §7.3：缺少配置版本时不启用该统计口径；SPEC-GAP SG-70：也不给观察窗口
   if (config.configVersion === null) return unavailable('CONFIG_VERSION_MISSING', null, noWindow())
   const configVersion = config.configVersion
   const asOf = parseInstant(input.asOf)
-  // SPEC-GAP SG-51：as_of 无法解析时没有可用历史
+  // SPEC-GAP SG-70：as_of 无法解析时没有可用历史
   if (asOf === null) return unavailable('HISTORY_INSUFFICIENT', configVersion, noWindow())
   const window = observationWindow(input.consumptionRecords, asOf, config.scenario.windowDays)
   if (!window.sufficient) return unavailable('HISTORY_INSUFFICIENT', configVersion, window)
   if (window.days.some((record) => record.items.some(flagsConflict))) return unavailable('CATEGORY_FLAGS_MISSING', configVersion, window)
   const end = input.checkPeriodEnd
-  // SPEC-GAP SG-55：检查期间终点未定时定不出组的覆盖期间
+  // SPEC-GAP SG-74：检查期间终点未定时定不出组的覆盖期间
   if (end === null || !isDate(end) || end < asOf.date) return unavailable('COVERAGE_UNCLEAR', configVersion, window)
   const groups = buildGroups({
     asOf,

@@ -1,4 +1,7 @@
+import type { EngineConfig } from '../config.ts'
+import { DEMO_CFG_1 } from '../config.ts'
 import type { ExcludedReasonCode, ItemCategory, PendingReasonCode, PriceBasis, Rounding } from '../enums.ts'
+import { caseForecasts, type HoltForecast } from '../holt/index.ts'
 import { makeMoney } from '../money.ts'
 import type { NormalizedCase } from '../normalize/index.ts'
 import type { Money } from '../result.ts'
@@ -159,17 +162,29 @@ type Resolved = {
   rules: string[]
 }
 
-function confirmedForecast(data: NormalizedCase, item: Item): number | null {
+/** D13：FORECAST 档只用已确认、且当前配置下合格（AVAILABLE）、确认价等于该预测整数分的结果 */
+function confirmedForecast(
+  data: NormalizedCase,
+  item: Item,
+  forecasts: readonly HoltForecast[],
+  config: EngineConfig,
+): number | null {
   const series = new Set<string>()
   for (const row of data.priceSeries) {
     if (row.costItemId === item.costItemId && row.channel === item.channel && row.spec === item.spec) series.add(row.seriesId)
   }
   const matches = data.forecastConfirmations.filter((row) => series.has(row.seriesId) && row.purchaseDate === item.purchaseDate)
   if (matches.length !== 1) return null
-  return matches[0]?.price ?? null
+  const confirmation = matches[0]
+  if (confirmation === undefined || confirmation.configVersion !== config.configVersion) return null
+  const forecast = forecasts.find(
+    (row) => row.seriesId === confirmation.seriesId && row.purchaseDate === item.purchaseDate && row.status === 'AVAILABLE',
+  )
+  if (forecast?.amount?.value !== confirmation.price) return null
+  return confirmation.price
 }
 
-function resolvePrice(data: NormalizedCase, item: Item): Resolved {
+function resolvePrice(data: NormalizedCase, item: Item, forecasts: readonly HoltForecast[], config: EngineConfig): Resolved {
   const refs = [item.costItemId]
   if (item.currency !== 'CNY') {
     return { amount: null, basis: item.priceBasis, estimate: false, pending: { code: 'NON_CNY', rule: 'R008', refs }, rules: ['R008'] }
@@ -194,7 +209,7 @@ function resolvePrice(data: NormalizedCase, item: Item): Resolved {
     return { amount: item.price, basis: 'QUOTE', estimate: false, pending: null, rules: ['R009'] }
   }
   if (item.priceBasis === 'FORECAST') {
-    const confirmed = confirmedForecast(data, item)
+    const confirmed = confirmedForecast(data, item, forecasts, config)
     if (confirmed != null) {
       return { amount: confirmed, basis: 'FORECAST', estimate: true, pending: null, rules: ['R009', 'D14'] }
     }
@@ -454,13 +469,13 @@ function checkCompatibility(data: NormalizedCase, lines: readonly Line[], pendin
   }
 }
 
-function priceOne(data: NormalizedCase, candidate: Candidate): Draft {
+function priceOne(data: NormalizedCase, candidate: Candidate, forecasts: readonly HoltForecast[], config: EngineConfig): Draft {
   const pending: Pending[] = []
   const excluded: Excluded[] = []
   const categories = new Map(data.costItems.map((item) => [item.costItemId, item.category]))
   const offers = new Map(data.offers.map((offer) => [offer.offerId, offer]))
   const lines: Line[] = candidate.items.map((item, index) => {
-    const resolved = resolvePrice(data, item)
+    const resolved = resolvePrice(data, item, forecasts, config)
     if (resolved.pending) pushUnique(pending, resolved.pending)
     const category = categories.get(item.costItemId) ?? null
     if (category == null) pushUnique(pending, { code: 'PRICE_PENDING', rule: 'R009', refs: [item.costItemId] })
@@ -646,9 +661,13 @@ function finish(data: NormalizedCase, draft: Draft, paid: number): PricedCandida
 }
 
 /** 逐个候选计算价格项、优惠、返还和相容性。不生成新组合，不排序。 */
-export function priceCandidates(data: NormalizedCase): PricedCandidate[] {
+export function priceCandidates(
+  data: NormalizedCase,
+  config: EngineConfig = DEMO_CFG_1,
+  forecasts: readonly HoltForecast[] = caseForecasts(data, config),
+): PricedCandidate[] {
   const paid = historicalPaid(data) ?? 0
-  const drafts = data.candidates.map((candidate) => priceOne(data, candidate))
+  const drafts = data.candidates.map((candidate) => priceOne(data, candidate, forecasts, config))
   const seen = new Map<string, string>()
   for (const draft of drafts) {
     const candidate = data.candidates.find((item) => item.candidateId === draft.candidateId)

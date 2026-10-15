@@ -1,11 +1,10 @@
 import type { EngineConfig } from '../config.ts'
 import type { ScenarioKind, ScenarioUnavailableReason } from '../enums.ts'
 import type { NormalizedCase } from '../normalize/index.ts'
-import { dayOf, nextDay } from '../timeline/dates.ts'
+import { recentMonthScenario } from '../scenarios/recent-month.ts'
+import type { ScenarioExpense, ScenarioResult } from '../scenarios/types.ts'
+import { dayOf } from '../timeline/dates.ts'
 import type { TimelineEvent } from '../timeline/index.ts'
-
-/** R008 支持日期范围的下界 */
-const RANGE_START = '2026-09-01'
 
 /** §10.5 第4步、D26：每日参考检查的一个情景 */
 export type DailyScenario = {
@@ -21,27 +20,88 @@ export type DailyScenario = {
 
 export const CONFIRMED_ONLY_SCENARIO: DailyScenario = { kind: 'CONFIRMED_ONLY', unavailableReason: null, events: [] }
 
-/** §7.1：as_of 之前最近 windowDays 个历日，须全部不早于支持范围的下界；做不到时为 null */
-function observationWindow(asOfDay: string, windowDays: number): string[] | null {
-  const days: string[] = []
-  for (let day = RANGE_START; day < asOfDay; day = nextDay(day)) days.push(day)
-  return days.length < windowDays ? null : days.slice(days.length - windowDays)
+export type ScenarioSet = {
+  /** 交给每日参考的情景集合，顺序为 CONFIRMED_ONLY、RECENT_MONTH */
+  daily: DailyScenario[]
+  /** scenarios[]，dailyReference 先为空，由每日参考填入各情景自己的 D */
+  records: ScenarioResult[]
 }
 
-function recentMonth(data: NormalizedCase, windowDays: number): DailyScenario {
-  const asOfDay = dayOf(data.snapshot.asOf)
-  const window = asOfDay === null ? null : observationWindow(asOfDay, windowDays)
-  const recorded = new Set(data.consumptionRecords.map((day) => day.observedOn))
-  const missing = new Set(data.consumptionRecords.filter((day) => day.dayCoverage === 'MISSING').map((day) => day.observedOn))
-  // §12.7：观察窗口内完整历日（COMPLETE 或 NO_SPEND）不足 windowDays 个时历史不足
-  if (window === null || window.some((day) => !recorded.has(day) || missing.has(day))) {
-    return { kind: 'RECENT_MONTH', unavailableReason: 'HISTORY_INSUFFICIENT', events: [] }
+function confirmedOnlyRecord(config: EngineConfig): ScenarioResult {
+  return {
+    kind: 'CONFIRMED_ONLY',
+    available: true,
+    unavailableReason: null,
+    configVersion: config.configVersion,
+    observationStart: null,
+    observationEnd: null,
+    completeDays: 0,
+    groups: [],
+    todayReplacement: null,
+    dailyReference: null,
   }
-  // SPEC-GAP SG-69：近月情景支出由 M9 生成，接入前无法完整评估
-  return { kind: 'RECENT_MONTH', unavailableReason: null, events: null }
 }
 
-/** D26 的情景集合，顺序为 CONFIRMED_ONLY、RECENT_MONTH（§12.7）。M9 接入前近月情景只判断历史是否足够 */
-export function dailyScenarios(data: NormalizedCase, config: EngineConfig): DailyScenario[] {
-  return [CONFIRMED_ONLY_SCENARIO, recentMonth(data, config.scenario.windowDays)]
+function scenarioEvent(expense: ScenarioExpense): TimelineEvent {
+  return {
+    id: expense.eventId,
+    kind: 'OTHER_EXPENSE',
+    amount: expense.amount,
+    at: expense.expectedAt,
+    day: dayOf(expense.expectedAt) ?? expense.expectedAt,
+    coverage: expense.coverage,
+    goalRelated: false,
+    confirmedIncome: false,
+    scenario: true,
+  }
+}
+
+/**
+ * D26、§12.7：始终列出仅已确认安排与近月情景。
+ * 近月支出只给每日参考的探测时间轴，不进入主时间轴。
+ */
+export function buildScenarios(data: NormalizedCase, config: EngineConfig, checkPeriodEnd: string | null): ScenarioSet {
+  const recent = recentMonthScenario(
+    {
+      asOf: data.snapshot.asOf,
+      checkPeriodEnd,
+      consumptionRecords: data.consumptionRecords,
+      reserves: data.reserves.map((reserve) => ({
+        reserveId: reserve.reserveId,
+        reserveKind: reserve.reserveKind,
+        coverageStart: reserve.coverageStart,
+        coverageEnd: reserve.coverageEnd,
+      })),
+      events: data.events.map((event) => ({
+        eventId: event.eventId,
+        eventKind: event.eventKind,
+        eventStatus: event.eventStatus,
+        amount: event.amount,
+        expectedAt: event.expectedAt,
+        ...(event.actualAt === undefined ? {} : { actualAt: event.actualAt }),
+        inSnapshot: event.inSnapshot,
+        availableAt: event.availableAt,
+        currency: event.currency,
+        ...(event.category === undefined ? {} : { category: event.category }),
+      })),
+    },
+    config,
+  )
+  const available = recent.scenario.available
+  return {
+    daily: [
+      CONFIRMED_ONLY_SCENARIO,
+      {
+        kind: 'RECENT_MONTH',
+        unavailableReason: available ? null : recent.scenario.unavailableReason,
+        events: available ? recent.expenses.map(scenarioEvent) : [],
+      },
+    ],
+    records: [confirmedOnlyRecord(config), recent.scenario],
+  }
+}
+
+/** D26 的情景集合。检查期间终点与主时间轴相同。 */
+export function dailyScenarios(data: NormalizedCase, config: EngineConfig, checkPeriodEnd: string | null): DailyScenario[] {
+  return buildScenarios(data, config, checkPeriodEnd).daily
 }

@@ -17,7 +17,7 @@ export function noWindow(): ObservationWindow {
   return { start: null, end: null, days: [], sufficient: false }
 }
 
-// SPEC-GAP SG-51：同一日多条记录、NO_SPEND 却带记录、有记录晚于 as_of 才可获得、日常类别记录非人民币或为负的日子不算完整历日
+// SPEC-GAP SG-70：同一日多条记录、NO_SPEND 却带记录、有记录晚于 as_of 才可获得、日常类别记录非人民币或为负的日子不算完整历日
 function completeRecord(records: readonly ConsumptionDayInput[], asOf: Instant): ConsumptionDayInput | null {
   if (records.length !== 1) return null
   const record = records[0]
@@ -47,6 +47,6 @@ export function observationWindow(records: readonly ConsumptionDayInput[], asOf:
   days.reverse()
   const first = days.at(0)
   const sufficient = days.length === windowDays
-  // SPEC-GAP SG-51：凑满时窗口从第 windowDays 个完整历日起，不足时从 RANGE_START 起
+  // SPEC-GAP SG-70：凑满时窗口从第 windowDays 个完整历日起，不足时从 RANGE_START 起
   return { start: sufficient && first !== undefined ? first.observedOn : RANGE_START, end, days, sufficient }
 }

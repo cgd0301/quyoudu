@@ -1,7 +1,7 @@
 export { originFits, rollingBacktest } from './backtest.ts'
 export type { Backtest, BacktestPoint, OriginFit } from './backtest.ts'
 export { Dec, fmt12, q12, toCents } from './decimal.ts'
-export { forecastSeries } from './forecast.ts'
+export { caseForecasts, forecastSeries } from './forecast.ts'
 export type { ForecastTarget, HoltForecast, SeriesInput } from './forecast.ts'
 export { fitHolt, forecast, selectParams } from './holt.ts'
 export type { GridEntry, HoltFit, HoltStep, ParamGrid, Projection, Selection } from './holt.ts'

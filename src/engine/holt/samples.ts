@@ -49,6 +49,9 @@ function mostRecentRun(valid: readonly Candidate[]): Candidate[] {
   return valid.slice(start)
 }
 
+/** R008：价格预测不使用 2026-09-01 之前的观测 */
+const RANGE_START = '2026-09-01'
+
 /** 取预测起点 asOf 前的样本；只用起点时已经可获得的观测（R020 第3条、D24、D66） */
 export function extractSamples(observations: readonly PriceObservation[], seriesId: string, asOf: string): SampleSet {
   const origin = instantMs(asOf)
@@ -60,8 +63,8 @@ export function extractSamples(observations: readonly PriceObservation[], series
     if (observation.seriesId !== seriesId) return
     const day = dayNumber(observation.observedOn)
     const availableAt = latestMs(observation.availableAt)
-    // SPEC-GAP SG-48：可获得时间无法解析的不用；观测日晚于起点日期的不用
-    if (day === null || availableAt === null || availableAt > origin || day > originDay) return
+    // SPEC-GAP SG-48：可获得时间无法解析的不用；观测日晚于起点日期或早于支持范围的不用（R008）
+    if (day === null || availableAt === null || availableAt > origin || day > originDay || observation.observedOn < RANGE_START) return
     candidates.push({ observation, index, day, availableAt, recordedAt: latestMs(observation.recordedAt) ?? -Infinity })
   })
 

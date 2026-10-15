@@ -67,13 +67,14 @@ function planOf(raw: CaseFile): DailyPlan | null {
   return { candidateId, priced, lifecycle: 'ACTIVE' }
 }
 
-function contextOf(raw: CaseFile, scenarios: readonly DailyScenario[] = dailyScenarios(normalize(raw), DEMO_CFG_1)): DailyContext {
+function contextOf(raw: CaseFile, scenarios?: readonly DailyScenario[]): DailyContext {
+  const result = run(raw)
   return {
     data: normalize(raw),
     plan: planOf(raw),
     issues: inputIssues(raw, []).issues,
-    nodes: run(raw).nodes,
-    scenarios,
+    nodes: result.nodes,
+    scenarios: scenarios ?? dailyScenarios(normalize(raw), DEMO_CFG_1, result.checkPeriod.end),
   }
 }
 
@@ -336,26 +337,39 @@ describe('§10.5 每日参考的前提与展示', () => {
     expect(LABEL_TEXT.DAILY_DISCLAIMER).toBe('按当前输入和假设测算，不是资金安全保证')
   })
 
-  test('§12.7 近月情景观察窗口为 as_of 前 30 个历日：完整历日不足 30 个为历史不足；满 30 个时 M9 接入前无法评估，不以仅已确认安排的金额代替', () => {
-    expect(dailyScenarios(normalize(loadVector('T019-01').input), DEMO_CFG_1)).toEqual([
+  test('§12.7、D26 近月情景：完整历日不足 30 个为历史不足；满 30 个时两种情景都算，主展示取较低者', () => {
+    const september = loadVector('T019-01').input
+    expect(dailyScenarios(normalize(september), DEMO_CFG_1, run(september).checkPeriod.end)).toEqual([
       CONFIRMED_ONLY_SCENARIO,
       { kind: 'RECENT_MONTH', unavailableReason: 'HISTORY_INSUFFICIENT', events: [] },
     ])
     const { input } = loadVector('T019-03')
-    expect(dailyScenarios(normalize(input), DEMO_CFG_1)[1]?.unavailableReason).toBe('HISTORY_INSUFFICIENT')
+    const end = run(input).checkPeriod.end
+    expect(dailyScenarios(normalize(input), DEMO_CFG_1, end)[1]?.unavailableReason).toBe('HISTORY_INSUFFICIENT')
     const full = structuredClone(input)
     full.consumption_records = Array.from({ length: 30 }, (_, index) => ({
       observed_on: `2026-09-${String(index + 1).padStart(2, '0')}`,
       day_coverage: 'NO_SPEND' as const,
       items: [],
     }))
-    expect(dailyScenarios(normalize(full), DEMO_CFG_1)[1]).toEqual({ kind: 'RECENT_MONTH', unavailableReason: null, events: null })
-    expect(run(full).dailyReference).toEqual({ display: 'UNAVAILABLE', unavailable: [], missingReasons: [] })
+    const fullDaily = dailyScenarios(normalize(full), DEMO_CFG_1, end)
+    expect(fullDaily[1]?.unavailableReason).toBeNull()
+    expect(fullDaily[1]?.events).toEqual([])
+    const fullResult = run(full)
+    expect(fullResult.dailyReference).toMatchObject({
+      display: 'AMOUNT',
+      amount: { value: 10000 },
+      limitedBy: { scenario: 'CONFIRMED_ONLY' },
+    })
+    expect(fullResult.dailyReference.label).toBeUndefined()
+    expect(fullResult.scenarios?.[1]).toMatchObject({ kind: 'RECENT_MONTH', available: true, unavailableReason: null })
+    expect(fullResult.scenarios?.[0]?.dailyReference?.value).toBe(10000)
+    expect(fullResult.scenarios?.[1]?.dailyReference?.value).toBe(10000)
     const gap = structuredClone(full)
     const missing = gap.consumption_records[14]
     if (missing === undefined) throw new Error('没有 9/15 的记录')
     missing.day_coverage = 'MISSING'
-    expect(dailyScenarios(normalize(gap), DEMO_CFG_1)[1]?.unavailableReason).toBe('HISTORY_INSUFFICIENT')
+    expect(dailyScenarios(normalize(gap), DEMO_CFG_1, end)[1]?.unavailableReason).toBe('HISTORY_INSUFFICIENT')
     expect(run(gap).dailyReference).toMatchObject({
       display: 'AMOUNT',
       amount: { value: 10000 },
@@ -451,7 +465,7 @@ describe('§10.5 每日参考的前提与展示', () => {
     expect(cancelled.dailyReference.amount?.value).toBeLessThan(50000)
   })
 
-  test('D14 已确认的预测估算：补上 S-TICKET 的观测后行动清单为 600、D=100；新估算 650 只形成待确认差异，不把 D 算成 50', () => {
+  test('D13、D14 9月1日只有一条观测时预测不合格，已确认价格不进入 FORECAST 档', () => {
     const data = structuredClone(loadVector('T019-10').input)
     data.price_series = [
       {
@@ -467,12 +481,14 @@ describe('§10.5 每日参考的前提与展示', () => {
       },
     ]
     const result = run(data)
-    expect(result.actionList.map((task) => [task.costItemId, task.amount?.value])).toEqual([['TICKET', 60000]])
-    expect(result.dailyReference).toMatchObject({ display: 'AMOUNT', amount: { value: 10000 } })
+    expect(result.forecasts?.[0]?.status).toBe('HISTORY_INSUFFICIENT')
+    expect(result.forecasts?.[0]?.confirmed).toBe(true)
+    expect(result.actionList.map((task) => [task.costItemId, task.amount])).toEqual([['TICKET', null]])
+    expect(result.dailyReference.display).toBe('UNAVAILABLE')
     const raised = run(data, [{ type: 'PATCH', path: '/forecast_confirmations/0/price', value: 65000 }])
-    expect(raised.pendingDifferences.map((row) => [row.costItemId, row.delta.value])).toEqual([['TICKET', 5000]])
-    expect(raised.actionList.map((task) => [task.costItemId, task.amount?.value])).toEqual([['TICKET', 60000]])
-    expect(raised.dailyReference.amount?.value).toBe(10000)
+    expect(raised.pendingDifferences).toEqual([])
+    expect(raised.actionList.map((task) => task.amount)).toEqual([null])
+    expect(raised.dailyReference.display).toBe('UNAVAILABLE')
   })
 
   test('每日参考的输出：各展示都通过 resultCoreSchema，可省略的键不写 undefined；与直接调用 dailyReference 的结果相同', () => {
