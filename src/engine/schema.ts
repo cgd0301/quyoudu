@@ -188,6 +188,8 @@ const candidateItemSchema = z.strictObject({
   payment_windows: z.array(itemPaymentWindowSchema).optional(),
   // D61：省略或 false 表示取消后仍把该价格项当作有效义务
   cancellable: z.boolean().optional(),
+  // D75：该价格项是哪笔本目标付款之后的未履行部分（如定金后的尾款）；省略时，已有本目标付款的项目视为已购项目的另一报价
+  settles_event_id: z.string().optional(),
 })
 
 // SPEC-GAP SG-30：order_id 为该次使用所作用的订单；sequence 缺省即未给出叠加计算顺序（D45）

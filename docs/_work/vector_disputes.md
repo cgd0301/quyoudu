@@ -19,4 +19,4 @@
 | T004-07 | final nodes[trigger.event_ids=E-INC].related includes R-LIV-0908 | 含 E-INC 与 R-LIV-0908 | 只有 E-INC | D37、§10.4 | 组8：related 同时含该收入及其建立的生活预留；constraint_issues.allocation_conflicts 中该条的 related 同理。expect 不改、不跳过。待 oracle 窗口修复 | 待修复（O组） |
 | T005-03 | final states.plan_state eq | FEASIBLE_UNDER_ASSUMPTIONS | INCOMPLETE | R005、§11.1、§12.1 | 组9：不计未知退款时节点已通过，计划状态为按当前假设可行；不因 E-DEP 报 MISSING_KEY_INFO；optimization_state 不因此为 PARTIALLY_EVALUABLE。dependencies 不含 E-DEP 的断言已通过。expect 不改、不跳过。参考实现已在 950c1d2 修复计划状态；其输出仍对 E-DEP 报 MISSING_KEY_INFO，待 oracle 窗口去掉（不涉及本条断言） | 已修正（O组） |
 
-前四条已按团队授权改写 expect，不跳过。A4-0 各行的 expect 均不改、不写入 tests/vector-disputes.json，故不跳过：标“已修正（A4-0）”的已写入 rules.md 或改正输入；标“待修复（O组）”的应得行为待 oracle 窗口修复。T012-02、T008-05、T005-03 的 O 组条目经团队确认改标“已修正（O组）”；T004-07 仍待确认。改 rules.md 与 T016-07 输入后 oracle 指纹过期，须人工导出后再对拍。
+前四条已按团队授权改写 expect，不跳过。A4-0 各行的 expect 均不改、不写入 tests/vector-disputes.json，故不跳过：标“已修正（A4-0）”的已写入 rules.md 或改正输入；标“待修复（O组）”的应得行为待 oracle 窗口修复。T012-02、T008-05、T005-03 的 O 组条目经团队确认改标“已修正（O组）”；T004-07 经团队确认维持 expect（收入节点的 related 含其建立的预留，D72），仍待 oracle 窗口修复。改 rules.md 与 T016-07 输入后 oracle 指纹过期，须人工导出后再对拍。

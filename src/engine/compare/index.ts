@@ -122,17 +122,17 @@ function pendingOf(input: CompareInput, shared: Shared, priced: PricedCandidate,
     if (pending.some((reason) => reason.refs.includes(costItemId))) continue
     addReason(pending, { code: 'PRICE_PENDING', rule: 'R016', refs: [costItemId] })
   }
-  // 可评估必须对应分支不是暂无法完整判断，且净支出已知
+  // 没有待确认原因必须对应分支不是暂无法完整判断，且净支出已知
   if (pending.length === 0 && (branch.planState === 'INCOMPLETE' || branch.cost.cost.netSpend === null)) {
     addReason(pending, { code: 'PRICE_PENDING', rule: 'R010', refs: [priced.candidateId] })
   }
   return pending
 }
 
-/** R016 第2、4条：M2 的相容、优惠和重复组合检查之后，可评估的候选再按分支检查付款节点、分配和预算 */
-function excludedOf(priced: PricedCandidate, branch: Branch, evaluable: boolean): Excluded[] {
+/** R016 第2、4条：M2 的相容、优惠和重复组合检查之后，信息完整的候选再按分支检查付款节点、分配和预算 */
+function excludedOf(priced: PricedCandidate, branch: Branch, complete: boolean): Excluded[] {
   const excluded: Excluded[] = priced.excludedReasons.map((reason) => ({ ...reason, refs: [...reason.refs] }))
-  if (!evaluable) return excluded
+  if (!complete) return excluded
   const gap = branch.timeline.earliestGap
   if (gap !== null) addReason(excluded, { code: 'PAYMENT_GAP', rule: 'R016', refs: [...gap.related] })
   const conflict = branch.timeline.allocationConflicts[0]
@@ -144,22 +144,22 @@ function excludedOf(priced: PricedCandidate, branch: Branch, evaluable: boolean)
 
 function judge(input: CompareInput, shared: Shared, index: number, priced: PricedCandidate): CandidateResult {
   const branch = runBranch(input, index, priced)
-  const pendingReasons = pendingOf(input, shared, priced, branch)
-  const evaluable = pendingReasons.length === 0
-  const excludedReasons = excludedOf(priced, branch, evaluable)
-  // SPEC-GAP SG-60：有确定排除原因即为不可行，即使仍有待确认信息
-  const feasible = excludedReasons.length > 0 ? false : evaluable ? true : null
-  // SPEC-GAP SG-61、SG-63：净支出取该候选分支 M4 的 P + F − R
+  const pending = pendingOf(input, shared, priced, branch)
+  const complete = pending.length === 0
+  const excludedReasons = excludedOf(priced, branch, complete)
+  // SPEC-GAP SG-60、SG-61：有确定排除原因即为不可行，只列排除原因，即使仍有待确认信息
+  const excluded = excludedReasons.length > 0
+  // SPEC-GAP SG-61：净支出取该候选分支 M4 的 P + F − R，信息不完整时为 null
   const cost = branch.cost.cost
   return {
     candidateId: priced.candidateId,
     planVersion: `${priced.candidateId}@v1`,
-    evaluable,
-    pendingReasons,
+    evaluable: complete || excluded,
+    pendingReasons: excluded ? [] : pending,
     excludedReasons,
-    feasible,
-    netSpend: evaluable ? cost.netSpend : null,
-    netSpendIfReceived: evaluable ? cost.netSpendIfReceived : null,
+    feasible: excluded ? false : complete ? true : null,
+    netSpend: complete ? cost.netSpend : null,
+    netSpendIfReceived: complete ? cost.netSpendIfReceived : null,
     tieGroup: null,
     rank: null,
   }

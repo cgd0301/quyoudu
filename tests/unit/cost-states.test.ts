@@ -216,6 +216,30 @@ describe('§3 净成本与预算', () => {
   })
 })
 
+describe('已有本目标付款的项目（D75）', () => {
+  test('T002-05 门票已付 580，C02 同票档报价 520 不计入：预计消费净支出 = 580 + 300', () => {
+    const vector = loadVector('T002-05')
+    const result = run(vector.input, vector.ops)
+    expect(result.cost.paidTotal.value).toBe(58000)
+    expect(result.cost.futurePayments.map((line) => line.costItemId)).toEqual(['LODGING'])
+    expect(result.cost.netSpend?.value).toBe(58000 + 30000)
+  })
+
+  test('T015-04 带 settles_event_id 的尾款计入：住宿 = 定金 100 + 尾款 300', () => {
+    const vector = loadVector('T015-04')
+    const data = structuredClone(vector.input)
+    const lodging = data.candidates[0]?.items[0]
+    if (lodging === undefined) throw new Error('没有价格项')
+    lodging.settles_event_id = 'E-DEPOSIT'
+    const result = run(data, vector.ops)
+    expect(result.cost.paidTotal.value).toBe(10000)
+    expect(result.cost.futurePayments).toEqual([
+      expect.objectContaining({ costItemId: 'LODGING', amount: expect.objectContaining({ value: 30000 }) }),
+    ])
+    expect(result.cost.netSpend?.value).toBe(10000 + 30000)
+  })
+})
+
 describe('状态、标签与依赖', () => {
   test('D62 未确认时两个标签同时出现，已确认时都没有', () => {
     const selected = run(withPlan(), [SELECT]).labels

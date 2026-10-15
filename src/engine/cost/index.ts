@@ -2,7 +2,7 @@ import { makeMoney } from '../money.ts'
 import type { NormalizedCase } from '../normalize/index.ts'
 import type { PricedCandidate } from '../pricing/index.ts'
 import type { Money, ResultCore } from '../result.ts'
-import { planItemId, type PlanLifecycle } from '../timeline/index.ts'
+import { goalPaymentCostItems, planItemId, type PlanLifecycle } from '../timeline/index.ts'
 
 type CaseEvent = NormalizedCase['events'][number]
 type Candidate = NormalizedCase['candidates'][number]
@@ -174,7 +174,7 @@ export function buildCost(input: CostInput): CostReport {
   const candidate =
     input.candidateId == null ? undefined : data.candidates.find((item) => item.candidateId === input.candidateId)
   const track = new Map<string, Track>()
-  const goalPaymentIds = new Set<string>()
+  const goalPaymentIds = goalPaymentCostItems(data, lifecycle)
   const paidLines: Line[] = []
   const futureLines: Line[] = []
   let unresolved = false
@@ -183,7 +183,6 @@ export function buildCost(input: CostInput): CostReport {
     if (!isGoalPayment(event, goalId)) continue
     const settled = event.inSnapshot && event.eventStatus === 'ACTUAL'
     if (lifecycle === 'CANCELLED' && event.cancellable === true && !settled) continue
-    if (event.costItemId !== undefined) goalPaymentIds.add(event.costItemId)
     if (event.amount == null || event.amount < 0) {
       unresolved = true
       continue
@@ -200,8 +199,8 @@ export function buildCost(input: CostInput): CostReport {
     const status = costById.get(item.costItemId)?.amountStatus
     if (status === 'PENDING' || status === 'NOT_APPLICABLE' || status === 'CONFIRMED_FREE') return
     if (lifecycle === 'CANCELLED' && item.cancellable === true) return
-    // 同一项目已有本目标付款事件时，候选报价不再加进 F（R007、R015）
-    if (goalPaymentIds.has(item.costItemId)) return
+    // D75：同一项目已有本目标付款事件时，不带 settles_event_id 的价格项是已购项目的另一报价，不加进 F
+    if (item.settlesEventId === undefined && goalPaymentIds.has(item.costItemId)) return
     const row = input.priced?.items.find((priced) => priced.index === index)
     const payment = row?.payment ?? null
     if (payment == null || row === undefined) {

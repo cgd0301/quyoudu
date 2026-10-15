@@ -614,7 +614,7 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 - C7 “产品建议”按“面向工行（含工银亚洲）的产品落地建议”撰写。
 - C8 作品名称为品牌名加一句话定位，不超过25字。
 
-#### 8.8 本轮裁决（D34—D74）
+#### 8.8 本轮裁决（D34—D75）
 
 以下条目接在D33之后。与上文D01—D33或R001—R020冲突时，以本小节为准。每条均为DEMO-CFG-1。
 
@@ -659,6 +659,7 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 - D72 节点与缺口的相关项目：trigger.event_ids、related 和金额依据 basis.event_ids 中，事件写 event_id；候选价格项形成的本目标付款写 PLAN:候选编号:序号:cost_item_id，序号为该价格项在 candidates[].items[] 中从 0 起的下标；引擎生成的机动预留释放写 AUTO:CONTINGENCY_RELEASE。起始节点的 trigger.event_ids 和 related 为空；其余节点（含通过）的 related 为触发该节点的事件，流出组为组内全部流出（按组内执行顺序），收入节点另列其建立的预留编号。最早缺口、缺口列表和分配冲突的 related 与所指节点相同。流出组节点的 at 取该日 YYYY-MM-DD，不写具体时刻；机动预留释放节点的 at 取释放日 YYYY-MM-DD。（DEMO-CFG-1｜依 SG-52 裁决）
 - D73 机动预留释放的生成条件：引擎只在有计划对象（D47）、且 reserves[] 中有 CONTINGENCY 预留时生成机动预留释放；没有计划对象时时间轴只含共同事件，不生成（§12.7）。活动结束日按 D39 取演出结束日与计划对象全部返程交通价格项 arrive_at 的较晚日；取消后仍按取消前的计划对象计算（D55）。有返程交通价格项但缺 arrive_at 时不生成释放，M 保留。events[] 中有 CONTINGENCY_RELEASE 事件时视为案例另有规定（D09），按其日期日终释放，不再生成；生成的释放日早于 as_of 所在日时不生成。（DEMO-CFG-1｜依 SG-54 裁决）
 - D74 金额或日期未知的事件：时间轴遇到金额或日期未知（含无法解析）或金额为负的流出时，报 MISSING_KEY_INFO（R010），局部检查在该笔处截断：按 §10.2 排在它之前的节点照常判定，该笔及其后的事件不再执行和判定；它在流出组中时整组不执行。日期未知的流出无法定位，局部检查在起始节点之后截断。日期已知的这类流出仍参与按 D04、D41、D56 确定检查期间。金额或日期未知的流入不计入，也不报问题（R005）。现金未知时不逐节点计算，报 MISSING_KEY_INFO。覆盖关系、funding_event_id、计划分配或所选候选指向不存在的对象时报 REFERENCE_INVALID，覆盖按 q = 0，所选候选不存在按没有计划对象；计划分配所挂的不是无条件的 INCOME 时不转入 A（D64）。金额为 0 的事件不成节点。（DEMO-CFG-1｜依 SG-55 裁决）
+- D75 已有本目标付款的项目：events[] 中已有某费用项目的本目标付款（GOAL_PAYMENT，已付或预计）时，候选中同一项目的价格项默认是已购项目的另一报价，不计入后续应付F，也不在时间轴上付款（R015第4条“已购项目不能重复生成待购”，T002-05）。价格项带可选字段 settles_event_id 时，表示它是该笔付款之后的未履行部分（如定金之后的尾款），照常计入F并在 payment_at 付款（R015第4条“部分付款只保留未履行部分”，T015-04）。settles_event_id 须指向同一 cost_item_id 的本目标付款事件，否则报 REFERENCE_INVALID，该价格项仍计入并付款。已取消时，cancellable 为 true 的未付事件不再算作该项目的付款（D61）。（DEMO-CFG-1｜依 SG-63 裁决）
 
 #### 8.9 提交版数据约束
 
@@ -670,6 +671,7 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 - V-04（数据卫生）：演示案例（c00、c01、cA_*、cB_*）中不出现预计日期早于as_of仍未履行的事件。
 - V-05（SG-05③）：演示案例不得出现同日多笔共用一项预留且覆盖声明合计超过该预留剩余额。由validate:cases检查。
 - V-06（SG-19延后）：演示案例（c00、c01、cA_*、cB_*）的as_of只能是2026-09-01。E1加入10月1日案例时删除本约束，改用continuation_of做勾稽检查。
+- V-07（SG-59延后）：演示案例中，共同事件与任一候选的返还合计，带触发条件的本目标返还最多一笔，使取消页的可能退回（cost.possible_refund）只对应一笔。由validate:cases检查。
 
 ### 9.术语、符号与代码字段对照表
 
@@ -802,6 +804,7 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 | 优惠类型 | — | type | type | D17：INSTANT_OFF（立减）／THRESHOLD_OFF（满减）／PERCENT_OFF（折扣）／CASHBACK（返现）／VOUCHER（返券） |
 | 优惠金额或折扣 | — | value | value | D17、D45：金额为整数分；折扣为万分比整数 |
 | 价格项所属订单 | — | orderId | order_id | D45：写在价格项和 offers_used 上，不写在 offers 上（SG-30 已裁决） |
+| 价格项所结清的本目标付款 | — | settlesEventId | settles_event_id | D75：价格项是该笔付款之后的未履行部分（如定金后的尾款）；省略时，已有本目标付款的项目视为已购项目的另一报价 |
 | 适用范围 | — | scope | scope | D17、D45：项目类别列表 |
 | 门槛 | — | threshold | threshold | D17 |
 | 有效期起止 | — | validFrom、validTo | valid_from、valid_to | D17 |
@@ -822,7 +825,7 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 
 - C：Ct、C0为现金；“C类建议”指§7的技术配置建议；C1—C8为§8.7的比赛对齐裁决；C01、C02……为候选完整组合编号（D15）；小写c01为案例编号，指§10.8的基础资金数据。
 - R：符号R为符合规则的返还；R001—R020为规则编号。
-- D：符号D为每日非计划支出参考金额；D01—D74为§8的默认裁决编号；注记“V2.1 依 D-xx 修订”中的D-xx即Dxx。V-01—V-06为§8.9的提交版数据约束。
+- D：符号D为每日非计划支出参考金额；D01—D75为§8的默认裁决编号；注记“V2.1 依 D-xx 修订”中的D-xx即Dxx。V-01—V-07为§8.9的提交版数据约束。
 - G：Gt为本目标可用金额；spec_gaps.md的条目编号写作SG-xx，以免混淆。
 - T与t：T001、T004-02为测试编号；t为节点下标。
 - K：推荐数量；DEMO-CFG-1中K = 3。
@@ -1173,7 +1176,7 @@ c01是本节和traceability.csv使用的基础资金数据：
 | goal | goal_id、name?、budget_cap、show_start_at、show_end_at、venue_city、seat_tiers[]{code, name}、arrive_before_show_min、return_after_show_min、lodging_nights_required、seat_tier_allowed、lodging_max_distance_m、refundable_required（六项约束为null即未填写） |
 | cost_items[] | cost_item_id、category、necessary、amount_status、confirm_basis? |
 | candidates[] | candidate_id、items[]、offers_used[]{offer_id, order_id, sequence?}、returns[] |
-| candidates[].items[] | cost_item_id、channel、spec、price、currency、price_basis、order_id、purchase_date、payment_at、arrive_at?、depart_at?、lodging_distance_m?、lodging_nights?、refundable?、quote{valid_from, valid_to, recorded_at, available_at}、payment_windows?[]{window_id, payment_at}、cancellable?（D61） |
+| candidates[].items[] | cost_item_id、channel、spec、price、currency、price_basis、order_id、purchase_date、payment_at、arrive_at?、depart_at?、lodging_distance_m?、lodging_nights?、refundable?、quote{valid_from, valid_to, recorded_at, available_at}、payment_windows?[]{window_id, payment_at}、cancellable?（D61）、settles_event_id?（D75） |
 | candidates[].returns[] | event_id、amount、expected_at、time_precision、trigger_condition?、cost_item_id?、currency、recorded_at、available_at |
 | offers[] | offer_id、type、value、scope、threshold、valid_from、valid_to、applies_at、max_uses、stackable_with、rounding、expected_at?、trigger_condition?（后两项为返现的到账日期和触发条件，D12） |
 | price_series[] | series_id、cost_item_id、channel、spec、service_date、observed_on、price、currency、recorded_at、available_at（每行一笔日级观测） |

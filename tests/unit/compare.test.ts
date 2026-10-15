@@ -447,7 +447,7 @@ describe('R011 比较覆盖范围与优化状态', () => {
     expect(result.optimization).toMatchObject({ pendingCount: 1, excludedCount: 2 })
   })
 
-  test('R011、§11.2 已确定排除的候选即使仍有待确认信息也计入确定排除（SG-60）', () => {
+  test('R011、§11.2 已确定排除的候选即使仍有待确认信息也计入确定排除，只列排除原因（SG-60、SG-61）', () => {
     const data = loadVector('T016-01').input
     const late = data.candidates[0]?.items[0]
     if (late === undefined) throw new Error('没有价格项')
@@ -455,9 +455,9 @@ describe('R011 比较覆盖范围与优化状态', () => {
     late.price_basis = 'PENDING'
     const result = run(data)
     const row = candidate(result, 'C01')
-    expect(codes(row.excludedReasons)).toContain('ARRIVAL_TOO_LATE')
-    expect(codes(row.pendingReasons)).toContain('PRICE_PENDING')
-    expect(row).toMatchObject({ evaluable: false, feasible: false, netSpend: null, rank: null })
+    expect(codes(row.excludedReasons)).toEqual(['ARRIVAL_TOO_LATE'])
+    expect(row.pendingReasons).toEqual([])
+    expect(row).toMatchObject({ evaluable: true, feasible: false, netSpend: null, rank: null })
     expect(result.optimization).toMatchObject({ evaluatedCount: 1, pendingCount: 0, excludedCount: 1 })
     expect(result.states.optimizationState).toBe('COMPLETED_FEASIBLE')
     expect(ranked(result)).toEqual(['C02'])

@@ -725,6 +725,9 @@
                 },
                 "cancellable": {
                   "type": "boolean"
+                },
+                "settles_event_id": {
+                  "type": "string"
                 }
               },
               "required": [

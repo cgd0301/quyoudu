@@ -1,5 +1,5 @@
 /**
- * validate:cases：fixtures/cases/*.json 是演示案例，按 rules.md §8.9（V-01—V-06）、D03、D51、D57 等严格校验；
+ * validate:cases：fixtures/cases/*.json 是演示案例，按 rules.md §8.9（V-01—V-07）、D03、D51、D57 等严格校验；
  * fixtures/vectors/*.json 是测试向量，只校验 schema，允许故意的冲突输入。
  * 每个问题打印一行“文件:路径:问题”，任一文件有问题时退出码为 1。
  */
@@ -44,6 +44,7 @@ export const PROBLEM_CODES = [
   'V-03',
   'OFFER_REF',
   'V-04',
+  'V-07',
   'PRICE_SOURCE',
   'BANNED_NAME',
 ] as const
@@ -628,6 +629,33 @@ function checkOverdue(data: CaseFile, clock: Clock, add: Add): void {
   })
 }
 
+// V-07：cost.possible_refund 只列一笔，共同事件与任一候选合计，带触发条件的本目标返还最多一笔
+function checkConditionalRefunds(data: CaseFile, add: Add): void {
+  const conditional = (trigger: string | undefined) => trigger !== undefined && trigger.trim() !== ''
+  const shared = data.events.flatMap((event, i) =>
+    event.event_kind === 'RETURN' &&
+    (event.goal_id === undefined || event.goal_id === data.goal.goal_id) &&
+    conditional(event.trigger_condition)
+      ? [i]
+      : [],
+  )
+  const second = shared[1]
+  if (second !== undefined) {
+    add('V-07', ['events', second, 'trigger_condition'], `V-07：带触发条件的本目标返还有 ${shared.length} 笔，演示案例最多一笔`)
+    return
+  }
+  data.candidates.forEach((candidate, c) => {
+    const own = candidate.returns.flatMap((ret, r) => (conditional(ret.trigger_condition) ? [r] : []))
+    const first = own[0]
+    if (first === undefined || shared.length + own.length <= 1) return
+    add(
+      'V-07',
+      ['candidates', c, 'returns', first, 'trigger_condition'],
+      `V-07：共同事件与候选 ${candidate.candidate_id} 带触发条件的本目标返还合计 ${shared.length + own.length} 笔，演示案例最多一笔`,
+    )
+  })
+}
+
 function checkProvenance(data: CaseFile, add: Add): void {
   // SPEC-GAP SG-34：schema 没有逐条的来源类型和批次，价格依据统一取 meta.source_type（由 schema 枚举保证）和 meta.batch
   if (data.meta.batch.trim() === '') {
@@ -649,6 +677,7 @@ export function validateDemoCase(data: unknown, file: string): Problem[] {
     checkReserves(parsed, add)
     checkOffers(parsed, add)
     checkOverdue(parsed, clock, add)
+    checkConditionalRefunds(parsed, add)
     checkProvenance(parsed, add)
   }
   checkBannedNames(data, add)

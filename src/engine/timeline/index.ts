@@ -1,4 +1,4 @@
-export { RELEASE_ID, planItemId, timelineInput } from './build.ts'
+export { RELEASE_ID, goalPaymentCostItems, planItemId, timelineInput } from './build.ts'
 export { RANGE_END, checkPeriod } from './period.ts'
 export { runTimeline } from './run.ts'
 export type {

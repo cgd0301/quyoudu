@@ -2,7 +2,7 @@ import type { InputIssueCode } from '../enums.ts'
 import type { InputIssue } from '../issues/index.ts'
 import type { NormalizedCase } from '../normalize/index.ts'
 import { dayOf, isInstant, nextDay } from './dates.ts'
-import type { PlanContext, TimelineEvent, TimelineInput, TimelineReserve } from './types.ts'
+import type { PlanContext, PlanLifecycle, TimelineEvent, TimelineInput, TimelineReserve } from './types.ts'
 
 type CaseEvent = NormalizedCase['events'][number]
 type Candidate = NormalizedCase['candidates'][number]
@@ -63,6 +63,25 @@ function isConfirmedIncome(event: CaseEvent): boolean {
 
 function isGoalReturn(event: CaseEvent, goalId: string): boolean {
   return event.eventKind === 'RETURN' && (event.goalId === undefined || event.goalId === goalId)
+}
+
+/** D75：events[] 中已有本目标付款（已付或预计）的费用项目；已取消时 cancellable 为 true 的未付事件不算（D61） */
+export function goalPaymentCostItems(data: NormalizedCase, lifecycle: PlanLifecycle): Set<string> {
+  const ids = new Set<string>()
+  for (const event of data.events) {
+    if (event.eventKind !== 'GOAL_PAYMENT' || event.currency !== 'CNY' || event.costItemId === undefined) continue
+    if (event.goalId !== undefined && event.goalId !== data.goal.goalId) continue
+    const settled = event.inSnapshot && event.eventStatus === 'ACTUAL'
+    if (lifecycle === 'CANCELLED' && event.cancellable === true && !settled) continue
+    ids.add(event.costItemId)
+  }
+  return ids
+}
+
+function settlesPayment(data: NormalizedCase, item: Candidate['items'][number]): boolean {
+  return data.events.some(
+    (event) => event.eventId === item.settlesEventId && event.eventKind === 'GOAL_PAYMENT' && event.costItemId === item.costItemId,
+  )
 }
 
 /** D47：已确认方案，否则当前选中的候选；都没有时原因为尚未形成方案 */
@@ -162,10 +181,14 @@ function planEvents(
 ): TimelineEvent[] {
   const cashAsOf = data.snapshot.cashAsOf
   const cancelled = plan.lifecycle === 'CANCELLED'
+  const paidItems = goalPaymentCostItems(data, plan.lifecycle)
   const events: TimelineEvent[] = []
   candidate.items.forEach((item, index) => {
     // D61：取消后 cancellable 为 true 的价格项不再计入
     if ((cancelled && item.cancellable === true) || item.currency !== 'CNY') return
+    if (item.settlesEventId !== undefined && !settlesPayment(data, item)) issues.add('REFERENCE_INVALID', 'D75', item.settlesEventId)
+    // D75：不带 settles_event_id 的是已购项目的另一报价，不付款
+    if (item.settlesEventId === undefined && paidItems.has(item.costItemId)) return
     const id = planItemId(candidate.candidateId, index, item.costItemId)
     const payment = plan.priced?.items.find((row) => row.index === index)?.payment?.value ?? null
     const when = whenOf(item.paymentAt, isInstant(item.paymentAt), asOfDay, cashAsOf)

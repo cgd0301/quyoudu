@@ -591,6 +591,23 @@ const counterexamples: [string, (draft: CaseFile) => void, Expected][] = [
     { code: 'V-04', path: 'candidates[1].items[0].payment_at' },
   ],
   [
+    'V-07 共同事件与候选合计两笔带触发条件的本目标返还',
+    (d) => {
+      d.events.push(
+        expense({
+          event_id: 'E-REFUND',
+          event_kind: 'RETURN',
+          amount: 10000,
+          expected_at: '2026-09-20',
+          goal_id: 'G1',
+          trigger_condition: '平台审核通过',
+        }),
+      )
+      d.candidates[0].returns[0].trigger_condition = '入住后提交评价并审核通过'
+    },
+    { code: 'V-07', path: 'candidates[0].returns[0].trigger_condition' },
+  ],
+  [
     '价格依据缺少生成批次',
     (d) => {
       d.meta.batch = ' '

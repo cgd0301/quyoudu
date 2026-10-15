@@ -1007,6 +1007,54 @@ describe('金额或日期未知与引用失效（D74）', () => {
   })
 })
 
+describe('已有本目标付款的项目（D75）', () => {
+  /** 住宿定金 100 已在 8/20 付清并计入快照；候选 C01 的住宿价格项 300 在 9/27 付款 */
+  function depositCase(overrides: Partial<Item> = {}): CaseFile {
+    return planCase([item('LODGING', '2026-09-27', 30000, overrides)], (draft) => {
+      draft.events.push(
+        goalPayment('E-DEPOSIT', '2026-08-20', 10000, {
+          event_status: 'ACTUAL',
+          actual_at: '2026-08-20T12:00:00+08:00',
+          time_precision: 'DATETIME',
+          in_snapshot: true,
+          cost_item_id: 'LODGING',
+        }),
+      )
+    })
+  }
+
+  const LODGING_ID = planItemId('C01', 0, 'LODGING')
+
+  test('T002-05 门票已付 580 时，C02 同票档报价 520 是另一报价，不在时间轴上付款', () => {
+    const { input, ops } = loadVector('T002-05')
+    const result = run(input, ops)
+    expect(triggered(result)).not.toContain(planItemId('C02', 1, 'TICKET'))
+    expect(triggered(result)).toContain(planItemId('C02', 0, 'LODGING'))
+  })
+
+  test('没有 settles_event_id 时，已付项目的价格项不付款', () => {
+    expect(triggered(run(depositCase(), [SELECT]))).not.toContain(LODGING_ID)
+  })
+
+  test('带 settles_event_id 的价格项是定金之后的尾款，照常付款（T015-04）', () => {
+    const result = run(depositCase({ settles_event_id: 'E-DEPOSIT' }), [SELECT])
+    const node = nodeOf(result, LODGING_ID)
+    expect(nth(result, 0).cash.value - node.cash.value).toBe(30000)
+    expect(codes(result)).not.toContain('REFERENCE_INVALID')
+  })
+
+  test('settles_event_id 指向不存在或别的项目的付款时报 REFERENCE_INVALID，该价格项仍付款', () => {
+    const missing = run(depositCase({ settles_event_id: 'E-NONE' }), [SELECT])
+    expect(refsOf(missing, 'REFERENCE_INVALID')).toEqual(['E-NONE'])
+    expect(triggered(missing)).toContain(LODGING_ID)
+    const other = depositCase({ settles_event_id: 'E-TICKET' })
+    other.events.push(goalPayment('E-TICKET', '2026-09-05', 58000, { cost_item_id: 'TICKET' }))
+    const mismatched = run(other, [SELECT])
+    expect(refsOf(mismatched, 'REFERENCE_INVALID')).toEqual(['E-TICKET'])
+    expect(triggered(mismatched)).toContain(LODGING_ID)
+  })
+})
+
 describe('T005-06 gap', () => {
   test('T005-06 gap 预测降价不生成流入，只体现为 C02 的预计消费净支出较低', () => {
     const { input, ops } = loadVector('T005-06')

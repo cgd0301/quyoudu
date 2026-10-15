@@ -106,6 +106,7 @@
             "order_id": "O1",
             "purchase_date": "2026-09-27",
             "payment_at": "2026-09-27",
+            "settles_event_id": "E-DEPOSIT",
             "quote": {
               "valid_from": "2026-09-01",
               "valid_to": "2026-09-30",
