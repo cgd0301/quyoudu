@@ -11,7 +11,7 @@
     "test": "vitest run",
     "test:e2e": "node scripts/not-implemented.mjs",
     "validate:cases": "tsx scripts/validate-cases.ts",
-    "diff:oracle": "node scripts/not-implemented.mjs",
+    "diff:oracle": "tsx scripts/diff-oracle.ts",
     "golden:check": "tsx scripts/golden-check.ts",
     "golden:freeze": "tsx scripts/golden-approve.ts",
     "trace:update": "node scripts/not-implemented.mjs",
