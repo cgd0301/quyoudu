@@ -2,6 +2,7 @@ import { compareCandidates } from './compare/index.ts'
 import type { EngineConfig } from './config.ts'
 import { applyConfirm, confirmView, initialSession, syncSession, type ConfirmSession } from './confirm/index.ts'
 import { buildCost } from './cost/index.ts'
+import { confirmedPricing, dailyReference, dailyScenarios } from './daily/index.ts'
 import { inputIssues, type InputIssue } from './issues/index.ts'
 import { normalize } from './normalize/index.ts'
 import { applyMutation, ensureCheckpoint, type Op } from './ops/index.ts'
@@ -119,15 +120,18 @@ function skeleton(
     facts: costReport.facts,
     futureReturns: costReport.futureReturns,
   })
-  const living = normalized.snapshot.livingArrangement
-  let dailyReference: ResultCore['dailyReference']
-  if (living === 'NOT_PROVIDED') {
-    dailyReference = { display: 'UNAVAILABLE', unavailable: [], missingReasons: ['LIVING_ARRANGEMENT_MISSING'] }
-  } else if (confirmed) {
-    dailyReference = { display: 'UNAVAILABLE', unavailable: [], missingReasons: [] }
-  } else {
-    dailyReference = { display: 'NEED_CONFIRMED_PLAN', unavailable: [], missingReasons: [] }
-  }
+  const confirmedPlan = data.confirmed_plan
+  const daily = dailyReference({
+    data: normalized,
+    plan:
+      confirmedPlan === undefined
+        ? null
+        : { candidateId: confirmedPlan.candidate_id, priced: confirmedPricing(planPriced, confirm.actionList), lifecycle },
+    issues: report.issues,
+    nodes: timeline.nodes,
+    scenarios: dailyScenarios(normalized, config),
+  })
+  for (const code of daily.labels) if (!labels.includes(code)) labels.push(code)
   return {
     asOf: data.snapshot.as_of,
     inputVersion: versionLabel(version),
@@ -146,7 +150,7 @@ function skeleton(
     optimization: { ...comparison.counts, topK: config.topK },
     confirmation: confirm.confirmation,
     actionList: confirm.actionList,
-    dailyReference,
+    dailyReference: daily.dailyReference,
     pendingDifferences: confirm.pendingDifferences,
     userConfirmations: confirmations,
     states,

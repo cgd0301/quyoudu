@@ -183,6 +183,8 @@ describe('快照公式 §1', () => {
     })
     const missing = withCase((draft) => {
       draft.snapshot.living_arrangement = 'NOT_PROVIDED'
+      draft.candidates = [{ candidate_id: 'C01', items: [], offers_used: [], returns: [] }]
+      draft.confirmed_plan = { candidate_id: 'C01', plan_version: 'C01@v1', input_version: 'v1' }
     })
     expect(run(missing).dailyReference).toEqual({
       display: 'UNAVAILABLE',
@@ -206,7 +208,7 @@ describe('快照公式 §1', () => {
     expect(result.labels).not.toContain('DRAFT_PREVIEW')
     expect(result.labels).not.toContain('PREVIEW_UNCONFIRMED')
     expect(result.states.planTarget).toBe('CONFIRMED_PLAN')
-    expect(result.dailyReference.display).toBe('UNAVAILABLE')
+    expect(result.dailyReference.display).toBe('AMOUNT')
   })
 })
 
