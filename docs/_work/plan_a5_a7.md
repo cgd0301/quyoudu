@@ -2,6 +2,18 @@
 
 基准：docs/_inputs/plan_base_a5_a7.md（下称"源计划"）。现状全部来自 `python .cache/plan/survey.py` 生成的 .cache/plan/survey.md（2026-10-16 01:58 运行；下文"survey §n"指该文件第 n 节）。与 AGENTS.md 冲突时以 AGENTS.md 为准，与 docs/rules.md 冲突时以 rules.md 为准。
 
+## 推送说明（10/16 10:34，给拉取后开工的队友）
+
+H0 第 1、2 项已完成并随本次推送入库。第一节是 01:58 的调查快照，下面几条以本次推送为准：
+
+- `bb1e3e3`：`docs/_work/diff_report.md` 已是差异合计 0（P1 0，P2 0，P3 0）。`oracle/oracle_inputs.json` 只改了 1 行，`docs/rules.md` 指纹为 `adaa1404d231`。
+- `77f321c`：本计划与源计划 `docs/_inputs/plan_base_a5_a7.md` 已入库。
+- 引擎标签 `engine-golden-v1` 仍是 `44309a3`。第一节第 2 条写的是当时的 HEAD；此后只有上面两个文档提交，`src/engine` 未改。M1—M9 仍锁定。
+- 第一节第 4、16 条里的“未提交 / 未跟踪”已过时，不要再提交那两处对拍改动或这两份计划。
+- 第二十四节 Q1–Q8 的“团队决定”仍是（未填）。没填时按各题“未决时默认”执行。注意：Q3 推荐 A、默认 B；Q5 推荐 A、默认 B。其余各题默认与推荐相同（Q1 A、Q2 A、Q4 A、Q6 A、Q7 A、Q8 A）。
+- `handoff_a4.md`、`handoff_a4_bundle.md` 留在编写者本机 `.cache/handoff/`，不入库。当前执行以本计划为准。
+- 界面、自然语言、`book/`（除 `meta.yml` 外）仍是零起点。现在可以写项目书第 1–3 章。第 4–6 章要等 `book/data`（计划 10/16 12:30 由主窗口推送）。下一步代码任务是 H0 第 3 项填团队决定，然后做第六节 A5-prep。
+
 ## 一、现状核对结论
 
 1. 时间：本机 2026-10-16 01:58（周五，UTC+8），距 F1 代码冻结（10/18 14:00）60.0 小时，距提交（10/18 21:00）67.0 小时。依据：survey §1。
