@@ -326,6 +326,88 @@ describe('evaluate 接线', () => {
 })
 
 describe('优惠性质', () => {
+  test('D45 满减门槛未达时不减免，付款仍为原价', () => {
+    const data = lodgingCase(30000, (draft) => {
+      draft.offers.push({
+        offer_id: 'Y-TH',
+        type: 'THRESHOLD_OFF',
+        value: 5000,
+        scope: ['LODGING'],
+        threshold: 40000,
+        valid_from: '2026-09-01',
+        valid_to: '2026-09-30',
+        applies_at: 'PAYMENT',
+        max_uses: 1,
+        stackable_with: [],
+        rounding: 'FLOOR',
+      })
+      draft.candidates[0]?.offers_used.push({ offer_id: 'Y-TH', order_id: 'O1' })
+    })
+    const row = priceCandidates(normalize(data))[0]
+    expect(codes(row?.excludedReasons ?? [])).toContain('OFFER_THRESHOLD_NOT_MET')
+    expect(row?.items[0]?.payment?.value).toBe(30000)
+  })
+
+  test('D65 同一订单多笔付款时从付款时刻最晚的一笔开始冲减', () => {
+    const data = lodgingCase(30000, (draft) => {
+      draft.cost_items.push({ cost_item_id: 'MEALS', category: 'MEALS', necessary: true, amount_status: 'CONFIRMED' })
+      draft.candidates[0]?.items.push({
+        cost_item_id: 'MEALS',
+        channel: '渠道乙',
+        spec: '正餐',
+        price: 20000,
+        currency: 'CNY',
+        price_basis: 'QUOTE',
+        order_id: 'O1',
+        purchase_date: '2026-09-10',
+        payment_at: '2026-09-20',
+        quote: { ...QUOTE },
+      } as never)
+      draft.offers.push({
+        offer_id: 'Y-IO',
+        type: 'INSTANT_OFF',
+        value: 5000,
+        scope: ['LODGING', 'MEALS'],
+        threshold: null,
+        valid_from: '2026-09-01',
+        valid_to: '2026-09-30',
+        applies_at: 'PAYMENT',
+        max_uses: 1,
+        stackable_with: [],
+        rounding: 'FLOOR',
+      })
+      draft.candidates[0]?.offers_used.push({ offer_id: 'Y-IO', order_id: 'O1' })    })
+    const row = priceCandidates(normalize(data))[0]
+    const meals = row?.items.find((item) => item.costItemId === 'MEALS')
+    const lodging = row?.items.find((item) => item.costItemId === 'LODGING')
+    // 付款时刻最晚的是 MEALS（9-20），减免先冲减它
+    expect(meals?.payment?.value).toBe(15000)
+    expect(lodging?.payment?.value).toBe(30000)
+  })
+
+  test('D45 同一订单两张即时优惠未给计算顺序时计入待确认', () => {
+    const data = lodgingCase(30000, (draft) => {
+      for (const id of ['Y-A', 'Y-B']) {
+        draft.offers.push({
+          offer_id: id,
+          type: 'INSTANT_OFF',
+          value: 1000,
+          scope: ['LODGING'],
+          threshold: null,
+          valid_from: '2026-09-01',
+          valid_to: '2026-09-30',
+          applies_at: 'PAYMENT',
+          max_uses: 1,
+          stackable_with: ['Y-A', 'Y-B'],
+          rounding: 'FLOOR',
+        })
+        draft.candidates[0]?.offers_used.push({ offer_id: id, order_id: 'O1' })
+      }
+    })
+    const row = priceCandidates(normalize(data))[0]
+    expect(codes(row?.pendingReasons ?? [])).toContain('OFFER_ORDER_MISSING')
+  })
+
   test('返现不冲减付款', () => {
     fc.assert(
       fc.property(fc.integer({ min: 0, max: 500_000 }), fc.integer({ min: 0, max: 200_000 }), (price, cashback) => {

@@ -36,7 +36,7 @@ export type VecJson = {
   runErrors: { testId: string; message: string }[]
 }
 
-export type NamedStatus = { name: string; status: 'pass' | 'fail' | 'skipped' }
+export type NamedStatus = { name: string; fullName?: string; status: 'pass' | 'fail' | 'skipped' }
 
 export type DocCheck = { id: string; passed: boolean; message: string }
 
@@ -104,9 +104,11 @@ export function parseVitestJson(text: string): { named: NamedStatus[]; totals: {
   const named: NamedStatus[] = []
   for (const file of data.testResults ?? []) {
     for (const assertion of file.assertionResults ?? []) {
-      const name = assertion.fullName ?? assertion.title ?? ''
+      // 用例编号写在 test() 的名称里，describe 前缀不算；fullName 只用于按完整名称核对缺口覆盖
+      const name = assertion.title ?? assertion.fullName ?? ''
+      const fullName = assertion.fullName ?? name
       const status = assertion.status === 'passed' ? 'pass' : assertion.status === 'pending' || assertion.status === 'skipped' || assertion.status === 'todo' ? 'skipped' : 'fail'
-      named.push({ name, status })
+      named.push({ name, fullName, status })
     }
   }
   const passed = data.numPassedTests ?? named.filter((item) => item.status === 'pass').length
@@ -206,6 +208,7 @@ export function buildEvidenceIndex(reportDir: string = path.join(REPO_ROOT, '.ca
     vitestTotals = parsed.totals
     for (const item of parsed.named) {
       unitTitles.add(item.name)
+      if (item.fullName !== undefined) unitTitles.add(item.fullName)
       const id = subIdOf(item.name)
       if (id === null) continue
       const entry = entryFor(ids, id)
