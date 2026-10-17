@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" role="img" aria-label="图 8 候选方案净支出比较（cB_topk）">
+<rect x="0" y="0" width="1000" height="560" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="1.2"/>
+<text x="40" y="46" font-size="22" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">图 8 候选方案净支出比较（cB_topk）</text>
+<text x="40" y="72" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">可行性、排除状态与 Top-3 显示位置</text>
+<line x1="90" y1="380" x2="910" y2="380" stroke="#cbd5e1" stroke-width="1.4"/>
+<line x1="90" y1="130" x2="90" y2="380" stroke="#cbd5e1" stroke-width="1.4"/>
+<rect x="116.57142857142856" y="177" width="64" height="203" rx="3" fill="#b91c1c" stroke="#b91c1c" stroke-width="1.2"/>
+<text x="148.57142857142856" y="171" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1f2937">1580.00</text>
+<text x="148.57142857142856" y="398" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">C01</text>
+<text x="148.57142857142856" y="414" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#6b7280">排除</text>
+<rect x="233.71428571428572" y="166" width="64" height="214" rx="3" fill="#047857" stroke="#047857" stroke-width="1.2"/>
+<text x="265.7142857142857" y="160" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1f2937">1660.00</text>
+<text x="265.7142857142857" y="398" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">C02</text>
+<text x="265.7142857142857" y="414" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#6b7280">Top1</text>
+<rect x="350.85714285714283" y="174" width="64" height="206" rx="3" fill="#b91c1c" stroke="#b91c1c" stroke-width="1.2"/>
+<text x="382.85714285714283" y="168" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1f2937">1600.00</text>
+<text x="382.85714285714283" y="398" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">C03</text>
+<text x="382.85714285714283" y="414" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#6b7280">排除</text>
+<rect x="468" y="156" width="64" height="224" rx="3" fill="#b91c1c" stroke="#b91c1c" stroke-width="1.2"/>
+<text x="500" y="150" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1f2937">1740.00</text>
+<text x="500" y="398" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">C04</text>
+<text x="500" y="414" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#6b7280">排除</text>
+<rect x="585.1428571428571" y="164" width="64" height="216" rx="3" fill="#047857" stroke="#047857" stroke-width="1.2"/>
+<text x="617.1428571428571" y="158" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1f2937">1680.00</text>
+<text x="617.1428571428571" y="398" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">C05</text>
+<text x="617.1428571428571" y="414" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#6b7280">Top2</text>
+<rect x="702.2857142857142" y="159" width="64" height="221" rx="3" fill="#047857" stroke="#047857" stroke-width="1.2"/>
+<text x="734.2857142857142" y="153" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1f2937">1720.00</text>
+<text x="734.2857142857142" y="398" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">C06</text>
+<text x="734.2857142857142" y="414" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#6b7280">Top3</text>
+<rect x="819.4285714285714" y="159" width="64" height="221" rx="3" fill="#60a5fa" stroke="#60a5fa" stroke-width="1.2"/>
+<text x="851.4285714285714" y="153" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1f2937">1720.00</text>
+<text x="851.4285714285714" y="398" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">C07</text>
+<text x="851.4285714285714" y="414" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#6b7280"></text>
+<text x="82" y="140" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="end" font-weight="normal" fill="#6b7280">分</text>
+<text x="90" y="420" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">评估 4 个、确定排除 3 个、待确认 0 个；K = 3。</text>
+<text x="90" y="446" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">口径：净支出取候选分支 M4 的 P+F−R；同价按编号升序，末位同价不突破 K（R016、D15）。</text>
+<text x="40" y="544" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">模拟数据｜数据来源见 book/figures/index.md</text>
+</svg>

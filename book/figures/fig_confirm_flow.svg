@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" role="img" aria-label="图 11 确认与行动清单流程">
+<rect x="0" y="0" width="1000" height="560" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="1.2"/>
+<text x="40" y="46" font-size="22" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">图 11 确认与行动清单流程</text>
+<text x="40" y="72" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">成功写入与只能存草案两条路径</text>
+<rect x="80" y="120" width="620" height="44" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="100" y="148" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">1. 选择候选（SELECT_CANDIDATE）</text>
+<line x1="390" y1="164" x2="390" y2="178" stroke="#6b7280" stroke-width="1.4"/><polygon points="390,178 383,174 383,182" fill="#6b7280"/>
+<rect x="80" y="178" width="620" height="44" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="100" y="206" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">2. 按 D46 算建议分配额 ΔA 与计划分配</text>
+<line x1="390" y1="222" x2="390" y2="236" stroke="#6b7280" stroke-width="1.4"/><polygon points="390,236 383,232 383,240" fill="#6b7280"/>
+<rect x="80" y="236" width="620" height="44" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="100" y="264" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">3. 确认前模拟的计划状态须为“按当前假设可行”</text>
+<line x1="390" y1="280" x2="390" y2="294" stroke="#6b7280" stroke-width="1.4"/><polygon points="390,294 383,290 383,298" fill="#6b7280"/>
+<rect x="80" y="294" width="620" height="44" rx="6" fill="#ecfdf5" stroke="#047857" stroke-width="1.2"/>
+<text x="100" y="322" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">4. CONFIRM 写入正式安排，输入版本 +1</text>
+<line x1="390" y1="338" x2="390" y2="352" stroke="#6b7280" stroke-width="1.4"/><polygon points="390,352 383,348 383,356" fill="#6b7280"/>
+<rect x="80" y="352" width="620" height="44" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="100" y="380" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">5. 冻结行动清单（R017 第8—10条）</text>
+<line x1="390" y1="396" x2="390" y2="410" stroke="#6b7280" stroke-width="1.4"/><polygon points="390,410 383,406 383,414" fill="#6b7280"/>
+<rect x="80" y="410" width="620" height="44" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="100" y="438" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">6. 输入变化后风险重算，清单不变</text>
+<rect x="740" y="120" width="200" height="300" rx="6" fill="#fef2f2" stroke="#fecaca" stroke-width="1.2"/>
+<text x="840" y="150" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#b91c1c">不能写入的情形</text>
+<text x="756" y="182" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">· 确认前模拟不可行</text>
+<text x="756" y="208" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">· 确认后出现付款缺口</text>
+<text x="756" y="234" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">· 计划状态为暂无法完整判断</text>
+<text x="756" y="260" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">· 存在约束问题</text>
+<text x="756" y="286" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">· plan_version 与候选不符</text>
+<text x="840" y="400" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#b91c1c">只能保存为“草案”</text>
+<text x="80" y="500" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">未确认的模型推断不写入确认记录；确认记录的输入版本早于当前版本时标“需重新确认”（D60、D63）。</text>
+<text x="40" y="544" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">模拟数据｜数据来源见 book/figures/index.md</text>
+</svg>

@@ -1,0 +1,303 @@
+{
+  "cases": {
+    "exit_code": 0,
+    "status": "通过"
+  },
+  "doc_lint": {
+    "checks": 16,
+    "exit_code": 0,
+    "failed": 0,
+    "status": "通过"
+  },
+  "e2e": {
+    "detail": "未执行：tests/e2e 还没有业务用例，前端页面不在本轮交付范围；E2E 业务验收受前端未交付限制",
+    "status": "未执行"
+  },
+  "golden": {
+    "exit_code": 0,
+    "status": "通过"
+  },
+  "meta": {
+    "commit": "d3e6959",
+    "commit_time": "2026-10-17T23:13:37+08:00",
+    "config_version": "DEMO-CFG-1",
+    "disclaimer": "技术测试结果，不代表需求成立或用户效果",
+    "generated_by": "pnpm test:report",
+    "notice": "模拟数据",
+    "simulated": true
+  },
+  "nl_layer": {
+    "covered": 0,
+    "total": 6
+  },
+  "oracle_diff": {
+    "cases": 10,
+    "checkpoints_oracle": 180,
+    "checkpoints_ts": 180,
+    "differences": 0,
+    "p1": 0,
+    "p2": 0,
+    "p3": 0,
+    "run_failures": 0,
+    "vectors": 152
+  },
+  "precheck": {
+    "assertions": "1004／1004（跳过",
+    "run_errors": "0",
+    "unit_exit": "0",
+    "vectors": "152／152"
+  },
+  "rules": [
+    {
+      "children": 7,
+      "failed": 0,
+      "implemented": true,
+      "partial": 2,
+      "pass": 3,
+      "pending": 2,
+      "real_user_validation": "未开展",
+      "rule": "R001",
+      "tested": false
+    },
+    {
+      "children": 7,
+      "failed": 0,
+      "implemented": true,
+      "partial": 3,
+      "pass": 4,
+      "pending": 0,
+      "real_user_validation": "未开展",
+      "rule": "R002",
+      "tested": false
+    },
+    {
+      "children": 8,
+      "failed": 0,
+      "implemented": true,
+      "partial": 1,
+      "pass": 7,
+      "pending": 0,
+      "real_user_validation": "未开展",
+      "rule": "R003",
+      "tested": false
+    },
+    {
+      "children": 7,
+      "failed": 0,
+      "implemented": true,
+      "partial": 1,
+      "pass": 6,
+      "pending": 0,
+      "real_user_validation": "未开展",
+      "rule": "R004",
+      "tested": false
+    },
+    {
+      "children": 6,
+      "failed": 0,
+      "implemented": true,
+      "partial": 2,
+      "pass": 4,
+      "pending": 0,
+      "real_user_validation": "未开展",
+      "rule": "R005",
+      "tested": false
+    },
+    {
+      "children": 6,
+      "failed": 0,
+      "implemented": true,
+      "partial": 1,
+      "pass": 4,
+      "pending": 1,
+      "real_user_validation": "未开展",
+      "rule": "R006",
+      "tested": false
+    },
+    {
+      "children": 6,
+      "failed": 0,
+      "implemented": true,
+      "partial": 0,
+      "pass": 4,
+      "pending": 2,
+      "real_user_validation": "未开展",
+      "rule": "R007",
+      "tested": false
+    },
+    {
+      "children": 7,
+      "failed": 0,
+      "implemented": true,
+      "partial": 0,
+      "pass": 7,
+      "pending": 0,
+      "real_user_validation": "未开展",
+      "rule": "R008",
+      "tested": true
+    },
+    {
+      "children": 7,
+      "failed": 0,
+      "implemented": true,
+      "partial": 3,
+      "pass": 1,
+      "pending": 3,
+      "real_user_validation": "未开展",
+      "rule": "R009",
+      "tested": false
+    },
+    {
+      "children": 9,
+      "failed": 0,
+      "implemented": true,
+      "partial": 3,
+      "pass": 6,
+      "pending": 0,
+      "real_user_validation": "未开展",
+      "rule": "R010",
+      "tested": false
+    },
+    {
+      "children": 5,
+      "failed": 0,
+      "implemented": true,
+      "partial": 2,
+      "pass": 2,
+      "pending": 1,
+      "real_user_validation": "未开展",
+      "rule": "R011",
+      "tested": false
+    },
+    {
+      "children": 6,
+      "failed": 0,
+      "implemented": true,
+      "partial": 1,
+      "pass": 5,
+      "pending": 0,
+      "real_user_validation": "未开展",
+      "rule": "R012",
+      "tested": false
+    },
+    {
+      "children": 8,
+      "failed": 0,
+      "implemented": true,
+      "partial": 4,
+      "pass": 3,
+      "pending": 1,
+      "real_user_validation": "未开展",
+      "rule": "R013",
+      "tested": false
+    },
+    {
+      "children": 8,
+      "failed": 0,
+      "implemented": false,
+      "partial": 0,
+      "pass": 8,
+      "pending": 0,
+      "real_user_validation": "未开展",
+      "rule": "R014",
+      "tested": true
+    },
+    {
+      "children": 9,
+      "failed": 0,
+      "implemented": true,
+      "partial": 2,
+      "pass": 3,
+      "pending": 4,
+      "real_user_validation": "未开展",
+      "rule": "R015",
+      "tested": false
+    },
+    {
+      "children": 9,
+      "failed": 0,
+      "implemented": true,
+      "partial": 2,
+      "pass": 7,
+      "pending": 0,
+      "real_user_validation": "未开展",
+      "rule": "R016",
+      "tested": false
+    },
+    {
+      "children": 12,
+      "failed": 0,
+      "implemented": true,
+      "partial": 5,
+      "pass": 6,
+      "pending": 1,
+      "real_user_validation": "未开展",
+      "rule": "R017",
+      "tested": false
+    },
+    {
+      "children": 12,
+      "failed": 0,
+      "implemented": true,
+      "partial": 4,
+      "pass": 4,
+      "pending": 4,
+      "real_user_validation": "未开展",
+      "rule": "R018",
+      "tested": false
+    },
+    {
+      "children": 10,
+      "failed": 0,
+      "implemented": true,
+      "partial": 3,
+      "pass": 7,
+      "pending": 0,
+      "real_user_validation": "未开展",
+      "rule": "R019",
+      "tested": false
+    },
+    {
+      "children": 12,
+      "failed": 0,
+      "implemented": true,
+      "partial": 5,
+      "pass": 0,
+      "pending": 7,
+      "real_user_validation": "未开展",
+      "rule": "R020",
+      "tested": false
+    }
+  ],
+  "spec_lint": {
+    "exit_code": 0,
+    "status": "通过",
+    "warnings": 14
+  },
+  "traceability": {
+    "failed": 0,
+    "partial": 62,
+    "pass": 93,
+    "pending": 26,
+    "rows": 181
+  },
+  "unfinished": [
+    "端到端：未执行：tests/e2e 还没有业务用例，前端页面不在本轮交付范围；E2E 业务验收受前端未交付限制",
+    "向量断言跳过 0 条；单元测试跳过 1 条"
+  ],
+  "unit": {
+    "failed": 0,
+    "files": 141,
+    "passed": 1113,
+    "skipped": 1,
+    "tests": 1114
+  },
+  "vectors": {
+    "assertions_passed": 1004,
+    "assertions_skipped": 0,
+    "assertions_total": 1004,
+    "run_errors": 0,
+    "vectors_passed": 152,
+    "vectors_total": 152
+  }
+}

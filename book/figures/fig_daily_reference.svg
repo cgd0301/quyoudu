@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" role="img" aria-label="图 14 每日参考与情景可用性">
+<rect x="0" y="0" width="1000" height="560" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="1.2"/>
+<text x="40" y="46" font-size="22" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">图 14 每日参考与情景可用性</text>
+<text x="40" y="72" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">各演示数据的每日参考显示、金额与情景不可用原因</text>
+<rect x="40" y="120" width="220" height="26" rx="3" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="48" y="138" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">案例／流程</text>
+<rect x="260" y="120" width="210" height="26" rx="3" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="268" y="138" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">每日参考显示</text>
+<rect x="470" y="120" width="140" height="26" rx="3" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="478" y="138" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">金额</text>
+<rect x="610" y="120" width="130" height="26" rx="3" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="618" y="138" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">限制来源</text>
+<rect x="740" y="120" width="260" height="26" rx="3" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="748" y="138" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">情景状态</text>
+<rect x="40" y="146" width="220" height="26" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="48" y="163" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">01_cB_topk_main</text>
+<rect x="260" y="146" width="210" height="26" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="268" y="163" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">NOT_RECOMMENDED</text>
+<rect x="470" y="146" width="140" height="26" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="478" y="163" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">0.00 元</text>
+<rect x="610" y="146" width="130" height="26" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="618" y="163" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">—</text>
+<rect x="740" y="146" width="260" height="26" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="748" y="163" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">CONFIRMED_ONLY 可用；RECENT_MONTH HISTORY_INSUFFICIENT</text>
+<rect x="40" y="172" width="220" height="26" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="48" y="189" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">04_cA_gap_living</text>
+<rect x="260" y="172" width="210" height="26" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="268" y="189" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">NEED_CONFIRMED_PLAN</text>
+<rect x="470" y="172" width="140" height="26" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="478" y="189" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">—</text>
+<rect x="610" y="172" width="130" height="26" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="618" y="189" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">—</text>
+<rect x="740" y="172" width="260" height="26" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="748" y="189" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">CONFIRMED_ONLY 可用；RECENT_MONTH HISTORY_INSUFFICIENT</text>
+<rect x="40" y="198" width="220" height="26" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="48" y="215" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">14_c00_today_spend</text>
+<rect x="260" y="198" width="210" height="26" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="268" y="215" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">AMOUNT</text>
+<rect x="470" y="198" width="140" height="26" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="478" y="215" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">60.00 元</text>
+<rect x="610" y="198" width="130" height="26" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="618" y="215" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">CONFIRMED_ONLY</text>
+<rect x="740" y="198" width="260" height="26" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="748" y="215" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">CONFIRMED_ONLY 可用；RECENT_MONTH HISTORY_INSUFFICIENT</text>
+<rect x="40" y="224" width="220" height="26" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="48" y="241" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">c00_v1_living_not_provided</text>
+<rect x="260" y="224" width="210" height="26" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="268" y="241" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">UNAVAILABLE</text>
+<rect x="470" y="224" width="140" height="26" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="478" y="241" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">—</text>
+<rect x="610" y="224" width="130" height="26" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="618" y="241" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">—</text>
+<rect x="740" y="224" width="260" height="26" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="748" y="241" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">CONFIRMED_ONLY 可用；RECENT_MONTH HISTORY_INSUFFICIENT</text>
+<text x="40" y="360" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">每日参考只在存在已确认方案时计算（D27）；信息不足时显示“暂无法给出建议金额”，不以 0 元代替（D59、R019）。</text>
+<text x="40" y="386" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">近月情景需要 30 个完整历日（§7.1）；9 月 1 日案例观察窗口不足，原因记为 HISTORY_INSUFFICIENT，不补造消费记录。</text>
+<text x="40" y="412" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">已确认方案下已有缺口时，0 元表示“当前不建议新增非计划支出”，不等于原计划可行（R019 第6条、§11.4）。</text>
+<text x="40" y="544" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">模拟数据｜数据来源见 book/figures/index.md</text>
+</svg>

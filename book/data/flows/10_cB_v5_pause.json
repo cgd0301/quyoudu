@@ -1,0 +1,3445 @@
+{
+  "checkpoints": [
+    {
+      "label": "final",
+      "result": {
+        "action_list": [
+          {
+            "amount": {
+              "basis": {
+                "event_ids": [
+                  "PLAN:C01:0:TRAIN-OUT"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R017",
+                  "R009"
+                ]
+              },
+              "value": 30000
+            },
+            "category": "OUTBOUND_TRANSPORT",
+            "channel": "渠道丙",
+            "cost_item_id": "TRAIN-OUT",
+            "offer_ids": [],
+            "payment_at": "2026-11-13",
+            "pending_checks": [],
+            "plan_version": "C01@v1",
+            "purchase_date": "2026-11-13",
+            "spec": "二等座·12:30 发车",
+            "task_id": "TASK:C01:0",
+            "task_state": "PENDING_PURCHASE"
+          },
+          {
+            "amount": {
+              "basis": {
+                "event_ids": [
+                  "PLAN:C01:1:TRAIN-BACK"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R017",
+                  "R009"
+                ]
+              },
+              "value": 28000
+            },
+            "category": "RETURN_TRANSPORT",
+            "channel": "渠道丙",
+            "cost_item_id": "TRAIN-BACK",
+            "offer_ids": [],
+            "payment_at": "2026-11-14",
+            "pending_checks": [],
+            "plan_version": "C01@v1",
+            "purchase_date": "2026-11-14",
+            "spec": "二等座·07:00 发车",
+            "task_id": "TASK:C01:1",
+            "task_state": "PENDING_PURCHASE"
+          }
+        ],
+        "as_of": "2026-09-01T09:00:00+08:00",
+        "candidates": [
+          {
+            "candidate_id": "C01",
+            "evaluable": true,
+            "excluded_reasons": [],
+            "feasible": true,
+            "net_spend": {
+              "basis": {
+                "event_ids": [
+                  "E-TICKET-0820",
+                  "E-LODGING-1010",
+                  "E-MEALS-1128",
+                  "E-LOCAL-1128",
+                  "PLAN:C01:0:TRAIN-OUT",
+                  "PLAN:C01:1:TRAIN-BACK"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R007"
+                ]
+              },
+              "value": 170000
+            },
+            "net_spend_if_received": {
+              "basis": {
+                "event_ids": [
+                  "E-TICKET-0820",
+                  "E-LODGING-1010",
+                  "E-MEALS-1128",
+                  "E-LOCAL-1128",
+                  "PLAN:C01:0:TRAIN-OUT",
+                  "PLAN:C01:1:TRAIN-BACK"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "D12",
+                  "R007"
+                ]
+              },
+              "value": 110000
+            },
+            "pending_reasons": [],
+            "plan_version": "C01@v1",
+            "rank": 1,
+            "tie_group": 1
+          }
+        ],
+        "check_period": {
+          "end": "2026-12-01",
+          "out_of_range": false,
+          "start": "2026-09-01T09:00:00+08:00"
+        },
+        "config_version": "DEMO-CFG-1",
+        "confirmation": null,
+        "constraint_issues": {
+          "allocation_conflicts": [],
+          "budget_overrun": null
+        },
+        "cost": {
+          "budget_overrun": null,
+          "contingency_reserve": {
+            "basis": {
+              "event_ids": [],
+              "reserve_ids": [
+                "R-CON"
+              ],
+              "rules": [
+                "D09"
+              ]
+            },
+            "value": 20000
+          },
+          "eligible_return": {
+            "basis": {
+              "event_ids": [],
+              "reserve_ids": [],
+              "rules": [
+                "R007"
+              ]
+            },
+            "value": 0
+          },
+          "future_payable": {
+            "basis": {
+              "event_ids": [
+                "E-LODGING-1010",
+                "E-MEALS-1128",
+                "E-LOCAL-1128",
+                "PLAN:C01:0:TRAIN-OUT",
+                "PLAN:C01:1:TRAIN-BACK"
+              ],
+              "reserve_ids": [],
+              "rules": [
+                "R007"
+              ]
+            },
+            "value": 102000
+          },
+          "future_payments": [
+            {
+              "amount": {
+                "basis": {
+                  "event_ids": [
+                    "E-LODGING-1010"
+                  ],
+                  "reserve_ids": [],
+                  "rules": [
+                    "R007"
+                  ]
+                },
+                "value": 30000
+              },
+              "at": "2026-10-10",
+              "cost_item_id": "LODGING",
+              "event_id": "E-LODGING-1010"
+            },
+            {
+              "amount": {
+                "basis": {
+                  "event_ids": [
+                    "PLAN:C01:0:TRAIN-OUT"
+                  ],
+                  "reserve_ids": [],
+                  "rules": [
+                    "R007",
+                    "R009"
+                  ]
+                },
+                "value": 30000
+              },
+              "at": "2026-11-13",
+              "cost_item_id": "TRAIN-OUT",
+              "event_id": "PLAN:C01:0:TRAIN-OUT"
+            },
+            {
+              "amount": {
+                "basis": {
+                  "event_ids": [
+                    "PLAN:C01:1:TRAIN-BACK"
+                  ],
+                  "reserve_ids": [],
+                  "rules": [
+                    "R007",
+                    "R009"
+                  ]
+                },
+                "value": 28000
+              },
+              "at": "2026-11-14",
+              "cost_item_id": "TRAIN-BACK",
+              "event_id": "PLAN:C01:1:TRAIN-BACK"
+            },
+            {
+              "amount": {
+                "basis": {
+                  "event_ids": [
+                    "E-LOCAL-1128"
+                  ],
+                  "reserve_ids": [],
+                  "rules": [
+                    "R007"
+                  ]
+                },
+                "value": 4000
+              },
+              "at": "2026-11-28",
+              "cost_item_id": "LOCAL",
+              "event_id": "E-LOCAL-1128"
+            },
+            {
+              "amount": {
+                "basis": {
+                  "event_ids": [
+                    "E-MEALS-1128"
+                  ],
+                  "reserve_ids": [],
+                  "rules": [
+                    "R007"
+                  ]
+                },
+                "value": 10000
+              },
+              "at": "2026-11-28",
+              "cost_item_id": "MEALS",
+              "event_id": "E-MEALS-1128"
+            }
+          ],
+          "net_spend": {
+            "basis": {
+              "event_ids": [
+                "E-TICKET-0820",
+                "E-LODGING-1010",
+                "E-MEALS-1128",
+                "E-LOCAL-1128",
+                "PLAN:C01:0:TRAIN-OUT",
+                "PLAN:C01:1:TRAIN-BACK"
+              ],
+              "reserve_ids": [],
+              "rules": [
+                "R007"
+              ]
+            },
+            "value": 170000
+          },
+          "net_spend_if_received": {
+            "basis": {
+              "event_ids": [
+                "E-TICKET-0820",
+                "E-LODGING-1010",
+                "E-MEALS-1128",
+                "E-LOCAL-1128",
+                "PLAN:C01:0:TRAIN-OUT",
+                "PLAN:C01:1:TRAIN-BACK"
+              ],
+              "reserve_ids": [],
+              "rules": [
+                "D12",
+                "R007"
+              ]
+            },
+            "value": 110000
+          },
+          "paid_payments": [
+            {
+              "amount": {
+                "basis": {
+                  "event_ids": [
+                    "E-TICKET-0820"
+                  ],
+                  "reserve_ids": [],
+                  "rules": [
+                    "R007"
+                  ]
+                },
+                "value": 68000
+              },
+              "at": "2026-08-20T12:00:00+08:00",
+              "cost_item_id": "TICKET",
+              "event_id": "E-TICKET-0820"
+            }
+          ],
+          "paid_total": {
+            "basis": {
+              "event_ids": [
+                "E-TICKET-0820"
+              ],
+              "reserve_ids": [],
+              "rules": [
+                "R007"
+              ]
+            },
+            "value": 68000
+          },
+          "pending_cost_item_ids": [],
+          "possible_refund": {
+            "amount": {
+              "basis": {
+                "event_ids": [
+                  "E-TICKET-REFUND"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R012"
+                ]
+              },
+              "value": 60000
+            },
+            "condition": "用户取消计划后申请退票，经审核通过后退还（扣手续费80元）"
+          },
+          "protected_reserves": {
+            "living_reserve": {
+              "basis": {
+                "event_ids": [],
+                "reserve_ids": [
+                  "R-LIV-09"
+                ],
+                "rules": [
+                  "§1"
+                ]
+              },
+              "value": 100000
+            },
+            "other_goal_hold": {
+              "basis": {
+                "event_ids": [],
+                "reserve_ids": [],
+                "rules": [
+                  "D09"
+                ]
+              },
+              "value": 0
+            },
+            "other_protected_reserve": {
+              "basis": {
+                "event_ids": [],
+                "reserve_ids": [],
+                "rules": [
+                  "§1"
+                ]
+              },
+              "value": 0
+            }
+          }
+        },
+        "daily_reference": {
+          "amount": {
+            "basis": {
+              "event_ids": [],
+              "reserve_ids": [
+                "R-LIV-09",
+                "R-CON"
+              ],
+              "rules": [
+                "R019",
+                "§4",
+                "§10.5"
+              ]
+            },
+            "value": 10000
+          },
+          "display": "AMOUNT",
+          "label": "CONFIRMED_ONLY",
+          "limited_by": {
+            "node_index": null,
+            "scenario": "CONFIRMED_ONLY"
+          },
+          "missing_reasons": [],
+          "unavailable": [
+            {
+              "reason": "HISTORY_INSUFFICIENT",
+              "scenario": "RECENT_MONTH"
+            }
+          ]
+        },
+        "dependencies": [
+          {
+            "amount": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1001"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R010",
+                  "D64"
+                ]
+              },
+              "value": 120000
+            },
+            "at": "2026-10-01",
+            "kind": "EXPECTED_INCOME",
+            "refs": [
+              "E-INC-1001"
+            ]
+          },
+          {
+            "amount": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1020"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R010",
+                  "D64"
+                ]
+              },
+              "value": 100000
+            },
+            "at": "2026-10-20",
+            "kind": "EXPECTED_INCOME",
+            "refs": [
+              "E-INC-1020"
+            ]
+          },
+          {
+            "amount": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1101"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R010",
+                  "D64"
+                ]
+              },
+              "value": 120000
+            },
+            "at": "2026-11-01",
+            "kind": "EXPECTED_INCOME",
+            "refs": [
+              "E-INC-1101"
+            ]
+          },
+          {
+            "amount": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1201"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R010",
+                  "D64"
+                ]
+              },
+              "value": 120000
+            },
+            "at": "2026-12-01",
+            "kind": "EXPECTED_INCOME",
+            "refs": [
+              "E-INC-1201"
+            ]
+          },
+          {
+            "amount": {
+              "basis": {
+                "event_ids": [],
+                "reserve_ids": [],
+                "rules": [
+                  "R010",
+                  "R009"
+                ]
+              },
+              "value": 10000
+            },
+            "at": "2026-11-28",
+            "kind": "ESTIMATE",
+            "refs": [
+              "MEALS"
+            ]
+          },
+          {
+            "amount": {
+              "basis": {
+                "event_ids": [],
+                "reserve_ids": [],
+                "rules": [
+                  "R010",
+                  "R009"
+                ]
+              },
+              "value": 4000
+            },
+            "at": "2026-11-28",
+            "kind": "ESTIMATE",
+            "refs": [
+              "LOCAL"
+            ]
+          }
+        ],
+        "earliest_gap": null,
+        "forecasts": [],
+        "gap_list": [],
+        "input_issues": [],
+        "input_version": "v2",
+        "labels": [
+          "SIMULATED_DATA",
+          "TOP_K_DEMO",
+          "PRE_RANGE_PAID",
+          "HISTORY_INSUFFICIENT",
+          "DAILY_DISCLAIMER"
+        ],
+        "nodes": [
+          {
+            "allocation_unsupported": null,
+            "amount": null,
+            "at": "2026-09-01T09:00:00+08:00",
+            "cash": {
+              "basis": {
+                "event_ids": [],
+                "reserve_ids": [],
+                "rules": [
+                  "R001",
+                  "§10.3"
+                ]
+              },
+              "value": 160000
+            },
+            "contingency_reserve": {
+              "basis": {
+                "event_ids": [],
+                "reserve_ids": [
+                  "R-CON"
+                ],
+                "rules": [
+                  "R003",
+                  "D09"
+                ]
+              },
+              "value": 20000
+            },
+            "goal_allocation": {
+              "basis": {
+                "event_ids": [],
+                "reserve_ids": [],
+                "rules": [
+                  "R004",
+                  "D06",
+                  "D18"
+                ]
+              },
+              "value": 30000
+            },
+            "goal_available": {
+              "basis": {
+                "event_ids": [],
+                "reserve_ids": [
+                  "R-LIV-09"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 60000
+            },
+            "living_reserve": {
+              "basis": {
+                "event_ids": [],
+                "reserve_ids": [
+                  "R-LIV-09"
+                ],
+                "rules": [
+                  "R003",
+                  "D08",
+                  "§10.3"
+                ]
+              },
+              "value": 100000
+            },
+            "node_verdict": "PASS",
+            "other_goal_hold": {
+              "basis": {
+                "event_ids": [],
+                "reserve_ids": [],
+                "rules": [
+                  "D09"
+                ]
+              },
+              "value": 0
+            },
+            "other_protected_reserve": {
+              "basis": {
+                "event_ids": [],
+                "reserve_ids": [],
+                "rules": [
+                  "R003",
+                  "§10.3"
+                ]
+              },
+              "value": 0
+            },
+            "payment_headroom": {
+              "basis": {
+                "event_ids": [],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 40000
+            },
+            "protected_over_cash": null,
+            "protected_total": {
+              "basis": {
+                "event_ids": [],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 120000
+            },
+            "related": [],
+            "trigger": {
+              "event_ids": [],
+              "kind": "START"
+            },
+            "unallocated": {
+              "basis": {
+                "event_ids": [],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON"
+                ],
+                "rules": [
+                  "§1",
+                  "R004",
+                  "D05"
+                ]
+              },
+              "value": 10000
+            }
+          },
+          {
+            "allocation_unsupported": null,
+            "amount": null,
+            "at": "2026-09-02",
+            "cash": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-0902"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R001",
+                  "§10.3"
+                ]
+              },
+              "value": 110000
+            },
+            "contingency_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-0902"
+                ],
+                "reserve_ids": [
+                  "R-CON"
+                ],
+                "rules": [
+                  "R003",
+                  "D09"
+                ]
+              },
+              "value": 20000
+            },
+            "goal_allocation": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-0902"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R004",
+                  "D06",
+                  "D18"
+                ]
+              },
+              "value": 30000
+            },
+            "goal_available": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-0902"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 60000
+            },
+            "living_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-0902"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09"
+                ],
+                "rules": [
+                  "R003",
+                  "D08",
+                  "§10.3"
+                ]
+              },
+              "value": 50000
+            },
+            "node_verdict": "PASS",
+            "other_goal_hold": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-0902"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "D09"
+                ]
+              },
+              "value": 0
+            },
+            "other_protected_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-0902"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R003",
+                  "§10.3"
+                ]
+              },
+              "value": 0
+            },
+            "payment_headroom": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-0902"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 40000
+            },
+            "protected_over_cash": null,
+            "protected_total": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-0902"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 70000
+            },
+            "related": [
+              "E-LIV-0902"
+            ],
+            "trigger": {
+              "event_ids": [
+                "E-LIV-0902"
+              ],
+              "kind": "OUTFLOW"
+            },
+            "unallocated": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-0902"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON"
+                ],
+                "rules": [
+                  "§1",
+                  "R004",
+                  "D05"
+                ]
+              },
+              "value": 10000
+            }
+          },
+          {
+            "allocation_unsupported": null,
+            "amount": null,
+            "at": "2026-09-16",
+            "cash": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-0916"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R001",
+                  "§10.3"
+                ]
+              },
+              "value": 60000
+            },
+            "contingency_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-0916"
+                ],
+                "reserve_ids": [
+                  "R-CON"
+                ],
+                "rules": [
+                  "R003",
+                  "D09"
+                ]
+              },
+              "value": 20000
+            },
+            "goal_allocation": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-0916"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R004",
+                  "D06",
+                  "D18"
+                ]
+              },
+              "value": 30000
+            },
+            "goal_available": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-0916"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 60000
+            },
+            "living_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-0916"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09"
+                ],
+                "rules": [
+                  "R003",
+                  "D08",
+                  "§10.3"
+                ]
+              },
+              "value": 0
+            },
+            "node_verdict": "PASS",
+            "other_goal_hold": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-0916"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "D09"
+                ]
+              },
+              "value": 0
+            },
+            "other_protected_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-0916"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R003",
+                  "§10.3"
+                ]
+              },
+              "value": 0
+            },
+            "payment_headroom": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-0916"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 40000
+            },
+            "protected_over_cash": null,
+            "protected_total": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-0916"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 20000
+            },
+            "related": [
+              "E-LIV-0916"
+            ],
+            "trigger": {
+              "event_ids": [
+                "E-LIV-0916"
+              ],
+              "kind": "OUTFLOW"
+            },
+            "unallocated": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-0916"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON"
+                ],
+                "rules": [
+                  "§1",
+                  "R004",
+                  "D05"
+                ]
+              },
+              "value": 10000
+            }
+          },
+          {
+            "allocation_unsupported": null,
+            "amount": null,
+            "at": "2026-10-01",
+            "cash": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1001"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R001",
+                  "§10.3"
+                ]
+              },
+              "value": 180000
+            },
+            "contingency_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1001"
+                ],
+                "reserve_ids": [
+                  "R-CON"
+                ],
+                "rules": [
+                  "R003",
+                  "D09"
+                ]
+              },
+              "value": 20000
+            },
+            "goal_allocation": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1001"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R004",
+                  "D06",
+                  "D18"
+                ]
+              },
+              "value": 30000
+            },
+            "goal_available": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1001"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 80000
+            },
+            "living_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1001"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "R003",
+                  "D08",
+                  "§10.3"
+                ]
+              },
+              "value": 100000
+            },
+            "node_verdict": "PASS",
+            "other_goal_hold": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1001"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "D09"
+                ]
+              },
+              "value": 0
+            },
+            "other_protected_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1001"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R003",
+                  "§10.3"
+                ]
+              },
+              "value": 0
+            },
+            "payment_headroom": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1001"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 60000
+            },
+            "protected_over_cash": null,
+            "protected_total": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1001"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 120000
+            },
+            "related": [
+              "E-INC-1001",
+              "R-LIV-10"
+            ],
+            "trigger": {
+              "event_ids": [
+                "E-INC-1001"
+              ],
+              "kind": "INCOME"
+            },
+            "unallocated": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1001"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "§1",
+                  "R004",
+                  "D05"
+                ]
+              },
+              "value": 30000
+            }
+          },
+          {
+            "allocation_unsupported": null,
+            "amount": null,
+            "at": "2026-10-02",
+            "cash": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1002"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R001",
+                  "§10.3"
+                ]
+              },
+              "value": 130000
+            },
+            "contingency_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1002"
+                ],
+                "reserve_ids": [
+                  "R-CON"
+                ],
+                "rules": [
+                  "R003",
+                  "D09"
+                ]
+              },
+              "value": 20000
+            },
+            "goal_allocation": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1002"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R004",
+                  "D06",
+                  "D18"
+                ]
+              },
+              "value": 30000
+            },
+            "goal_available": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1002"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 80000
+            },
+            "living_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1002"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "R003",
+                  "D08",
+                  "§10.3"
+                ]
+              },
+              "value": 50000
+            },
+            "node_verdict": "PASS",
+            "other_goal_hold": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1002"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "D09"
+                ]
+              },
+              "value": 0
+            },
+            "other_protected_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1002"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R003",
+                  "§10.3"
+                ]
+              },
+              "value": 0
+            },
+            "payment_headroom": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1002"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 60000
+            },
+            "protected_over_cash": null,
+            "protected_total": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1002"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 70000
+            },
+            "related": [
+              "E-LIV-1002"
+            ],
+            "trigger": {
+              "event_ids": [
+                "E-LIV-1002"
+              ],
+              "kind": "OUTFLOW"
+            },
+            "unallocated": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1002"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "§1",
+                  "R004",
+                  "D05"
+                ]
+              },
+              "value": 30000
+            }
+          },
+          {
+            "allocation_unsupported": null,
+            "amount": null,
+            "at": "2026-10-10",
+            "cash": {
+              "basis": {
+                "event_ids": [
+                  "E-LODGING-1010"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R001",
+                  "§10.3"
+                ]
+              },
+              "value": 100000
+            },
+            "contingency_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-LODGING-1010"
+                ],
+                "reserve_ids": [
+                  "R-CON"
+                ],
+                "rules": [
+                  "R003",
+                  "D09"
+                ]
+              },
+              "value": 20000
+            },
+            "goal_allocation": {
+              "basis": {
+                "event_ids": [
+                  "E-LODGING-1010"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R004",
+                  "D06",
+                  "D18"
+                ]
+              },
+              "value": 0
+            },
+            "goal_available": {
+              "basis": {
+                "event_ids": [
+                  "E-LODGING-1010"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 50000
+            },
+            "living_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-LODGING-1010"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "R003",
+                  "D08",
+                  "§10.3"
+                ]
+              },
+              "value": 50000
+            },
+            "node_verdict": "PASS",
+            "other_goal_hold": {
+              "basis": {
+                "event_ids": [
+                  "E-LODGING-1010"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "D09"
+                ]
+              },
+              "value": 0
+            },
+            "other_protected_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-LODGING-1010"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R003",
+                  "§10.3"
+                ]
+              },
+              "value": 0
+            },
+            "payment_headroom": {
+              "basis": {
+                "event_ids": [
+                  "E-LODGING-1010"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 30000
+            },
+            "protected_over_cash": null,
+            "protected_total": {
+              "basis": {
+                "event_ids": [
+                  "E-LODGING-1010"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 70000
+            },
+            "related": [
+              "E-LODGING-1010"
+            ],
+            "trigger": {
+              "event_ids": [
+                "E-LODGING-1010"
+              ],
+              "kind": "OUTFLOW"
+            },
+            "unallocated": {
+              "basis": {
+                "event_ids": [
+                  "E-LODGING-1010"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "§1",
+                  "R004",
+                  "D05"
+                ]
+              },
+              "value": 30000
+            }
+          },
+          {
+            "allocation_unsupported": null,
+            "amount": null,
+            "at": "2026-10-16",
+            "cash": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1016"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R001",
+                  "§10.3"
+                ]
+              },
+              "value": 50000
+            },
+            "contingency_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1016"
+                ],
+                "reserve_ids": [
+                  "R-CON"
+                ],
+                "rules": [
+                  "R003",
+                  "D09"
+                ]
+              },
+              "value": 20000
+            },
+            "goal_allocation": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1016"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R004",
+                  "D06",
+                  "D18"
+                ]
+              },
+              "value": 0
+            },
+            "goal_available": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1016"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 50000
+            },
+            "living_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1016"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "R003",
+                  "D08",
+                  "§10.3"
+                ]
+              },
+              "value": 0
+            },
+            "node_verdict": "PASS",
+            "other_goal_hold": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1016"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "D09"
+                ]
+              },
+              "value": 0
+            },
+            "other_protected_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1016"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R003",
+                  "§10.3"
+                ]
+              },
+              "value": 0
+            },
+            "payment_headroom": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1016"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 30000
+            },
+            "protected_over_cash": null,
+            "protected_total": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1016"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 20000
+            },
+            "related": [
+              "E-LIV-1016"
+            ],
+            "trigger": {
+              "event_ids": [
+                "E-LIV-1016"
+              ],
+              "kind": "OUTFLOW"
+            },
+            "unallocated": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1016"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "§1",
+                  "R004",
+                  "D05"
+                ]
+              },
+              "value": 30000
+            }
+          },
+          {
+            "allocation_unsupported": null,
+            "amount": null,
+            "at": "2026-10-20",
+            "cash": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1020"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R001",
+                  "§10.3"
+                ]
+              },
+              "value": 150000
+            },
+            "contingency_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1020"
+                ],
+                "reserve_ids": [
+                  "R-CON"
+                ],
+                "rules": [
+                  "R003",
+                  "D09"
+                ]
+              },
+              "value": 20000
+            },
+            "goal_allocation": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1020"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R004",
+                  "D06",
+                  "D18"
+                ]
+              },
+              "value": 0
+            },
+            "goal_available": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1020"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 150000
+            },
+            "living_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1020"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "R003",
+                  "D08",
+                  "§10.3"
+                ]
+              },
+              "value": 0
+            },
+            "node_verdict": "PASS",
+            "other_goal_hold": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1020"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "D09"
+                ]
+              },
+              "value": 0
+            },
+            "other_protected_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1020"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R003",
+                  "§10.3"
+                ]
+              },
+              "value": 0
+            },
+            "payment_headroom": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1020"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 130000
+            },
+            "protected_over_cash": null,
+            "protected_total": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1020"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 20000
+            },
+            "related": [
+              "E-INC-1020"
+            ],
+            "trigger": {
+              "event_ids": [
+                "E-INC-1020"
+              ],
+              "kind": "INCOME"
+            },
+            "unallocated": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1020"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10"
+                ],
+                "rules": [
+                  "§1",
+                  "R004",
+                  "D05"
+                ]
+              },
+              "value": 130000
+            }
+          },
+          {
+            "allocation_unsupported": null,
+            "amount": null,
+            "at": "2026-11-01",
+            "cash": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1101"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R001",
+                  "§10.3"
+                ]
+              },
+              "value": 270000
+            },
+            "contingency_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1101"
+                ],
+                "reserve_ids": [
+                  "R-CON"
+                ],
+                "rules": [
+                  "R003",
+                  "D09"
+                ]
+              },
+              "value": 20000
+            },
+            "goal_allocation": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1101"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R004",
+                  "D06",
+                  "D18"
+                ]
+              },
+              "value": 0
+            },
+            "goal_available": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1101"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 170000
+            },
+            "living_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1101"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "R003",
+                  "D08",
+                  "§10.3"
+                ]
+              },
+              "value": 100000
+            },
+            "node_verdict": "PASS",
+            "other_goal_hold": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1101"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "D09"
+                ]
+              },
+              "value": 0
+            },
+            "other_protected_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1101"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R003",
+                  "§10.3"
+                ]
+              },
+              "value": 0
+            },
+            "payment_headroom": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1101"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 150000
+            },
+            "protected_over_cash": null,
+            "protected_total": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1101"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 120000
+            },
+            "related": [
+              "E-INC-1101",
+              "R-LIV-11"
+            ],
+            "trigger": {
+              "event_ids": [
+                "E-INC-1101"
+              ],
+              "kind": "INCOME"
+            },
+            "unallocated": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1101"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "R004",
+                  "D05"
+                ]
+              },
+              "value": 150000
+            }
+          },
+          {
+            "allocation_unsupported": null,
+            "amount": null,
+            "at": "2026-11-02",
+            "cash": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1102"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R001",
+                  "§10.3"
+                ]
+              },
+              "value": 220000
+            },
+            "contingency_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1102"
+                ],
+                "reserve_ids": [
+                  "R-CON"
+                ],
+                "rules": [
+                  "R003",
+                  "D09"
+                ]
+              },
+              "value": 20000
+            },
+            "goal_allocation": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1102"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R004",
+                  "D06",
+                  "D18"
+                ]
+              },
+              "value": 0
+            },
+            "goal_available": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1102"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 170000
+            },
+            "living_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1102"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "R003",
+                  "D08",
+                  "§10.3"
+                ]
+              },
+              "value": 50000
+            },
+            "node_verdict": "PASS",
+            "other_goal_hold": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1102"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "D09"
+                ]
+              },
+              "value": 0
+            },
+            "other_protected_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1102"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R003",
+                  "§10.3"
+                ]
+              },
+              "value": 0
+            },
+            "payment_headroom": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1102"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 150000
+            },
+            "protected_over_cash": null,
+            "protected_total": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1102"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 70000
+            },
+            "related": [
+              "E-LIV-1102"
+            ],
+            "trigger": {
+              "event_ids": [
+                "E-LIV-1102"
+              ],
+              "kind": "OUTFLOW"
+            },
+            "unallocated": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1102"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "R004",
+                  "D05"
+                ]
+              },
+              "value": 150000
+            }
+          },
+          {
+            "allocation_unsupported": null,
+            "amount": null,
+            "at": "2026-11-13",
+            "cash": {
+              "basis": {
+                "event_ids": [
+                  "PLAN:C01:0:TRAIN-OUT"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R001",
+                  "§10.3"
+                ]
+              },
+              "value": 190000
+            },
+            "contingency_reserve": {
+              "basis": {
+                "event_ids": [
+                  "PLAN:C01:0:TRAIN-OUT"
+                ],
+                "reserve_ids": [
+                  "R-CON"
+                ],
+                "rules": [
+                  "R003",
+                  "D09"
+                ]
+              },
+              "value": 20000
+            },
+            "goal_allocation": {
+              "basis": {
+                "event_ids": [
+                  "PLAN:C01:0:TRAIN-OUT"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R004",
+                  "D06",
+                  "D18"
+                ]
+              },
+              "value": 0
+            },
+            "goal_available": {
+              "basis": {
+                "event_ids": [
+                  "PLAN:C01:0:TRAIN-OUT"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 140000
+            },
+            "living_reserve": {
+              "basis": {
+                "event_ids": [
+                  "PLAN:C01:0:TRAIN-OUT"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "R003",
+                  "D08",
+                  "§10.3"
+                ]
+              },
+              "value": 50000
+            },
+            "node_verdict": "PASS",
+            "other_goal_hold": {
+              "basis": {
+                "event_ids": [
+                  "PLAN:C01:0:TRAIN-OUT"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "D09"
+                ]
+              },
+              "value": 0
+            },
+            "other_protected_reserve": {
+              "basis": {
+                "event_ids": [
+                  "PLAN:C01:0:TRAIN-OUT"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R003",
+                  "§10.3"
+                ]
+              },
+              "value": 0
+            },
+            "payment_headroom": {
+              "basis": {
+                "event_ids": [
+                  "PLAN:C01:0:TRAIN-OUT"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 120000
+            },
+            "protected_over_cash": null,
+            "protected_total": {
+              "basis": {
+                "event_ids": [
+                  "PLAN:C01:0:TRAIN-OUT"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 70000
+            },
+            "related": [
+              "PLAN:C01:0:TRAIN-OUT"
+            ],
+            "trigger": {
+              "event_ids": [
+                "PLAN:C01:0:TRAIN-OUT"
+              ],
+              "kind": "OUTFLOW"
+            },
+            "unallocated": {
+              "basis": {
+                "event_ids": [
+                  "PLAN:C01:0:TRAIN-OUT"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "R004",
+                  "D05"
+                ]
+              },
+              "value": 120000
+            }
+          },
+          {
+            "allocation_unsupported": null,
+            "amount": null,
+            "at": "2026-11-14",
+            "cash": {
+              "basis": {
+                "event_ids": [
+                  "PLAN:C01:1:TRAIN-BACK"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R001",
+                  "§10.3"
+                ]
+              },
+              "value": 162000
+            },
+            "contingency_reserve": {
+              "basis": {
+                "event_ids": [
+                  "PLAN:C01:1:TRAIN-BACK"
+                ],
+                "reserve_ids": [
+                  "R-CON"
+                ],
+                "rules": [
+                  "R003",
+                  "D09"
+                ]
+              },
+              "value": 20000
+            },
+            "goal_allocation": {
+              "basis": {
+                "event_ids": [
+                  "PLAN:C01:1:TRAIN-BACK"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R004",
+                  "D06",
+                  "D18"
+                ]
+              },
+              "value": 0
+            },
+            "goal_available": {
+              "basis": {
+                "event_ids": [
+                  "PLAN:C01:1:TRAIN-BACK"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 112000
+            },
+            "living_reserve": {
+              "basis": {
+                "event_ids": [
+                  "PLAN:C01:1:TRAIN-BACK"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "R003",
+                  "D08",
+                  "§10.3"
+                ]
+              },
+              "value": 50000
+            },
+            "node_verdict": "PASS",
+            "other_goal_hold": {
+              "basis": {
+                "event_ids": [
+                  "PLAN:C01:1:TRAIN-BACK"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "D09"
+                ]
+              },
+              "value": 0
+            },
+            "other_protected_reserve": {
+              "basis": {
+                "event_ids": [
+                  "PLAN:C01:1:TRAIN-BACK"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R003",
+                  "§10.3"
+                ]
+              },
+              "value": 0
+            },
+            "payment_headroom": {
+              "basis": {
+                "event_ids": [
+                  "PLAN:C01:1:TRAIN-BACK"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 92000
+            },
+            "protected_over_cash": null,
+            "protected_total": {
+              "basis": {
+                "event_ids": [
+                  "PLAN:C01:1:TRAIN-BACK"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 70000
+            },
+            "related": [
+              "PLAN:C01:1:TRAIN-BACK"
+            ],
+            "trigger": {
+              "event_ids": [
+                "PLAN:C01:1:TRAIN-BACK"
+              ],
+              "kind": "OUTFLOW"
+            },
+            "unallocated": {
+              "basis": {
+                "event_ids": [
+                  "PLAN:C01:1:TRAIN-BACK"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "R004",
+                  "D05"
+                ]
+              },
+              "value": 92000
+            }
+          },
+          {
+            "allocation_unsupported": null,
+            "amount": null,
+            "at": "2026-11-16",
+            "cash": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1116"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R001",
+                  "§10.3"
+                ]
+              },
+              "value": 112000
+            },
+            "contingency_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1116"
+                ],
+                "reserve_ids": [
+                  "R-CON"
+                ],
+                "rules": [
+                  "R003",
+                  "D09"
+                ]
+              },
+              "value": 20000
+            },
+            "goal_allocation": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1116"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R004",
+                  "D06",
+                  "D18"
+                ]
+              },
+              "value": 0
+            },
+            "goal_available": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1116"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 112000
+            },
+            "living_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1116"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "R003",
+                  "D08",
+                  "§10.3"
+                ]
+              },
+              "value": 0
+            },
+            "node_verdict": "PASS",
+            "other_goal_hold": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1116"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "D09"
+                ]
+              },
+              "value": 0
+            },
+            "other_protected_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1116"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R003",
+                  "§10.3"
+                ]
+              },
+              "value": 0
+            },
+            "payment_headroom": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1116"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 92000
+            },
+            "protected_over_cash": null,
+            "protected_total": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1116"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 20000
+            },
+            "related": [
+              "E-LIV-1116"
+            ],
+            "trigger": {
+              "event_ids": [
+                "E-LIV-1116"
+              ],
+              "kind": "OUTFLOW"
+            },
+            "unallocated": {
+              "basis": {
+                "event_ids": [
+                  "E-LIV-1116"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "R004",
+                  "D05"
+                ]
+              },
+              "value": 92000
+            }
+          },
+          {
+            "allocation_unsupported": null,
+            "amount": null,
+            "at": "2026-11-28",
+            "cash": {
+              "basis": {
+                "event_ids": [
+                  "E-LOCAL-1128",
+                  "E-MEALS-1128"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R001",
+                  "§10.3"
+                ]
+              },
+              "value": 98000
+            },
+            "contingency_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-LOCAL-1128",
+                  "E-MEALS-1128"
+                ],
+                "reserve_ids": [
+                  "R-CON"
+                ],
+                "rules": [
+                  "R003",
+                  "D09"
+                ]
+              },
+              "value": 20000
+            },
+            "goal_allocation": {
+              "basis": {
+                "event_ids": [
+                  "E-LOCAL-1128",
+                  "E-MEALS-1128"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R004",
+                  "D06",
+                  "D18"
+                ]
+              },
+              "value": 0
+            },
+            "goal_available": {
+              "basis": {
+                "event_ids": [
+                  "E-LOCAL-1128",
+                  "E-MEALS-1128"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 98000
+            },
+            "living_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-LOCAL-1128",
+                  "E-MEALS-1128"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "R003",
+                  "D08",
+                  "§10.3"
+                ]
+              },
+              "value": 0
+            },
+            "node_verdict": "PASS",
+            "other_goal_hold": {
+              "basis": {
+                "event_ids": [
+                  "E-LOCAL-1128",
+                  "E-MEALS-1128"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "D09"
+                ]
+              },
+              "value": 0
+            },
+            "other_protected_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-LOCAL-1128",
+                  "E-MEALS-1128"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R003",
+                  "§10.3"
+                ]
+              },
+              "value": 0
+            },
+            "payment_headroom": {
+              "basis": {
+                "event_ids": [
+                  "E-LOCAL-1128",
+                  "E-MEALS-1128"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 78000
+            },
+            "protected_over_cash": null,
+            "protected_total": {
+              "basis": {
+                "event_ids": [
+                  "E-LOCAL-1128",
+                  "E-MEALS-1128"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 20000
+            },
+            "related": [
+              "E-LOCAL-1128",
+              "E-MEALS-1128"
+            ],
+            "trigger": {
+              "event_ids": [
+                "E-LOCAL-1128",
+                "E-MEALS-1128"
+              ],
+              "kind": "OUTFLOW_GROUP"
+            },
+            "unallocated": {
+              "basis": {
+                "event_ids": [
+                  "E-LOCAL-1128",
+                  "E-MEALS-1128"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "R004",
+                  "D05"
+                ]
+              },
+              "value": 78000
+            }
+          },
+          {
+            "allocation_unsupported": null,
+            "amount": null,
+            "at": "2026-11-30",
+            "cash": {
+              "basis": {
+                "event_ids": [
+                  "AUTO:CONTINGENCY_RELEASE"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R001",
+                  "§10.3"
+                ]
+              },
+              "value": 98000
+            },
+            "contingency_reserve": {
+              "basis": {
+                "event_ids": [
+                  "AUTO:CONTINGENCY_RELEASE"
+                ],
+                "reserve_ids": [
+                  "R-CON"
+                ],
+                "rules": [
+                  "R003",
+                  "D09"
+                ]
+              },
+              "value": 0
+            },
+            "goal_allocation": {
+              "basis": {
+                "event_ids": [
+                  "AUTO:CONTINGENCY_RELEASE"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R004",
+                  "D06",
+                  "D18"
+                ]
+              },
+              "value": 0
+            },
+            "goal_available": {
+              "basis": {
+                "event_ids": [
+                  "AUTO:CONTINGENCY_RELEASE"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 98000
+            },
+            "living_reserve": {
+              "basis": {
+                "event_ids": [
+                  "AUTO:CONTINGENCY_RELEASE"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "R003",
+                  "D08",
+                  "§10.3"
+                ]
+              },
+              "value": 0
+            },
+            "node_verdict": "PASS",
+            "other_goal_hold": {
+              "basis": {
+                "event_ids": [
+                  "AUTO:CONTINGENCY_RELEASE"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "D09"
+                ]
+              },
+              "value": 0
+            },
+            "other_protected_reserve": {
+              "basis": {
+                "event_ids": [
+                  "AUTO:CONTINGENCY_RELEASE"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R003",
+                  "§10.3"
+                ]
+              },
+              "value": 0
+            },
+            "payment_headroom": {
+              "basis": {
+                "event_ids": [
+                  "AUTO:CONTINGENCY_RELEASE"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 98000
+            },
+            "protected_over_cash": null,
+            "protected_total": {
+              "basis": {
+                "event_ids": [
+                  "AUTO:CONTINGENCY_RELEASE"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 0
+            },
+            "related": [
+              "AUTO:CONTINGENCY_RELEASE"
+            ],
+            "trigger": {
+              "event_ids": [
+                "AUTO:CONTINGENCY_RELEASE"
+              ],
+              "kind": "OTHER"
+            },
+            "unallocated": {
+              "basis": {
+                "event_ids": [
+                  "AUTO:CONTINGENCY_RELEASE"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10",
+                  "R-LIV-11"
+                ],
+                "rules": [
+                  "§1",
+                  "R004",
+                  "D05"
+                ]
+              },
+              "value": 98000
+            }
+          },
+          {
+            "allocation_unsupported": null,
+            "amount": null,
+            "at": "2026-12-01",
+            "cash": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1201"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R001",
+                  "§10.3"
+                ]
+              },
+              "value": 218000
+            },
+            "contingency_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1201"
+                ],
+                "reserve_ids": [
+                  "R-CON"
+                ],
+                "rules": [
+                  "R003",
+                  "D09"
+                ]
+              },
+              "value": 0
+            },
+            "goal_allocation": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1201"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R004",
+                  "D06",
+                  "D18"
+                ]
+              },
+              "value": 0
+            },
+            "goal_available": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1201"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10",
+                  "R-LIV-11",
+                  "R-LIV-12"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 118000
+            },
+            "living_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1201"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-LIV-10",
+                  "R-LIV-11",
+                  "R-LIV-12"
+                ],
+                "rules": [
+                  "R003",
+                  "D08",
+                  "§10.3"
+                ]
+              },
+              "value": 100000
+            },
+            "node_verdict": "PASS",
+            "other_goal_hold": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1201"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "D09"
+                ]
+              },
+              "value": 0
+            },
+            "other_protected_reserve": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1201"
+                ],
+                "reserve_ids": [],
+                "rules": [
+                  "R003",
+                  "§10.3"
+                ]
+              },
+              "value": 0
+            },
+            "payment_headroom": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1201"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10",
+                  "R-LIV-11",
+                  "R-LIV-12"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 118000
+            },
+            "protected_over_cash": null,
+            "protected_total": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1201"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10",
+                  "R-LIV-11",
+                  "R-LIV-12"
+                ],
+                "rules": [
+                  "§1",
+                  "D05"
+                ]
+              },
+              "value": 100000
+            },
+            "related": [
+              "E-INC-1201",
+              "R-LIV-12"
+            ],
+            "trigger": {
+              "event_ids": [
+                "E-INC-1201"
+              ],
+              "kind": "INCOME"
+            },
+            "unallocated": {
+              "basis": {
+                "event_ids": [
+                  "E-INC-1201"
+                ],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON",
+                  "R-LIV-10",
+                  "R-LIV-11",
+                  "R-LIV-12"
+                ],
+                "rules": [
+                  "§1",
+                  "R004",
+                  "D05"
+                ]
+              },
+              "value": 118000
+            }
+          }
+        ],
+        "optimization": {
+          "evaluated_count": 1,
+          "excluded_count": 0,
+          "pending_count": 0,
+          "scope": [
+            "C01"
+          ],
+          "top_k": 3
+        },
+        "pending_differences": [],
+        "scenarios": [
+          {
+            "available": true,
+            "complete_days": 0,
+            "config_version": "DEMO-CFG-1",
+            "daily_reference": {
+              "basis": {
+                "event_ids": [],
+                "reserve_ids": [
+                  "R-LIV-09",
+                  "R-CON"
+                ],
+                "rules": [
+                  "R019",
+                  "§4",
+                  "§10.5"
+                ]
+              },
+              "value": 10000
+            },
+            "groups": [],
+            "kind": "CONFIRMED_ONLY",
+            "observation_end": null,
+            "observation_start": null,
+            "today_replacement": null,
+            "unavailable_reason": null
+          },
+          {
+            "available": false,
+            "complete_days": 0,
+            "config_version": "DEMO-CFG-1",
+            "daily_reference": null,
+            "groups": [],
+            "kind": "RECENT_MONTH",
+            "observation_end": null,
+            "observation_start": null,
+            "today_replacement": null,
+            "unavailable_reason": "HISTORY_INSUFFICIENT"
+          }
+        ],
+        "snapshot": {
+          "cash": {
+            "basis": {
+              "event_ids": [],
+              "reserve_ids": [],
+              "rules": [
+                "R001"
+              ]
+            },
+            "value": 160000
+          },
+          "contingency_reserve": {
+            "basis": {
+              "event_ids": [],
+              "reserve_ids": [
+                "R-CON"
+              ],
+              "rules": [
+                "D09"
+              ]
+            },
+            "value": 20000
+          },
+          "goal_allocation": {
+            "basis": {
+              "event_ids": [],
+              "reserve_ids": [],
+              "rules": [
+                "R004"
+              ]
+            },
+            "value": 30000
+          },
+          "goal_available": {
+            "basis": {
+              "event_ids": [],
+              "reserve_ids": [
+                "R-LIV-09"
+              ],
+              "rules": [
+                "§1"
+              ]
+            },
+            "value": 60000
+          },
+          "issues": [],
+          "living_reserve": {
+            "basis": {
+              "event_ids": [],
+              "reserve_ids": [
+                "R-LIV-09"
+              ],
+              "rules": [
+                "§1"
+              ]
+            },
+            "value": 100000
+          },
+          "other_goal_hold": {
+            "basis": {
+              "event_ids": [],
+              "reserve_ids": [],
+              "rules": [
+                "D09"
+              ]
+            },
+            "value": 0
+          },
+          "other_protected_reserve": {
+            "basis": {
+              "event_ids": [],
+              "reserve_ids": [],
+              "rules": [
+                "§1"
+              ]
+            },
+            "value": 0
+          },
+          "payment_headroom": {
+            "basis": {
+              "event_ids": [],
+              "reserve_ids": [
+                "R-LIV-09",
+                "R-CON"
+              ],
+              "rules": [
+                "§1"
+              ]
+            },
+            "value": 40000
+          },
+          "protected_total": {
+            "basis": {
+              "event_ids": [],
+              "reserve_ids": [
+                "R-LIV-09",
+                "R-CON"
+              ],
+              "rules": [
+                "§1",
+                "D09"
+              ]
+            },
+            "value": 120000
+          },
+          "unallocated": {
+            "basis": {
+              "event_ids": [],
+              "reserve_ids": [
+                "R-LIV-09",
+                "R-CON"
+              ],
+              "rules": [
+                "§1",
+                "R004"
+              ]
+            },
+            "value": 10000
+          }
+        },
+        "states": {
+          "confirmation_state": "CONFIRMED",
+          "optimization_state": "COMPLETED_FEASIBLE",
+          "plan_state": "PAUSED",
+          "plan_target": "CONFIRMED_PLAN",
+          "underlying_plan_state": "FEASIBLE_UNDER_ASSUMPTIONS"
+        },
+        "top_k_label": "K=3（演示配置v1）",
+        "user_confirmations": []
+      }
+    }
+  ],
+  "meta": {
+    "case_data_version": "1",
+    "case_id": "cB_v5_cancel",
+    "commit": "d3e6959",
+    "commit_time": "2026-10-17T23:13:37+08:00",
+    "config_version": "DEMO-CFG-1",
+    "done_modules": [
+      "M1",
+      "M2",
+      "M3",
+      "M4",
+      "M5",
+      "M6",
+      "M7",
+      "M8",
+      "M9"
+    ],
+    "engine": "ts",
+    "generated_by": "pnpm export:results",
+    "id": "10_cB_v5_pause",
+    "kind": "flow",
+    "notice": "模拟数据",
+    "purpose": "案例B变体：门票已于 2026-08-20 付清（范围前已付，D57），酒店已预订且不可取消（E-LODGING-1010），往返高铁方案 C01 已确认；票档和住宿约束不填（SG-36），其余同 cB_topk。",
+    "simulated": true,
+    "source": "fixtures/flows/10_cB_v5_pause.json",
+    "source_type": "LLM_GENERATED"
+  }
+}

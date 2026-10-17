@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" role="img" aria-label="图 9 优惠类型与约束（cB_topk 案例）">
+<rect x="0" y="0" width="1000" height="560" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="1.2"/>
+<text x="40" y="46" font-size="22" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">图 9 优惠类型与约束（cB_topk 案例）</text>
+<text x="40" y="72" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">类型、面额、适用范围与门槛</text>
+<rect x="40" y="120" width="120" height="26" rx="3" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="48" y="138" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">优惠</text>
+<rect x="160" y="120" width="130" height="26" rx="3" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="168" y="138" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">类型</text>
+<rect x="290" y="120" width="150" height="26" rx="3" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="298" y="138" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">面额</text>
+<rect x="440" y="120" width="190" height="26" rx="3" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="448" y="138" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">适用范围</text>
+<rect x="630" y="120" width="150" height="26" rx="3" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="638" y="138" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">门槛</text>
+<rect x="780" y="120" width="180" height="26" rx="3" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="788" y="138" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">有效期至</text>
+<rect x="40" y="146" width="120" height="26" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="48" y="163" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">Y1</text>
+<rect x="160" y="146" width="130" height="26" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="168" y="163" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">INSTANT_OFF</text>
+<rect x="290" y="146" width="150" height="26" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="298" y="163" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">120.00 元</text>
+<rect x="440" y="146" width="190" height="26" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="448" y="163" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">LODGING</text>
+<rect x="630" y="146" width="150" height="26" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="638" y="163" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">无门槛</text>
+<rect x="780" y="146" width="180" height="26" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="788" y="163" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">2026-09-20</text>
+<rect x="40" y="172" width="120" height="26" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="48" y="189" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">Y2</text>
+<rect x="160" y="172" width="130" height="26" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="168" y="189" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">INSTANT_OFF</text>
+<rect x="290" y="172" width="150" height="26" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="298" y="189" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">50.00 元</text>
+<rect x="440" y="172" width="190" height="26" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="448" y="189" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">TICKET</text>
+<rect x="630" y="172" width="150" height="26" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="638" y="189" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">无门槛</text>
+<rect x="780" y="172" width="180" height="26" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="788" y="189" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">2026-11-27</text>
+<rect x="40" y="198" width="120" height="26" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="48" y="215" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">Y3</text>
+<rect x="160" y="198" width="130" height="26" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="168" y="215" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">THRESHOLD_OFF</text>
+<rect x="290" y="198" width="150" height="26" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="298" y="215" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">60.00 元</text>
+<rect x="440" y="198" width="190" height="26" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="448" y="215" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">TICKET</text>
+<rect x="630" y="198" width="150" height="26" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="638" y="215" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">600.00 元</text>
+<rect x="780" y="198" width="180" height="26" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="788" y="215" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">2026-11-27</text>
+<rect x="40" y="224" width="120" height="26" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="48" y="241" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">Y4</text>
+<rect x="160" y="224" width="130" height="26" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="168" y="241" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">CASHBACK</text>
+<rect x="290" y="224" width="150" height="26" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="298" y="241" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">50.00 元</text>
+<rect x="440" y="224" width="190" height="26" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="448" y="241" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">LODGING</text>
+<rect x="630" y="224" width="150" height="26" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="638" y="241" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">无门槛</text>
+<rect x="780" y="224" width="180" height="26" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="788" y="241" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">2026-11-28</text>
+<text x="40" y="400" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">约束：每个订单最多一张参与计算的即时类优惠和一张返现（V-03）；叠加顺序未给出的候选计入待确认（D45）。</text>
+<text x="40" y="426" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">返现只有“付款即返、金额与日期明确、不依赖后续行为”才计入 R（D12、D42）；返券不冲减当前目标成本。</text>
+<text x="40" y="544" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">模拟数据｜数据来源见 book/figures/index.md</text>
+</svg>

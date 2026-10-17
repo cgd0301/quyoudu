@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" role="img" aria-label="图 1 系统总体架构">
+<rect x="0" y="0" width="1000" height="560" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="1.2"/>
+<text x="40" y="46" font-size="22" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">图 1 系统总体架构</text>
+<text x="40" y="72" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">输入 → 确定性引擎 → 结果契约 → 交付层</text>
+<rect x="40" y="120" width="215" height="250" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="148" y="148" font-size="14" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1f2937">输入层</text>
+<text x="56" y="180" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">CaseFile（rules.md §12.2）</text>
+<text x="56" y="206" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">Op 白名单（D29）</text>
+<text x="56" y="232" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">演示流程 fixtures/flows</text>
+<line x1="255" y1="245" x2="275" y2="245" stroke="#6b7280" stroke-width="1.4"/><polygon points="275,245 268,241 268,249" fill="#6b7280"/>
+<rect x="275" y="120" width="215" height="250" rx="6" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.2"/>
+<text x="383" y="148" font-size="14" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1d4ed8">确定性引擎 src/engine</text>
+<text x="291" y="180" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">normalize / snapshot / states</text>
+<text x="291" y="206" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">timeline / cost / pricing</text>
+<text x="291" y="232" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">compare / confirm / daily</text>
+<text x="291" y="258" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">scenarios / holt</text>
+<line x1="490" y1="245" x2="510" y2="245" stroke="#6b7280" stroke-width="1.4"/><polygon points="510,245 503,241 503,249" fill="#6b7280"/>
+<rect x="510" y="120" width="215" height="250" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="618" y="148" font-size="14" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1f2937">结果契约 ResultCore</text>
+<text x="526" y="180" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">24 个一级字段</text>
+<text x="526" y="206" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">金额一律整数分</text>
+<text x="526" y="232" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">toWire → snake_case</text>
+<line x1="725" y1="245" x2="745" y2="245" stroke="#6b7280" stroke-width="1.4"/><polygon points="745,245 738,241 738,249" fill="#6b7280"/>
+<rect x="745" y="120" width="215" height="250" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="853" y="148" font-size="14" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1f2937">交付层</text>
+<text x="761" y="180" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">四页界面（未交付）</text>
+<text x="761" y="206" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">book/data 导出</text>
+<text x="761" y="232" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">图表与项目书</text>
+<text x="40" y="415" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">引擎只用确定性代码：无 Date.now、无随机数、无网络；模型输出（src/nl）只能成为待确认值，不进入计算（AGENTS.md §3）。</text>
+<text x="40" y="440" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#b45309">界面与截图不在本轮实现范围，图中“四页界面”按未交付标注。</text>
+<text x="40" y="544" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">模拟数据｜数据来源见 book/figures/index.md</text>
+</svg>

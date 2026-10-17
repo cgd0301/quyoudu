@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" role="img" aria-label="图 12 Holt 阻尼趋势预测的参数与状态判定">
+<rect x="0" y="0" width="1000" height="560" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="1.2"/>
+<text x="40" y="46" font-size="22" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">图 12 Holt 阻尼趋势预测的参数与状态判定</text>
+<text x="40" y="72" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">网格选择、样本与回测门槛</text>
+<rect x="80" y="120" width="300" height="110" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="100" y="150" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">参数网格</text>
+<text x="100" y="176" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">α、β ∈ {0.2, 0.4, 0.6, 0.8}</text>
+<text x="100" y="198" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">φ ∈ {0.80, 0.90, 0.95, 0.98}</text>
+<text x="100" y="220" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">共 4 × 4 × 4 = 64 组</text>
+<rect x="410" y="120" width="250" height="110" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="430" y="150" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">样本门槛</text>
+<text x="430" y="176" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">最近 14 个连续可比日级样本</text>
+<text x="430" y="198" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">同一序列须同项目、渠道、规格</text>
+<text x="430" y="220" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">不可比即整条序列不拟合</text>
+<rect x="690" y="120" width="250" height="110" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="710" y="150" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">回测门槛</text>
+<text x="710" y="176" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">至少 5 个回测误差</text>
+<text x="710" y="198" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">与基线 MAE 比较</text>
+<text x="710" y="220" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">不足则 BACKTEST_INSUFFICIENT</text>
+<rect x="80" y="270" width="860" height="150" rx="6" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.2"/>
+<text x="100" y="300" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1d4ed8">预测状态判定顺序（SG-49 的保守读法）</text>
+<text x="110" y="330" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">CONFIG_NOT_FROZEN</text>
+<text x="250" y="330" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">NOT_COMPARABLE</text>
+<text x="390" y="330" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">HISTORY_INSUFFICIENT</text>
+<text x="530" y="330" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">INVALID_RESULT</text>
+<text x="670" y="330" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">BACKTEST_INSUFFICIENT</text>
+<text x="810" y="330" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">AVAILABLE</text>
+<line x1="168" y1="336" x2="188" y2="336" stroke="#1d4ed8" stroke-width="1.4"/><polygon points="188,336 181,332 181,340" fill="#1d4ed8"/>
+<line x1="308" y1="336" x2="328" y2="336" stroke="#1d4ed8" stroke-width="1.4"/><polygon points="328,336 321,332 321,340" fill="#1d4ed8"/>
+<line x1="448" y1="336" x2="468" y2="336" stroke="#1d4ed8" stroke-width="1.4"/><polygon points="468,336 461,332 461,340" fill="#1d4ed8"/>
+<line x1="588" y1="336" x2="608" y2="336" stroke="#1d4ed8" stroke-width="1.4"/><polygon points="608,336 601,332 601,340" fill="#1d4ed8"/>
+<line x1="728" y1="336" x2="748" y2="336" stroke="#1d4ed8" stroke-width="1.4"/><polygon points="748,336 741,332 741,340" fill="#1d4ed8"/>
+<text x="100" y="366" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">中间量保留 12 位小数，两端 34 位有效数字、ROUND_HALF_UP（D25、D50）；整数分只在进入金额计算时使用。</text>
+<text x="80" y="460" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">口径：方法定义见 rules.md §6、§7.2；实现见 src/engine/holt/，与独立参考实现对拍。</text>
+<text x="40" y="544" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">模拟数据｜数据来源见 book/figures/index.md</text>
+</svg>

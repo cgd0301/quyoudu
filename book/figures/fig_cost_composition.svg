@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" role="img" aria-label="图 4 费用组成（主线流程 C02）">
+<rect x="0" y="0" width="1000" height="560" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="1.2"/>
+<text x="40" y="46" font-size="22" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">图 4 费用组成（主线流程 C02）</text>
+<text x="40" y="72" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">金额为整数分换算的元；模拟报价</text>
+<line x1="70" y1="370" x2="930" y2="370" stroke="#cbd5e1" stroke-width="1.4"/>
+<line x1="70" y1="130" x2="70" y2="370" stroke="#cbd5e1" stroke-width="1.4"/>
+<rect x="109.66666666666669" y="156" width="64" height="214" rx="3" fill="#1d4ed8" stroke="#1d4ed8" stroke-width="1.2"/>
+<text x="141.66666666666669" y="150" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1f2937">660.00</text>
+<text x="141.66666666666669" y="388" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">门票</text>
+<rect x="253" y="273" width="64" height="97" rx="3" fill="#1d4ed8" stroke="#1d4ed8" stroke-width="1.2"/>
+<text x="285" y="267" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1f2937">300.00</text>
+<text x="285" y="388" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">去程交通</text>
+<rect x="396.33333333333337" y="279" width="64" height="91" rx="3" fill="#1d4ed8" stroke="#1d4ed8" stroke-width="1.2"/>
+<text x="428.33333333333337" y="273" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1f2937">280.00</text>
+<text x="428.33333333333337" y="388" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">返程交通</text>
+<rect x="539.6666666666666" y="357" width="64" height="13" rx="3" fill="#1d4ed8" stroke="#1d4ed8" stroke-width="1.2"/>
+<text x="571.6666666666666" y="351" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1f2937">40.00</text>
+<text x="571.6666666666666" y="388" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">本地交通</text>
+<rect x="683" y="338" width="64" height="32" rx="3" fill="#1d4ed8" stroke="#1d4ed8" stroke-width="1.2"/>
+<text x="715" y="332" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1f2937">100.00</text>
+<text x="715" y="388" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">餐饮</text>
+<rect x="826.3333333333334" y="279" width="64" height="91" rx="3" fill="#1d4ed8" stroke="#1d4ed8" stroke-width="1.2"/>
+<text x="858.3333333333334" y="273" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1f2937">280.00</text>
+<text x="858.3333333333334" y="388" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">住宿</text>
+<text x="62" y="140" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="end" font-weight="normal" fill="#6b7280">分</text>
+<text x="80" y="420" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">后续应付 1660.00 元；净支出 1660.00 元；已付 0.00 元；行动清单 4 项。</text>
+<text x="80" y="446" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">口径：已确认方案分支中，按费用项目汇总的后续应付（R007、D75）；不含保护性预留与机动预留。</text>
+<text x="40" y="544" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">模拟数据｜数据来源见 book/figures/index.md</text>
+</svg>

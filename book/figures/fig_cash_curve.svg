@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" role="img" aria-label="图 6 资金节点与 U 曲线（主线流程）">
+<rect x="0" y="0" width="1000" height="560" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="1.2"/>
+<text x="40" y="46" font-size="22" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">图 6 资金节点与 U 曲线（主线流程）</text>
+<text x="40" y="72" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">每个事件节点后的可用余额 U</text>
+<line x1="90" y1="270" x2="910" y2="270" stroke="#6b7280" stroke-width="1.2"/>
+<text x="82" y="274" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="end" font-weight="normal" fill="#6b7280">U=0</text>
+<line x1="90" y1="380" x2="910" y2="380" stroke="#e2e8f0" stroke-width="1"/>
+<text x="82" y="384" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="end" font-weight="normal" fill="#6b7280">-440.00</text>
+<line x1="90" y1="130" x2="910" y2="130" stroke="#e2e8f0" stroke-width="1"/>
+<text x="82" y="134" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="end" font-weight="normal" fill="#6b7280">560.00</text>
+<path d="M90.0,235.0 L144.7,235.0 L199.3,235.0 L254.0,235.0 L308.7,235.0 L363.3,235.0 L418.0,285.0 L472.7,235.0 L527.3,235.0 L582.0,310.0 L636.7,380.0 L691.3,380.0 L746.0,130.0 L800.7,235.0 L855.3,185.0 L910.0,135.0" fill="none" stroke="#1d4ed8" stroke-width="2.2"/>
+<circle cx="90.0" cy="235.0" r="4" fill="#047857"/>
+<text x="90" y="400" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#6b7280">09-01</text>
+<circle cx="144.7" cy="235.0" r="4" fill="#047857"/>
+<circle cx="199.3" cy="235.0" r="4" fill="#047857"/>
+<text x="199.33333333333331" y="400" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#6b7280">09-16</text>
+<circle cx="254.0" cy="235.0" r="4" fill="#047857"/>
+<circle cx="308.7" cy="235.0" r="4" fill="#047857"/>
+<text x="308.66666666666663" y="400" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#6b7280">10-02</text>
+<circle cx="363.3" cy="235.0" r="4" fill="#047857"/>
+<circle cx="418.0" cy="285.0" r="4" fill="#b91c1c"/>
+<text x="418" y="400" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#6b7280">10-25</text>
+<circle cx="472.7" cy="235.0" r="4" fill="#047857"/>
+<circle cx="527.3" cy="235.0" r="4" fill="#047857"/>
+<text x="527.3333333333333" y="400" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#6b7280">11-02</text>
+<circle cx="582.0" cy="310.0" r="4" fill="#b91c1c"/>
+<circle cx="636.7" cy="380.0" r="4" fill="#b91c1c"/>
+<text x="636.6666666666666" y="400" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#6b7280">11-14</text>
+<circle cx="691.3" cy="380.0" r="4" fill="#b45309"/>
+<circle cx="746.0" cy="130.0" r="4" fill="#047857"/>
+<text x="746" y="400" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#6b7280">11-20</text>
+<circle cx="800.7" cy="235.0" r="4" fill="#047857"/>
+<circle cx="855.3" cy="185.0" r="4" fill="#047857"/>
+<text x="855.3333333333334" y="400" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#6b7280">11-30</text>
+<circle cx="910.0" cy="135.0" r="4" fill="#047857"/>
+<text x="910" y="400" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#6b7280">12-01</text>
+<text x="90" y="430" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">U = C − L − N − O − M − A；共 16 个节点，最低 U = -440.00 元。红点为保护性资金缺口，黄点为分配冲突。</text>
+<text x="90" y="456" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">口径：由正式引擎的节点金额按 D05 重算；金额单位为元（formatCents），原值为整数分。</text>
+<text x="40" y="544" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">模拟数据｜数据来源见 book/figures/index.md</text>
+</svg>

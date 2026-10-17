@@ -1,0 +1,596 @@
+{
+  "entries": [
+    {
+      "checkpoints": [
+        {
+          "confirmation_state": "CONFIRMED",
+          "input_version": "v1",
+          "label": "final",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "HISTORY_INSUFFICIENT",
+            "DAILY_DISCLAIMER"
+          ],
+          "optimization_state": "COMPLETED_FEASIBLE",
+          "plan_state": "FEASIBLE_UNDER_ASSUMPTIONS"
+        }
+      ],
+      "file": "cases/c00_r019_minimal.json",
+      "id": "c00_r019_minimal",
+      "kind": "case",
+      "title": "R019 最小数值验收案例（rules.md §4、T019-01）：现金1000、生活预留300、本目标分配400、后续目标付款600、B=600，数字取自规则原文，未改；方案 C01 已确认。"
+    },
+    {
+      "checkpoints": [
+        {
+          "confirmation_state": "CONFIRMED",
+          "input_version": "v1",
+          "label": "final",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "LIVING_ARRANGEMENT_MISSING",
+            "HISTORY_INSUFFICIENT"
+          ],
+          "optimization_state": "COMPLETED_FEASIBLE",
+          "plan_state": "FEASIBLE_UNDER_ASSUMPTIONS"
+        }
+      ],
+      "file": "cases/c00_v1_living_not_provided.json",
+      "id": "c00_v1_living_not_provided",
+      "kind": "case",
+      "title": "c00_r019_minimal 的变体：只把 snapshot.living_arrangement 标为 NOT_PROVIDED（D59、T019-04），其余数据相同。"
+    },
+    {
+      "checkpoints": [
+        {
+          "confirmation_state": "NOT_SELECTED",
+          "input_version": "v1",
+          "label": "final",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "DRAFT_PREVIEW",
+            "PREVIEW_UNCONFIRMED",
+            "HISTORY_INSUFFICIENT"
+          ],
+          "optimization_state": "NOT_COMPARED",
+          "plan_state": "INCOMPLETE"
+        }
+      ],
+      "file": "cases/c01_base.json",
+      "id": "c01_base",
+      "kind": "case",
+      "title": "基础资金数据 c01（rules.md §10.8）：现金1000、生活预留300、机动预留200、本目标分配400、B=900，没有事件和候选；T003、T004、T006 等子用例在此基础上增加事件。"
+    },
+    {
+      "checkpoints": [
+        {
+          "confirmation_state": "NOT_SELECTED",
+          "input_version": "v1",
+          "label": "final",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "DRAFT_PREVIEW",
+            "PREVIEW_UNCONFIRMED",
+            "HISTORY_INSUFFICIENT"
+          ],
+          "optimization_state": "NO_KNOWN_FEASIBLE",
+          "plan_state": "INCOMPLETE"
+        }
+      ],
+      "file": "cases/cA_gap.json",
+      "id": "cA_gap",
+      "kind": "case",
+      "title": "案例A（政策卡第八节）：成都出发去重庆看 10/31 晚的演唱会（模拟），尚未购票；用户描述的方案写成唯一候选 C01，演示时先 SELECT_CANDIDATE C01（SG-37）。设计为总额预计够，但开票日的付款早于各笔收入。"
+    },
+    {
+      "checkpoints": [
+        {
+          "confirmation_state": "NOT_SELECTED",
+          "input_version": "v1",
+          "label": "final",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "DRAFT_PREVIEW",
+            "PREVIEW_UNCONFIRMED",
+            "SAME_PRICE",
+            "HISTORY_INSUFFICIENT"
+          ],
+          "optimization_state": "COMPLETED_FEASIBLE",
+          "plan_state": "INCOMPLETE"
+        }
+      ],
+      "file": "cases/cB_topk.json",
+      "id": "cB_topk",
+      "kind": "case",
+      "title": "案例B（政策卡第八节）：武汉出发去上海看 11/28 晚的演唱会（模拟），尚未购票；7 个完整候选，K=3。E-INC-1020 为 10/20 家教兼职收入。"
+    },
+    {
+      "checkpoints": [
+        {
+          "confirmation_state": "NOT_SELECTED",
+          "input_version": "v1",
+          "label": "final",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "DRAFT_PREVIEW",
+            "PREVIEW_UNCONFIRMED",
+            "HISTORY_INSUFFICIENT"
+          ],
+          "optimization_state": "COMPLETED_FEASIBLE",
+          "plan_state": "INCOMPLETE"
+        }
+      ],
+      "file": "cases/cB_v1_two_feasible.json",
+      "id": "cB_v1_two_feasible",
+      "kind": "case",
+      "title": "案例B变体：只把预算 B 由 1800 元改为 1700 元，其余同 cB_topk。"
+    },
+    {
+      "checkpoints": [
+        {
+          "confirmation_state": "NOT_SELECTED",
+          "input_version": "v1",
+          "label": "final",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "DRAFT_PREVIEW",
+            "PREVIEW_UNCONFIRMED",
+            "HISTORY_INSUFFICIENT"
+          ],
+          "optimization_state": "NO_KNOWN_FEASIBLE",
+          "plan_state": "INCOMPLETE"
+        }
+      ],
+      "file": "cases/cB_v2_zero_feasible.json",
+      "id": "cB_v2_zero_feasible",
+      "kind": "case",
+      "title": "案例B变体：家教兼职收入尚未确认，不列入 E-INC-1020，其余同 cB_topk。"
+    },
+    {
+      "checkpoints": [
+        {
+          "confirmation_state": "NOT_SELECTED",
+          "input_version": "v1",
+          "label": "final",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "DRAFT_PREVIEW",
+            "PREVIEW_UNCONFIRMED",
+            "HISTORY_INSUFFICIENT"
+          ],
+          "optimization_state": "PARTIALLY_EVALUABLE",
+          "plan_state": "INCOMPLETE"
+        }
+      ],
+      "file": "cases/cB_v3_lodging_unknown.json",
+      "id": "cB_v3_lodging_unknown",
+      "kind": "case",
+      "title": "案例B变体：住宿待填，没有报价、参考价和价格观测；候选只含门票和往返高铁（5 个），其余同 cB_topk。"
+    },
+    {
+      "checkpoints": [
+        {
+          "confirmation_state": "NOT_SELECTED",
+          "input_version": "v1",
+          "label": "final",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "DRAFT_PREVIEW",
+            "PREVIEW_UNCONFIRMED",
+            "HISTORY_INSUFFICIENT"
+          ],
+          "optimization_state": "COMPLETED_FEASIBLE",
+          "plan_state": "INCOMPLETE"
+        }
+      ],
+      "file": "cases/cB_v4_lodging_free.json",
+      "id": "cB_v4_lodging_free",
+      "kind": "case",
+      "title": "案例B变体：住宿确认免费（住上海亲友家），候选同 cB_v3；住宿相容约束不填（SG-36），其余同 cB_topk。"
+    },
+    {
+      "checkpoints": [
+        {
+          "confirmation_state": "CONFIRMED",
+          "input_version": "v1",
+          "label": "final",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "PRE_RANGE_PAID",
+            "HISTORY_INSUFFICIENT",
+            "DAILY_DISCLAIMER"
+          ],
+          "optimization_state": "COMPLETED_FEASIBLE",
+          "plan_state": "FEASIBLE_UNDER_ASSUMPTIONS"
+        }
+      ],
+      "file": "cases/cB_v5_cancel.json",
+      "id": "cB_v5_cancel",
+      "kind": "case",
+      "title": "案例B变体：门票已于 2026-08-20 付清（范围前已付，D57），酒店已预订且不可取消（E-LODGING-1010），往返高铁方案 C01 已确认；票档和住宿约束不填（SG-36），其余同 cB_topk。"
+    },
+    {
+      "checkpoints": [
+        {
+          "confirmation_state": "CONFIRMED",
+          "input_version": "v3",
+          "label": "final",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "PROTECTED_SQUEEZE",
+            "PAID_BY_UNALLOCATED_LATER",
+            "HISTORY_INSUFFICIENT"
+          ],
+          "optimization_state": "NO_KNOWN_FEASIBLE",
+          "plan_state": "PAYMENT_GAP"
+        }
+      ],
+      "file": "flows/01_cB_topk_main.json",
+      "id": "01_cB_topk_main",
+      "kind": "flow",
+      "title": "案例B（政策卡第八节）：武汉出发去上海看 11/28 晚的演唱会（模拟），尚未购票；7 个完整候选，K=3。E-INC-1020 为 10/20 家教兼职收入。"
+    },
+    {
+      "checkpoints": [
+        {
+          "confirmation_state": "CONFIRMED",
+          "input_version": "v2",
+          "label": "第1次确认",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "SAME_PRICE",
+            "PAID_BY_UNALLOCATED_LATER",
+            "HISTORY_INSUFFICIENT",
+            "DAILY_DISCLAIMER"
+          ],
+          "optimization_state": "COMPLETED_FEASIBLE",
+          "plan_state": "FEASIBLE_UNDER_ASSUMPTIONS"
+        },
+        {
+          "confirmation_state": "CONFIRMED",
+          "input_version": "v2",
+          "label": "第2次确认",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "SAME_PRICE",
+            "PAID_BY_UNALLOCATED_LATER",
+            "HISTORY_INSUFFICIENT",
+            "DAILY_DISCLAIMER"
+          ],
+          "optimization_state": "COMPLETED_FEASIBLE",
+          "plan_state": "FEASIBLE_UNDER_ASSUMPTIONS"
+        }
+      ],
+      "file": "flows/02_cB_topk_reconfirm.json",
+      "id": "02_cB_topk_reconfirm",
+      "kind": "flow",
+      "title": "案例B（政策卡第八节）：武汉出发去上海看 11/28 晚的演唱会（模拟），尚未购票；7 个完整候选，K=3。E-INC-1020 为 10/20 家教兼职收入。"
+    },
+    {
+      "checkpoints": [
+        {
+          "confirmation_state": "NOT_SELECTED",
+          "input_version": "v2",
+          "label": "final",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "DRAFT_PREVIEW",
+            "PREVIEW_UNCONFIRMED",
+            "HISTORY_INSUFFICIENT"
+          ],
+          "optimization_state": "NO_KNOWN_FEASIBLE",
+          "plan_state": "INCOMPLETE"
+        }
+      ],
+      "file": "flows/03_cB_topk_living.json",
+      "id": "03_cB_topk_living",
+      "kind": "flow",
+      "title": "案例B（政策卡第八节）：武汉出发去上海看 11/28 晚的演唱会（模拟），尚未购票；7 个完整候选，K=3。E-INC-1020 为 10/20 家教兼职收入。"
+    },
+    {
+      "checkpoints": [
+        {
+          "confirmation_state": "PENDING_CONFIRMATION",
+          "input_version": "v2",
+          "label": "final",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "DRAFT_PREVIEW",
+            "PREVIEW_UNCONFIRMED",
+            "PROTECTED_SQUEEZE",
+            "HISTORY_INSUFFICIENT"
+          ],
+          "optimization_state": "NO_KNOWN_FEASIBLE",
+          "plan_state": "PAYMENT_GAP"
+        }
+      ],
+      "file": "flows/04_cA_gap_living.json",
+      "id": "04_cA_gap_living",
+      "kind": "flow",
+      "title": "案例A（政策卡第八节）：成都出发去重庆看 10/31 晚的演唱会（模拟），尚未购票；用户描述的方案写成唯一候选 C01，演示时先 SELECT_CANDIDATE C01（SG-37）。设计为总额预计够，但开票日的付款早于各笔收入。"
+    },
+    {
+      "checkpoints": [
+        {
+          "confirmation_state": "PENDING_CONFIRMATION",
+          "input_version": "v2",
+          "label": "final",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "DRAFT_PREVIEW",
+            "PREVIEW_UNCONFIRMED",
+            "HISTORY_INSUFFICIENT"
+          ],
+          "optimization_state": "NO_KNOWN_FEASIBLE",
+          "plan_state": "CONSTRAINT_ISSUE"
+        }
+      ],
+      "file": "flows/05_cA_gap_allocation.json",
+      "id": "05_cA_gap_allocation",
+      "kind": "flow",
+      "title": "案例A（政策卡第八节）：成都出发去重庆看 10/31 晚的演唱会（模拟），尚未购票；用户描述的方案写成唯一候选 C01，演示时先 SELECT_CANDIDATE C01（SG-37）。设计为总额预计够，但开票日的付款早于各笔收入。"
+    },
+    {
+      "checkpoints": [
+        {
+          "confirmation_state": "PENDING_CONFIRMATION",
+          "input_version": "v1",
+          "label": "final",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "DRAFT_PREVIEW",
+            "PREVIEW_UNCONFIRMED",
+            "HISTORY_INSUFFICIENT"
+          ],
+          "optimization_state": "PARTIALLY_EVALUABLE",
+          "plan_state": "INCOMPLETE"
+        }
+      ],
+      "file": "flows/06_cB_v3_select.json",
+      "id": "06_cB_v3_select",
+      "kind": "flow",
+      "title": "案例B变体：住宿待填，没有报价、参考价和价格观测；候选只含门票和往返高铁（5 个），其余同 cB_topk。"
+    },
+    {
+      "checkpoints": [
+        {
+          "confirmation_state": "NOT_SELECTED",
+          "input_version": "v1",
+          "label": "final",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "DRAFT_PREVIEW",
+            "PREVIEW_UNCONFIRMED",
+            "HISTORY_INSUFFICIENT"
+          ],
+          "optimization_state": "COMPLETED_FEASIBLE",
+          "plan_state": "INCOMPLETE"
+        }
+      ],
+      "file": "flows/07_cB_v4_free.json",
+      "id": "07_cB_v4_free",
+      "kind": "flow",
+      "title": "案例B变体：住宿确认免费（住上海亲友家），候选同 cB_v3；住宿相容约束不填（SG-36），其余同 cB_topk。"
+    },
+    {
+      "checkpoints": [
+        {
+          "confirmation_state": "NOT_SELECTED",
+          "input_version": "v1",
+          "label": "final",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "DRAFT_PREVIEW",
+            "PREVIEW_UNCONFIRMED",
+            "HISTORY_INSUFFICIENT"
+          ],
+          "optimization_state": "COMPLETED_FEASIBLE",
+          "plan_state": "INCOMPLETE"
+        }
+      ],
+      "file": "flows/08_cB_v1_two.json",
+      "id": "08_cB_v1_two",
+      "kind": "flow",
+      "title": "案例B变体：只把预算 B 由 1800 元改为 1700 元，其余同 cB_topk。"
+    },
+    {
+      "checkpoints": [
+        {
+          "confirmation_state": "NOT_SELECTED",
+          "input_version": "v1",
+          "label": "final",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "DRAFT_PREVIEW",
+            "PREVIEW_UNCONFIRMED",
+            "HISTORY_INSUFFICIENT"
+          ],
+          "optimization_state": "NO_KNOWN_FEASIBLE",
+          "plan_state": "INCOMPLETE"
+        }
+      ],
+      "file": "flows/09_cB_v2_zero.json",
+      "id": "09_cB_v2_zero",
+      "kind": "flow",
+      "title": "案例B变体：家教兼职收入尚未确认，不列入 E-INC-1020，其余同 cB_topk。"
+    },
+    {
+      "checkpoints": [
+        {
+          "confirmation_state": "CONFIRMED",
+          "input_version": "v2",
+          "label": "final",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "PRE_RANGE_PAID",
+            "HISTORY_INSUFFICIENT",
+            "DAILY_DISCLAIMER"
+          ],
+          "optimization_state": "COMPLETED_FEASIBLE",
+          "plan_state": "PAUSED"
+        }
+      ],
+      "file": "flows/10_cB_v5_pause.json",
+      "id": "10_cB_v5_pause",
+      "kind": "flow",
+      "title": "案例B变体：门票已于 2026-08-20 付清（范围前已付，D57），酒店已预订且不可取消（E-LODGING-1010），往返高铁方案 C01 已确认；票档和住宿约束不填（SG-36），其余同 cB_topk。"
+    },
+    {
+      "checkpoints": [
+        {
+          "confirmation_state": "CONFIRMED",
+          "input_version": "v2",
+          "label": "final",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "PRE_RANGE_PAID",
+            "HISTORY_INSUFFICIENT",
+            "DAILY_DISCLAIMER"
+          ],
+          "optimization_state": "COMPLETED_FEASIBLE",
+          "plan_state": "CANCELLED"
+        }
+      ],
+      "file": "flows/11_cB_v5_cancel.json",
+      "id": "11_cB_v5_cancel",
+      "kind": "flow",
+      "title": "案例B变体：门票已于 2026-08-20 付清（范围前已付，D57），酒店已预订且不可取消（E-LODGING-1010），往返高铁方案 C01 已确认；票档和住宿约束不填（SG-36），其余同 cB_topk。"
+    },
+    {
+      "checkpoints": [
+        {
+          "confirmation_state": "CONFIRMED",
+          "input_version": "v1",
+          "label": "final",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "LIVING_ARRANGEMENT_MISSING",
+            "HISTORY_INSUFFICIENT"
+          ],
+          "optimization_state": "COMPLETED_FEASIBLE",
+          "plan_state": "FEASIBLE_UNDER_ASSUMPTIONS"
+        }
+      ],
+      "file": "flows/12_c00_v1_missing.json",
+      "id": "12_c00_v1_missing",
+      "kind": "flow",
+      "title": "c00_r019_minimal 的变体：只把 snapshot.living_arrangement 标为 NOT_PROVIDED（D59、T019-04），其余数据相同。"
+    },
+    {
+      "checkpoints": [
+        {
+          "confirmation_state": "NOT_SELECTED",
+          "input_version": "v1",
+          "label": "第1次",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "DRAFT_PREVIEW",
+            "PREVIEW_UNCONFIRMED",
+            "HISTORY_INSUFFICIENT"
+          ],
+          "optimization_state": "NOT_COMPARED",
+          "plan_state": "INCOMPLETE"
+        },
+        {
+          "confirmation_state": "NOT_SELECTED",
+          "input_version": "v1",
+          "label": "第2次",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "DRAFT_PREVIEW",
+            "PREVIEW_UNCONFIRMED",
+            "HISTORY_INSUFFICIENT"
+          ],
+          "optimization_state": "NOT_COMPARED",
+          "plan_state": "INCOMPLETE"
+        },
+        {
+          "confirmation_state": "NOT_SELECTED",
+          "input_version": "v1",
+          "label": "第3次",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "DRAFT_PREVIEW",
+            "PREVIEW_UNCONFIRMED",
+            "HISTORY_INSUFFICIENT"
+          ],
+          "optimization_state": "NOT_COMPARED",
+          "plan_state": "INCOMPLETE"
+        }
+      ],
+      "file": "flows/13_c01_reevaluate.json",
+      "id": "13_c01_reevaluate",
+      "kind": "flow",
+      "title": "基础资金数据 c01（rules.md §10.8）：现金1000、生活预留300、机动预留200、本目标分配400、B=900，没有事件和候选；T003、T004、T006 等子用例在此基础上增加事件。"
+    },
+    {
+      "checkpoints": [
+        {
+          "confirmation_state": "CONFIRMED",
+          "input_version": "v2",
+          "label": "final",
+          "labels": [
+            "SIMULATED_DATA",
+            "TOP_K_DEMO",
+            "HISTORY_INSUFFICIENT",
+            "DAILY_DISCLAIMER"
+          ],
+          "optimization_state": "COMPLETED_FEASIBLE",
+          "plan_state": "FEASIBLE_UNDER_ASSUMPTIONS"
+        }
+      ],
+      "file": "flows/14_c00_today_spend.json",
+      "id": "14_c00_today_spend",
+      "kind": "flow",
+      "title": "R019 最小数值验收案例（rules.md §4、T019-01）：现金1000、生活预留300、本目标分配400、后续目标付款600、B=600，数字取自规则原文，未改；方案 C01 已确认。"
+    }
+  ],
+  "meta": {
+    "commit": "d3e6959",
+    "commit_time": "2026-10-17T23:13:37+08:00",
+    "config_version": "DEMO-CFG-1",
+    "done_modules": [
+      "M1",
+      "M2",
+      "M3",
+      "M4",
+      "M5",
+      "M6",
+      "M7",
+      "M8",
+      "M9"
+    ],
+    "engine": "ts",
+    "entries": 24,
+    "generated_by": "pnpm export:results",
+    "kind": "index",
+    "notice": "模拟数据",
+    "simulated": true
+  }
+}

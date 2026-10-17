@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" role="img" aria-label="图 3 数据流与依赖">
+<rect x="0" y="0" width="1000" height="560" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="1.2"/>
+<text x="40" y="46" font-size="22" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">图 3 数据流与依赖</text>
+<text x="40" y="72" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">受控输入 → 验证 → 数据产物 → 文档</text>
+<rect x="40" y="116" width="150" height="86" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="115" y="164" font-size="14" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1f2937">受控输入</text>
+<rect x="220" y="116" width="176" height="86" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="308" y="164" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">fixtures/cases（10 个）</text>
+<rect x="410" y="116" width="176" height="86" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="498" y="164" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">fixtures/vectors（152 个）</text>
+<rect x="600" y="116" width="176" height="86" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="688" y="164" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">fixtures/flows（14 个）</text>
+<rect x="790" y="116" width="176" height="86" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="878" y="164" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">fixtures/llm-replay</text>
+<line x1="490" y1="202" x2="490" y2="224" stroke="#6b7280" stroke-width="1.4"/><polygon points="490,224 483,220 483,228" fill="#6b7280"/>
+<rect x="40" y="224" width="150" height="86" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="115" y="272" font-size="14" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1f2937">验证</text>
+<rect x="220" y="224" width="176" height="86" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="308" y="272" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">evaluate + 向量断言</text>
+<rect x="410" y="224" width="176" height="86" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="498" y="272" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">golden:check</text>
+<rect x="600" y="224" width="176" height="86" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="688" y="272" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">validate:cases</text>
+<rect x="790" y="224" width="176" height="86" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="878" y="272" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">diff:oracle（参考实现）</text>
+<line x1="490" y1="310" x2="490" y2="332" stroke="#6b7280" stroke-width="1.4"/><polygon points="490,332 483,328 483,336" fill="#6b7280"/>
+<rect x="40" y="332" width="150" height="86" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="115" y="380" font-size="14" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1f2937">产物</text>
+<rect x="220" y="332" width="176" height="86" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="308" y="380" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">book/data/cases</text>
+<rect x="410" y="332" width="176" height="86" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="498" y="380" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">book/data/flows</text>
+<rect x="600" y="332" width="176" height="86" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="688" y="380" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">book/data/status.json</text>
+<rect x="790" y="332" width="176" height="86" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="878" y="380" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">docs/traceability.csv</text>
+<line x1="490" y1="418" x2="490" y2="440" stroke="#6b7280" stroke-width="1.4"/><polygon points="490,440 483,436 483,444" fill="#6b7280"/>
+<rect x="40" y="440" width="150" height="86" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="115" y="488" font-size="14" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1f2937">文档</text>
+<rect x="220" y="440" width="176" height="86" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="308" y="488" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">book/figures/*.svg</text>
+<rect x="410" y="440" width="176" height="86" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="498" y="488" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">book/chapters/*.md</text>
+<rect x="600" y="440" width="176" height="86" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="688" y="488" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">book/build 成稿</text>
+<rect x="790" y="440" width="176" height="86" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="878" y="488" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">doc:lint / count:chars</text>
+<text x="40" y="544" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">模拟数据｜数据来源见 book/figures/index.md</text>
+</svg>
