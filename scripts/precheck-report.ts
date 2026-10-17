@@ -1,6 +1,12 @@
 /**
- * pnpm precheck
+ * pnpm vec:precheck
  * 由 .cache/precheck.json、.cache/oracle-out 和 python -m oracle unit 生成 docs/_work/precheck_report.md。
+ *
+ * 注意：脚本名不能取作 precheck——pnpm 会把它当作 `pnpm check` 的前置生命周期钩子自动运行，
+ * 使普通的质量门禁依赖 A4 预检产物。这里用 vec:precheck，只能显式调用。
+ *
+ * .cache/precheck.json 是 A4 预检（逐条断言的 TS／参考实现对拍记录）的产物，被 .gitignore 忽略，
+ * 仓库里不保存、也没有生成器。缺少它时本脚本不重写报告，直接以退出码 1 结束并说明来源。
  */
 import { spawnSync } from 'node:child_process'
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises'
@@ -853,8 +859,22 @@ function runUnit(cwd: string): { status: number | null; stdout: string; stderr: 
   }
 }
 
+/** A4 预检产物不在版本控制中；缺失时给出可操作的原因，不覆盖已有报告 */
+async function readPrecheckInput(inputPath: string): Promise<string> {
+  try {
+    return await readFile(inputPath, 'utf8')
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error
+    throw new Error(
+      `缺少 .cache/precheck.json（${inputPath}）。这是 A4 预检的逐条对拍产物，被 .gitignore 忽略、仓库不保存；` +
+        '请先在有预检产物的环境运行，本脚本不会用占位数据生成报告，也不改动 docs/_work/precheck_report.md。',
+    )
+  }
+}
+
 async function main(): Promise<number> {
-  const precheck = parsePrecheck(await readFile(path.join(root, '.cache', 'precheck.json'), 'utf8'))
+  const input = path.join(root, '.cache', 'precheck.json')
+  const precheck = parsePrecheck(await readPrecheckInput(input))
   const stale = staleMessage(precheck.stale)
   if (stale !== null) {
     console.error(stale)
