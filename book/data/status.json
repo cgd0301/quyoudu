@@ -18,8 +18,8 @@
     "status": "通过"
   },
   "meta": {
-    "commit": "0d4d52c",
-    "commit_time": "2026-10-17T23:51:10+08:00",
+    "commit": "053bbd3",
+    "commit_time": "2026-10-18T00:11:36+08:00",
     "config_version": "DEMO-CFG-1",
     "disclaimer": "技术测试结果，不代表需求成立或用户效果",
     "generated_by": "pnpm test:report",
@@ -287,10 +287,10 @@
   ],
   "unit": {
     "failed": 0,
-    "files": 146,
-    "passed": 1136,
+    "files": 148,
+    "passed": 1141,
     "skipped": 1,
-    "tests": 1137
+    "tests": 1142
   },
   "vectors": {
     "assertions_passed": 1004,
