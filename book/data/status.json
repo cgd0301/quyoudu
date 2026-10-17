@@ -18,8 +18,8 @@
     "status": "通过"
   },
   "meta": {
-    "commit": "365183e",
-    "commit_time": "2026-10-17T23:18:12+08:00",
+    "commit": "0d4d52c",
+    "commit_time": "2026-10-17T23:51:10+08:00",
     "config_version": "DEMO-CFG-1",
     "disclaimer": "技术测试结果，不代表需求成立或用户效果",
     "generated_by": "pnpm test:report",
@@ -27,7 +27,7 @@
     "simulated": true
   },
   "nl_layer": {
-    "covered": 0,
+    "covered": 6,
     "total": 6
   },
   "oracle_diff": {
@@ -52,8 +52,8 @@
       "children": 7,
       "failed": 0,
       "implemented": true,
-      "partial": 2,
-      "pass": 3,
+      "partial": 1,
+      "pass": 4,
       "pending": 2,
       "real_user_validation": "未开展",
       "rule": "R001",
@@ -74,30 +74,30 @@
       "children": 8,
       "failed": 0,
       "implemented": true,
-      "partial": 1,
-      "pass": 7,
+      "partial": 0,
+      "pass": 8,
       "pending": 0,
       "real_user_validation": "未开展",
       "rule": "R003",
-      "tested": false
+      "tested": true
     },
     {
       "children": 7,
       "failed": 0,
       "implemented": true,
-      "partial": 1,
-      "pass": 6,
+      "partial": 0,
+      "pass": 7,
       "pending": 0,
       "real_user_validation": "未开展",
       "rule": "R004",
-      "tested": false
+      "tested": true
     },
     {
       "children": 6,
       "failed": 0,
       "implemented": true,
-      "partial": 2,
-      "pass": 4,
+      "partial": 1,
+      "pass": 5,
       "pending": 0,
       "real_user_validation": "未开展",
       "rule": "R005",
@@ -107,8 +107,8 @@
       "children": 6,
       "failed": 0,
       "implemented": true,
-      "partial": 1,
-      "pass": 4,
+      "partial": 0,
+      "pass": 5,
       "pending": 1,
       "real_user_validation": "未开展",
       "rule": "R006",
@@ -140,8 +140,8 @@
       "children": 7,
       "failed": 0,
       "implemented": true,
-      "partial": 3,
-      "pass": 1,
+      "partial": 2,
+      "pass": 2,
       "pending": 3,
       "real_user_validation": "未开展",
       "rule": "R009",
@@ -151,8 +151,8 @@
       "children": 9,
       "failed": 0,
       "implemented": true,
-      "partial": 3,
-      "pass": 6,
+      "partial": 1,
+      "pass": 8,
       "pending": 0,
       "real_user_validation": "未开展",
       "rule": "R010",
@@ -185,8 +185,8 @@
       "failed": 0,
       "implemented": true,
       "partial": 3,
-      "pass": 4,
-      "pending": 1,
+      "pass": 5,
+      "pending": 0,
       "real_user_validation": "未开展",
       "rule": "R013",
       "tested": false
@@ -206,9 +206,9 @@
       "children": 9,
       "failed": 0,
       "implemented": true,
-      "partial": 2,
-      "pass": 3,
-      "pending": 4,
+      "partial": 0,
+      "pass": 8,
+      "pending": 1,
       "real_user_validation": "未开展",
       "rule": "R015",
       "tested": false
@@ -217,8 +217,8 @@
       "children": 9,
       "failed": 0,
       "implemented": true,
-      "partial": 2,
-      "pass": 7,
+      "partial": 1,
+      "pass": 8,
       "pending": 0,
       "real_user_validation": "未开展",
       "rule": "R016",
@@ -250,12 +250,12 @@
       "children": 10,
       "failed": 0,
       "implemented": true,
-      "partial": 2,
-      "pass": 8,
+      "partial": 0,
+      "pass": 10,
       "pending": 0,
       "real_user_validation": "未开展",
       "rule": "R019",
-      "tested": false
+      "tested": true
     },
     {
       "children": 12,
@@ -276,9 +276,9 @@
   },
   "traceability": {
     "failed": 0,
-    "partial": 59,
-    "pass": 96,
-    "pending": 26,
+    "partial": 43,
+    "pass": 116,
+    "pending": 22,
     "rows": 181
   },
   "unfinished": [
@@ -288,9 +288,9 @@
   "unit": {
     "failed": 0,
     "files": 146,
-    "passed": 1133,
+    "passed": 1136,
     "skipped": 1,
-    "tests": 1134
+    "tests": 1137
   },
   "vectors": {
     "assertions_passed": 1004,

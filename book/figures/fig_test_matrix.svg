@@ -3,32 +3,29 @@
 <text x="40" y="46" font-size="22" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">图 15 测试覆盖矩阵（按规则）</text>
 <text x="40" y="72" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">追溯状态分布；未执行不计为通过</text>
 <text x="60" y="110" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">每条规则下子用例的追溯状态（pass / partial / failed / pending）</text>
-<rect x="200" y="128" width="205.7142857142857" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
-<rect x="405.71428571428567" y="128" width="137.14285714285714" height="14" rx="2" fill="#b45309" stroke="#b45309" stroke-width="1.2"/>
-<rect x="542.8571428571428" y="128" width="137.14285714285714" height="14" rx="2" fill="#94a3b8" stroke="#94a3b8" stroke-width="1.2"/>
+<rect x="200" y="128" width="274.2857142857143" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
+<rect x="474.2857142857143" y="128" width="68.57142857142857" height="14" rx="2" fill="#b45309" stroke="#b45309" stroke-width="1.2"/>
+<rect x="542.8571428571429" y="128" width="137.14285714285714" height="14" rx="2" fill="#94a3b8" stroke="#94a3b8" stroke-width="1.2"/>
 <text x="60" y="140" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">R001</text>
-<text x="700" y="140" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">7 条：通过 3／部分 2／未通过 0／待执行 2</text>
+<text x="700" y="140" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">7 条：通过 4／部分 1／未通过 0／待执行 2</text>
 <rect x="200" y="152" width="274.2857142857143" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
 <rect x="474.2857142857143" y="152" width="205.7142857142857" height="14" rx="2" fill="#b45309" stroke="#b45309" stroke-width="1.2"/>
 <text x="60" y="164" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">R002</text>
 <text x="700" y="164" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">7 条：通过 4／部分 3／未通过 0／待执行 0</text>
-<rect x="200" y="176" width="420" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
-<rect x="620" y="176" width="60" height="14" rx="2" fill="#b45309" stroke="#b45309" stroke-width="1.2"/>
+<rect x="200" y="176" width="480" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
 <text x="60" y="188" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">R003</text>
-<text x="700" y="188" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">8 条：通过 7／部分 1／未通过 0／待执行 0</text>
-<rect x="200" y="200" width="411.4285714285714" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
-<rect x="611.4285714285713" y="200" width="68.57142857142857" height="14" rx="2" fill="#b45309" stroke="#b45309" stroke-width="1.2"/>
+<text x="700" y="188" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">8 条：通过 8／部分 0／未通过 0／待执行 0</text>
+<rect x="200" y="200" width="480" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
 <text x="60" y="212" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">R004</text>
-<text x="700" y="212" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">7 条：通过 6／部分 1／未通过 0／待执行 0</text>
-<rect x="200" y="224" width="320" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
-<rect x="520" y="224" width="160" height="14" rx="2" fill="#b45309" stroke="#b45309" stroke-width="1.2"/>
+<text x="700" y="212" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">7 条：通过 7／部分 0／未通过 0／待执行 0</text>
+<rect x="200" y="224" width="400" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
+<rect x="600" y="224" width="80" height="14" rx="2" fill="#b45309" stroke="#b45309" stroke-width="1.2"/>
 <text x="60" y="236" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">R005</text>
-<text x="700" y="236" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">6 条：通过 4／部分 2／未通过 0／待执行 0</text>
-<rect x="200" y="248" width="320" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
-<rect x="520" y="248" width="80" height="14" rx="2" fill="#b45309" stroke="#b45309" stroke-width="1.2"/>
+<text x="700" y="236" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">6 条：通过 5／部分 1／未通过 0／待执行 0</text>
+<rect x="200" y="248" width="400" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
 <rect x="600" y="248" width="80" height="14" rx="2" fill="#94a3b8" stroke="#94a3b8" stroke-width="1.2"/>
 <text x="60" y="260" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">R006</text>
-<text x="700" y="260" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">6 条：通过 4／部分 1／未通过 0／待执行 1</text>
+<text x="700" y="260" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">6 条：通过 5／部分 0／未通过 0／待执行 1</text>
 <rect x="200" y="272" width="320" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
 <rect x="520" y="272" width="160" height="14" rx="2" fill="#94a3b8" stroke="#94a3b8" stroke-width="1.2"/>
 <text x="60" y="284" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">R007</text>
@@ -36,15 +33,15 @@
 <rect x="200" y="296" width="480" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
 <text x="60" y="308" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">R008</text>
 <text x="700" y="308" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">7 条：通过 7／部分 0／未通过 0／待执行 0</text>
-<rect x="200" y="320" width="68.57142857142857" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
-<rect x="268.57142857142856" y="320" width="205.7142857142857" height="14" rx="2" fill="#b45309" stroke="#b45309" stroke-width="1.2"/>
+<rect x="200" y="320" width="137.14285714285714" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
+<rect x="337.1428571428571" y="320" width="137.14285714285714" height="14" rx="2" fill="#b45309" stroke="#b45309" stroke-width="1.2"/>
 <rect x="474.2857142857142" y="320" width="205.7142857142857" height="14" rx="2" fill="#94a3b8" stroke="#94a3b8" stroke-width="1.2"/>
 <text x="60" y="332" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">R009</text>
-<text x="700" y="332" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">7 条：通过 1／部分 3／未通过 0／待执行 3</text>
-<rect x="200" y="344" width="320" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
-<rect x="520" y="344" width="160" height="14" rx="2" fill="#b45309" stroke="#b45309" stroke-width="1.2"/>
+<text x="700" y="332" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">7 条：通过 2／部分 2／未通过 0／待执行 3</text>
+<rect x="200" y="344" width="426.66666666666663" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
+<rect x="626.6666666666666" y="344" width="53.33333333333333" height="14" rx="2" fill="#b45309" stroke="#b45309" stroke-width="1.2"/>
 <text x="60" y="356" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">R010</text>
-<text x="700" y="356" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">9 条：通过 6／部分 3／未通过 0／待执行 0</text>
+<text x="700" y="356" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">9 条：通过 8／部分 1／未通过 0／待执行 0</text>
 <rect x="200" y="368" width="192" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
 <rect x="392" y="368" width="192" height="14" rx="2" fill="#b45309" stroke="#b45309" stroke-width="1.2"/>
 <rect x="584" y="368" width="96" height="14" rx="2" fill="#94a3b8" stroke="#94a3b8" stroke-width="1.2"/>
@@ -54,23 +51,21 @@
 <rect x="600" y="392" width="80" height="14" rx="2" fill="#b45309" stroke="#b45309" stroke-width="1.2"/>
 <text x="60" y="404" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">R012</text>
 <text x="700" y="404" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">6 条：通过 5／部分 1／未通过 0／待执行 0</text>
-<rect x="200" y="416" width="240" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
-<rect x="440" y="416" width="180" height="14" rx="2" fill="#b45309" stroke="#b45309" stroke-width="1.2"/>
-<rect x="620" y="416" width="60" height="14" rx="2" fill="#94a3b8" stroke="#94a3b8" stroke-width="1.2"/>
+<rect x="200" y="416" width="300" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
+<rect x="500" y="416" width="180" height="14" rx="2" fill="#b45309" stroke="#b45309" stroke-width="1.2"/>
 <text x="60" y="428" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">R013</text>
-<text x="700" y="428" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">8 条：通过 4／部分 3／未通过 0／待执行 1</text>
+<text x="700" y="428" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">8 条：通过 5／部分 3／未通过 0／待执行 0</text>
 <rect x="200" y="440" width="480" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
 <text x="60" y="452" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">R014</text>
 <text x="700" y="452" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">8 条：通过 8／部分 0／未通过 0／待执行 0</text>
-<rect x="200" y="464" width="160" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
-<rect x="360" y="464" width="106.66666666666666" height="14" rx="2" fill="#b45309" stroke="#b45309" stroke-width="1.2"/>
-<rect x="466.66666666666663" y="464" width="213.33333333333331" height="14" rx="2" fill="#94a3b8" stroke="#94a3b8" stroke-width="1.2"/>
+<rect x="200" y="464" width="426.66666666666663" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
+<rect x="626.6666666666666" y="464" width="53.33333333333333" height="14" rx="2" fill="#94a3b8" stroke="#94a3b8" stroke-width="1.2"/>
 <text x="60" y="476" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">R015</text>
-<text x="700" y="476" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">9 条：通过 3／部分 2／未通过 0／待执行 4</text>
-<rect x="200" y="488" width="373.3333333333333" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
-<rect x="573.3333333333333" y="488" width="106.66666666666666" height="14" rx="2" fill="#b45309" stroke="#b45309" stroke-width="1.2"/>
+<text x="700" y="476" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">9 条：通过 8／部分 0／未通过 0／待执行 1</text>
+<rect x="200" y="488" width="426.66666666666663" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
+<rect x="626.6666666666666" y="488" width="53.33333333333333" height="14" rx="2" fill="#b45309" stroke="#b45309" stroke-width="1.2"/>
 <text x="60" y="500" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">R016</text>
-<text x="700" y="500" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">9 条：通过 7／部分 2／未通过 0／待执行 0</text>
+<text x="700" y="500" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">9 条：通过 8／部分 1／未通过 0／待执行 0</text>
 <rect x="200" y="512" width="280" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
 <rect x="480" y="512" width="160" height="14" rx="2" fill="#b45309" stroke="#b45309" stroke-width="1.2"/>
 <rect x="640" y="512" width="40" height="14" rx="2" fill="#94a3b8" stroke="#94a3b8" stroke-width="1.2"/>
@@ -81,10 +76,9 @@
 <rect x="520" y="536" width="160" height="14" rx="2" fill="#94a3b8" stroke="#94a3b8" stroke-width="1.2"/>
 <text x="60" y="548" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">R018</text>
 <text x="700" y="548" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">12 条：通过 4／部分 4／未通过 0／待执行 4</text>
-<rect x="200" y="560" width="384" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
-<rect x="584" y="560" width="96" height="14" rx="2" fill="#b45309" stroke="#b45309" stroke-width="1.2"/>
+<rect x="200" y="560" width="480" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>
 <text x="60" y="572" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">R019</text>
-<text x="700" y="572" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">10 条：通过 8／部分 2／未通过 0／待执行 0</text>
+<text x="700" y="572" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">10 条：通过 10／部分 0／未通过 0／待执行 0</text>
 <rect x="200" y="584" width="200" height="14" rx="2" fill="#b45309" stroke="#b45309" stroke-width="1.2"/>
 <rect x="400" y="584" width="280" height="14" rx="2" fill="#94a3b8" stroke="#94a3b8" stroke-width="1.2"/>
 <text x="60" y="596" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">R020</text>

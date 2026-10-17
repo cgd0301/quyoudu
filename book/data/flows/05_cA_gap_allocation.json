@@ -2471,8 +2471,8 @@
   "meta": {
     "case_data_version": "1",
     "case_id": "cA_gap",
-    "commit": "365183e",
-    "commit_time": "2026-10-17T23:18:12+08:00",
+    "commit": "0d4d52c",
+    "commit_time": "2026-10-17T23:51:10+08:00",
     "config_version": "DEMO-CFG-1",
     "done_modules": [
       "M1",
