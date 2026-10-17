@@ -18,8 +18,8 @@
     "status": "通过"
   },
   "meta": {
-    "commit": "d3e6959",
-    "commit_time": "2026-10-17T23:13:37+08:00",
+    "commit": "365183e",
+    "commit_time": "2026-10-17T23:18:12+08:00",
     "config_version": "DEMO-CFG-1",
     "disclaimer": "技术测试结果，不代表需求成立或用户效果",
     "generated_by": "pnpm test:report",
@@ -184,8 +184,8 @@
       "children": 8,
       "failed": 0,
       "implemented": true,
-      "partial": 4,
-      "pass": 3,
+      "partial": 3,
+      "pass": 4,
       "pending": 1,
       "real_user_validation": "未开展",
       "rule": "R013",
@@ -228,8 +228,8 @@
       "children": 12,
       "failed": 0,
       "implemented": true,
-      "partial": 5,
-      "pass": 6,
+      "partial": 4,
+      "pass": 7,
       "pending": 1,
       "real_user_validation": "未开展",
       "rule": "R017",
@@ -250,8 +250,8 @@
       "children": 10,
       "failed": 0,
       "implemented": true,
-      "partial": 3,
-      "pass": 7,
+      "partial": 2,
+      "pass": 8,
       "pending": 0,
       "real_user_validation": "未开展",
       "rule": "R019",
@@ -272,12 +272,12 @@
   "spec_lint": {
     "exit_code": 0,
     "status": "通过",
-    "warnings": 14
+    "warnings": 15
   },
   "traceability": {
     "failed": 0,
-    "partial": 62,
-    "pass": 93,
+    "partial": 59,
+    "pass": 96,
     "pending": 26,
     "rows": 181
   },
@@ -287,10 +287,10 @@
   ],
   "unit": {
     "failed": 0,
-    "files": 141,
-    "passed": 1113,
+    "files": 146,
+    "passed": 1133,
     "skipped": 1,
-    "tests": 1114
+    "tests": 1134
   },
   "vectors": {
     "assertions_passed": 1004,
