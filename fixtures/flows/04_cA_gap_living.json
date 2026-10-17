@@ -1,0 +1,391 @@
+{
+  "flow_id": "04_cA_gap_living",
+  "input": {
+    "candidates": [
+      {
+        "candidate_id": "C01",
+        "items": [
+          {
+            "cancellable": true,
+            "channel": "渠道甲",
+            "cost_item_id": "TICKET",
+            "currency": "CNY",
+            "order_id": "O1",
+            "payment_at": "2026-09-15",
+            "price": 58000,
+            "price_basis": "QUOTE",
+            "purchase_date": "2026-09-15",
+            "quote": {
+              "available_at": "2026-09-01T08:00:00+08:00",
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "valid_from": "2026-09-15",
+              "valid_to": "2026-10-30"
+            },
+            "spec": "B"
+          },
+          {
+            "cancellable": true,
+            "channel": "渠道乙",
+            "cost_item_id": "LODGING",
+            "currency": "CNY",
+            "lodging_distance_m": 2000,
+            "lodging_nights": [
+              "2026-10-31"
+            ],
+            "order_id": "O2",
+            "payment_at": "2026-10-31",
+            "price": 25000,
+            "price_basis": "QUOTE",
+            "purchase_date": "2026-09-15",
+            "quote": {
+              "available_at": "2026-09-01T08:00:00+08:00",
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "valid_from": "2026-09-01",
+              "valid_to": "2026-10-30"
+            },
+            "spec": "酒店D 大床房·到店付"
+          },
+          {
+            "arrive_at": "2026-10-31T14:30:00+08:00",
+            "cancellable": true,
+            "channel": "渠道丙",
+            "cost_item_id": "TRAIN-OUT",
+            "currency": "CNY",
+            "depart_at": "2026-10-31T13:00:00+08:00",
+            "order_id": "O3",
+            "payment_at": "2026-10-21",
+            "price": 15000,
+            "price_basis": "QUOTE",
+            "purchase_date": "2026-10-21",
+            "quote": {
+              "available_at": "2026-09-01T08:00:00+08:00",
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "valid_from": "2026-09-01",
+              "valid_to": "2026-10-31"
+            },
+            "spec": "二等座·13:00 发车"
+          },
+          {
+            "arrive_at": "2026-11-01T11:30:00+08:00",
+            "cancellable": true,
+            "channel": "渠道丙",
+            "cost_item_id": "TRAIN-BACK",
+            "currency": "CNY",
+            "depart_at": "2026-11-01T10:00:00+08:00",
+            "order_id": "O4",
+            "payment_at": "2026-10-21",
+            "price": 15000,
+            "price_basis": "QUOTE",
+            "purchase_date": "2026-10-21",
+            "quote": {
+              "available_at": "2026-09-01T08:00:00+08:00",
+              "recorded_at": "2026-09-01T08:00:00+08:00",
+              "valid_from": "2026-09-01",
+              "valid_to": "2026-11-01"
+            },
+            "spec": "二等座·10:00 发车"
+          }
+        ],
+        "offers_used": [],
+        "returns": []
+      }
+    ],
+    "consumption_records": [],
+    "cost_items": [
+      {
+        "amount_status": "CONFIRMED",
+        "category": "TICKET",
+        "cost_item_id": "TICKET",
+        "necessary": true
+      },
+      {
+        "amount_status": "CONFIRMED",
+        "category": "OUTBOUND_TRANSPORT",
+        "cost_item_id": "TRAIN-OUT",
+        "necessary": true
+      },
+      {
+        "amount_status": "CONFIRMED",
+        "category": "RETURN_TRANSPORT",
+        "cost_item_id": "TRAIN-BACK",
+        "necessary": true
+      },
+      {
+        "amount_status": "CONFIRMED",
+        "category": "LODGING",
+        "cost_item_id": "LODGING",
+        "necessary": true
+      },
+      {
+        "amount_status": "ESTIMATE",
+        "category": "MEALS",
+        "cost_item_id": "MEALS",
+        "necessary": true
+      },
+      {
+        "amount_status": "ESTIMATE",
+        "category": "LOCAL_TRANSPORT",
+        "cost_item_id": "LOCAL",
+        "necessary": true
+      }
+    ],
+    "events": [
+      {
+        "amount": 40000,
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "category": "MEALS",
+        "coverage": [
+          {
+            "covered_amount": 40000,
+            "reserve_id": "R-LIV-09"
+          }
+        ],
+        "currency": "CNY",
+        "event_id": "E-LIV-0902",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "expected_at": "2026-09-02",
+        "in_snapshot": false,
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "time_precision": "DATE"
+      },
+      {
+        "amount": 40000,
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "category": "MEALS",
+        "coverage": [
+          {
+            "covered_amount": 40000,
+            "reserve_id": "R-LIV-09"
+          }
+        ],
+        "currency": "CNY",
+        "event_id": "E-LIV-0916",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "expected_at": "2026-09-16",
+        "in_snapshot": false,
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "time_precision": "DATE"
+      },
+      {
+        "amount": 120000,
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "coverage": [],
+        "currency": "CNY",
+        "event_id": "E-INC-1001",
+        "event_kind": "INCOME",
+        "event_status": "EXPECTED",
+        "expected_at": "2026-10-01",
+        "in_snapshot": false,
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "time_precision": "DATE"
+      },
+      {
+        "amount": 40000,
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "category": "MEALS",
+        "coverage": [
+          {
+            "covered_amount": 40000,
+            "reserve_id": "R-LIV-10"
+          }
+        ],
+        "currency": "CNY",
+        "event_id": "E-LIV-1002",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "expected_at": "2026-10-02",
+        "in_snapshot": false,
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "time_precision": "DATE"
+      },
+      {
+        "amount": 40000,
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "category": "MEALS",
+        "coverage": [
+          {
+            "covered_amount": 40000,
+            "reserve_id": "R-LIV-10"
+          }
+        ],
+        "currency": "CNY",
+        "event_id": "E-LIV-1016",
+        "event_kind": "OTHER_EXPENSE",
+        "event_status": "EXPECTED",
+        "expected_at": "2026-10-16",
+        "in_snapshot": false,
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "time_precision": "DATE"
+      },
+      {
+        "amount": 80000,
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "coverage": [],
+        "currency": "CNY",
+        "event_id": "E-INC-1020",
+        "event_kind": "INCOME",
+        "event_status": "EXPECTED",
+        "expected_at": "2026-10-20",
+        "in_snapshot": false,
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "time_precision": "DATE"
+      },
+      {
+        "amount": 6000,
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "cancellable": true,
+        "cost_item_id": "MEALS",
+        "coverage": [],
+        "currency": "CNY",
+        "event_id": "E-MEALS-1031",
+        "event_kind": "GOAL_PAYMENT",
+        "event_status": "EXPECTED",
+        "expected_at": "2026-10-31",
+        "goal_id": "G1",
+        "in_snapshot": false,
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "time_precision": "DATE"
+      },
+      {
+        "amount": 4000,
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "cancellable": true,
+        "cost_item_id": "LOCAL",
+        "coverage": [],
+        "currency": "CNY",
+        "event_id": "E-LOCAL-1031",
+        "event_kind": "GOAL_PAYMENT",
+        "event_status": "EXPECTED",
+        "expected_at": "2026-10-31",
+        "goal_id": "G1",
+        "in_snapshot": false,
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "time_precision": "DATE"
+      },
+      {
+        "amount": 120000,
+        "available_at": "2026-09-01T08:00:00+08:00",
+        "coverage": [],
+        "currency": "CNY",
+        "event_id": "E-INC-1101",
+        "event_kind": "INCOME",
+        "event_status": "EXPECTED",
+        "expected_at": "2026-11-01",
+        "in_snapshot": false,
+        "recorded_at": "2026-09-01T08:00:00+08:00",
+        "time_precision": "DATE"
+      }
+    ],
+    "forecast_confirmations": [],
+    "goal": {
+      "arrive_before_show_min": 60,
+      "budget_cap": 130000,
+      "goal_id": "G1",
+      "lodging_max_distance_m": 3000,
+      "lodging_nights_required": [
+        "2026-10-31"
+      ],
+      "name": "重庆演唱会资金",
+      "refundable_required": null,
+      "return_after_show_min": null,
+      "seat_tier_allowed": [
+        "B"
+      ],
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "show_end_at": "2026-10-31T21:30:00+08:00",
+      "show_start_at": "2026-10-31T19:00:00+08:00",
+      "venue_city": "重庆"
+    },
+    "meta": {
+      "batch": "demo-cases-2026-10-14",
+      "case_id": "cA_gap",
+      "created_at_real": "2026-10-14T18:50:00+08:00",
+      "data_version": "1",
+      "demo_points": [
+        "SELECT_CANDIDATE C01 后查看草案预览：门票须在 9/15 开票日支付，早于 10/1 生活费和 10/20 兼职收入（E-INC-1020），用于演示较早付款节点的缺口",
+        "用于演示后续预计收入不能提前填补较早节点，“预计最终够用”不等于“当前资金已经充足”",
+        "第二目标占用（寒假返乡车票）配合 SET_ALLOCATION goal_allocation=60000，用于演示同一笔资金不能重复分配（分配冲突）",
+        "ADD_LIVING_EXPENSE 新增 9/10 必要生活支出 150 元（NEW_RESERVE）后实时重算"
+      ],
+      "generator": "cursor-agent",
+      "purpose": "案例A（政策卡第八节）：成都出发去重庆看 10/31 晚的演唱会（模拟），尚未购票；用户描述的方案写成唯一候选 C01，演示时先 SELECT_CANDIDATE C01（SG-37）。设计为总额预计够，但开票日的付款早于各笔收入。",
+      "simulated": true,
+      "source_type": "LLM_GENERATED"
+    },
+    "offers": [],
+    "planned_allocation": null,
+    "price_series": [],
+    "reserves": [
+      {
+        "amount": 80000,
+        "coverage_end": "2026-09-30",
+        "coverage_start": "2026-09-01",
+        "release_at_end": false,
+        "reserve_id": "R-LIV-09",
+        "reserve_kind": "LIVING"
+      },
+      {
+        "amount": 10000,
+        "coverage_end": "2026-11-01",
+        "coverage_start": "2026-09-01",
+        "release_at_end": false,
+        "reserve_id": "R-CON",
+        "reserve_kind": "CONTINGENCY"
+      },
+      {
+        "amount": 80000,
+        "coverage_end": "2026-10-31",
+        "coverage_start": "2026-10-01",
+        "funding_event_id": "E-INC-1001",
+        "release_at_end": false,
+        "reserve_id": "R-LIV-10",
+        "reserve_kind": "LIVING"
+      },
+      {
+        "amount": 80000,
+        "coverage_end": "2026-11-30",
+        "coverage_start": "2026-11-01",
+        "funding_event_id": "E-INC-1101",
+        "release_at_end": false,
+        "reserve_id": "R-LIV-11",
+        "reserve_kind": "LIVING"
+      }
+    ],
+    "snapshot": {
+      "as_of": "2026-09-01T09:00:00+08:00",
+      "cash": 150000,
+      "cash_as_of": "2026-09-01T09:00:00+08:00",
+      "goal_allocation": 20000,
+      "other_goal_hold": {
+        "amount": 20000,
+        "name": "第二目标：寒假返乡车票"
+      },
+      "snapshot_phase": "DAY_START"
+    }
+  },
+  "ops": [
+    {
+      "candidate_id": "C01",
+      "type": "SELECT_CANDIDATE"
+    },
+    {
+      "amount": 15000,
+      "cover_mode": "NEW_RESERVE",
+      "event_id": "E-LIV-0910",
+      "expected_at": "2026-09-10",
+      "reserve_id": "R-LIV-0910",
+      "type": "ADD_LIVING_EXPENSE"
+    }
+  ]
+}

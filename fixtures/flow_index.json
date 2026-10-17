@@ -1,0 +1,135 @@
+{
+  "simulated": true,
+  "notice": "模拟数据",
+  "source": "docs/policy_card.md 演示点—案例对照表（第 1—30 行），按“同一案例、同一操作序列取前缀”合并为 14 个流程",
+  "flows": [
+    {
+      "flow_id": "01_cB_topk_main",
+      "case": "cB_topk",
+      "title": "主线：选方案、确认、收入延期",
+      "ops": [
+        { "type": "SELECT_CANDIDATE", "candidate_id": "C02" },
+        { "type": "CONFIRM", "candidate_id": "C02", "plan_version": "C02@v1", "input_version": "v1" },
+        { "type": "DELAY_INCOME", "event_id": "E-INC-1020", "expected_at": "2026-11-20" }
+      ]
+    },
+    {
+      "flow_id": "02_cB_topk_reconfirm",
+      "case": "cB_topk",
+      "title": "重复确认：不计新版本",
+      "ops": [
+        { "type": "SELECT_CANDIDATE", "candidate_id": "C02" },
+        { "type": "CONFIRM", "candidate_id": "C02", "plan_version": "C02@v1", "input_version": "v1" },
+        { "type": "EVALUATE", "label": "第1次确认" },
+        { "type": "CONFIRM", "candidate_id": "C02", "plan_version": "C02@v1", "input_version": "v1" },
+        { "type": "EVALUATE", "label": "第2次确认" }
+      ]
+    },
+    {
+      "flow_id": "03_cB_topk_living",
+      "case": "cB_topk",
+      "title": "新增生活支出并新建预留",
+      "ops": [
+        {
+          "type": "ADD_LIVING_EXPENSE",
+          "event_id": "E-LIV-0910",
+          "expected_at": "2026-09-10",
+          "amount": 20000,
+          "cover_mode": "NEW_RESERVE",
+          "reserve_id": "R-LIV-0910"
+        }
+      ]
+    },
+    {
+      "flow_id": "04_cA_gap_living",
+      "case": "cA_gap",
+      "title": "案例A：新增生活支出后出现缺口",
+      "ops": [
+        { "type": "SELECT_CANDIDATE", "candidate_id": "C01" },
+        {
+          "type": "ADD_LIVING_EXPENSE",
+          "event_id": "E-LIV-0910",
+          "expected_at": "2026-09-10",
+          "amount": 15000,
+          "cover_mode": "NEW_RESERVE",
+          "reserve_id": "R-LIV-0910"
+        }
+      ]
+    },
+    {
+      "flow_id": "05_cA_gap_allocation",
+      "case": "cA_gap",
+      "title": "案例A：改分配额出现分配冲突",
+      "ops": [
+        { "type": "SELECT_CANDIDATE", "candidate_id": "C01" },
+        { "type": "SET_ALLOCATION", "goal_allocation": 60000 }
+      ]
+    },
+    {
+      "flow_id": "06_cB_v3_select",
+      "case": "cB_v3_lodging_unknown",
+      "title": "住宿价待填时只选方案",
+      "ops": [{ "type": "SELECT_CANDIDATE", "candidate_id": "C02" }]
+    },
+    {
+      "flow_id": "07_cB_v4_free",
+      "case": "cB_v4_lodging_free",
+      "title": "住宿确认免费",
+      "ops": []
+    },
+    {
+      "flow_id": "08_cB_v1_two",
+      "case": "cB_v1_two_feasible",
+      "title": "两个可行候选",
+      "ops": []
+    },
+    {
+      "flow_id": "09_cB_v2_zero",
+      "case": "cB_v2_zero_feasible",
+      "title": "没有可行候选",
+      "ops": []
+    },
+    {
+      "flow_id": "10_cB_v5_pause",
+      "case": "cB_v5_cancel",
+      "title": "暂停：主状态已暂停",
+      "ops": [{ "type": "PAUSE" }]
+    },
+    {
+      "flow_id": "11_cB_v5_cancel",
+      "case": "cB_v5_cancel",
+      "title": "取消：只释放未使用的分配",
+      "ops": [{ "type": "CANCEL" }]
+    },
+    {
+      "flow_id": "12_c00_v1_missing",
+      "case": "c00_v1_living_not_provided",
+      "title": "生活安排未提供",
+      "ops": []
+    },
+    {
+      "flow_id": "13_c01_reevaluate",
+      "case": "c01_base",
+      "title": "同一输入重复计算",
+      "ops": [
+        { "type": "EVALUATE", "label": "第1次" },
+        { "type": "EVALUATE", "label": "第2次" },
+        { "type": "EVALUATE", "label": "第3次" }
+      ]
+    },
+    {
+      "flow_id": "14_c00_today_spend",
+      "case": "c00_r019_minimal",
+      "title": "记一笔当日消费后重算",
+      "ops": [
+        {
+          "type": "ADD_TODAY_SPEND",
+          "event_id": "E-TODAY-0901",
+          "amount": 4000,
+          "actual_at": "2026-09-01T09:00:00+08:00",
+          "coverage": []
+        }
+      ]
+    }
+  ]
+}

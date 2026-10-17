@@ -1,0 +1,90 @@
+{
+  "flow_id": "13_c01_reevaluate",
+  "input": {
+    "candidates": [],
+    "consumption_records": [],
+    "cost_items": [],
+    "events": [],
+    "forecast_confirmations": [],
+    "goal": {
+      "arrive_before_show_min": null,
+      "budget_cap": 90000,
+      "goal_id": "G1",
+      "lodging_max_distance_m": null,
+      "lodging_nights_required": null,
+      "refundable_required": null,
+      "return_after_show_min": null,
+      "seat_tier_allowed": null,
+      "seat_tiers": [
+        {
+          "code": "A",
+          "name": "内场"
+        },
+        {
+          "code": "B",
+          "name": "看台"
+        }
+      ],
+      "show_end_at": "2026-09-27T22:00:00+08:00",
+      "show_start_at": "2026-09-27T19:30:00+08:00",
+      "venue_city": "上海"
+    },
+    "meta": {
+      "batch": "demo-cases-2026-10-14",
+      "case_id": "c01_base",
+      "created_at_real": "2026-10-14T18:50:00+08:00",
+      "data_version": "1",
+      "demo_points": [
+        "同一输入版本连续 EVALUATE 三次，资金不累计增加（R013、T013-02）",
+        "机动预留单列，不计入消费成本，但在资金检查中保留（R007、§3）"
+      ],
+      "generator": "cursor-agent",
+      "purpose": "基础资金数据 c01（rules.md §10.8）：现金1000、生活预留300、机动预留200、本目标分配400、B=900，没有事件和候选；T003、T004、T006 等子用例在此基础上增加事件。",
+      "simulated": true,
+      "source_type": "HAND_WRITTEN"
+    },
+    "offers": [],
+    "planned_allocation": null,
+    "price_series": [],
+    "reserves": [
+      {
+        "amount": 30000,
+        "coverage_end": "2026-09-30",
+        "coverage_start": "2026-09-01",
+        "release_at_end": false,
+        "reserve_id": "R-LIV-09",
+        "reserve_kind": "LIVING"
+      },
+      {
+        "amount": 20000,
+        "coverage_end": "2026-09-28",
+        "coverage_start": "2026-09-01",
+        "release_at_end": false,
+        "reserve_id": "R-CON",
+        "reserve_kind": "CONTINGENCY"
+      }
+    ],
+    "snapshot": {
+      "as_of": "2026-09-01T09:00:00+08:00",
+      "cash": 100000,
+      "cash_as_of": "2026-09-01T09:00:00+08:00",
+      "goal_allocation": 40000,
+      "other_goal_hold": null,
+      "snapshot_phase": "DAY_START"
+    }
+  },
+  "ops": [
+    {
+      "label": "第1次",
+      "type": "EVALUATE"
+    },
+    {
+      "label": "第2次",
+      "type": "EVALUATE"
+    },
+    {
+      "label": "第3次",
+      "type": "EVALUATE"
+    }
+  ]
+}

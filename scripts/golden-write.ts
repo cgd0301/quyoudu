@@ -15,34 +15,20 @@ import { DEMO_CFG_1 } from '../src/engine/config.ts'
 import { evaluate } from '../src/engine/evaluate.ts'
 import { opsSchema } from '../src/engine/ops/index.ts'
 import { caseFileSchema } from '../src/engine/schema.ts'
-import { toWire } from '../src/engine/wire.ts'
+import { canonicalWire } from './lib/canonical.ts'
+
+export { canonicalWire, sortKeys } from './lib/canonical.ts'
 
 const rootDir = path.resolve(fileURLToPath(new URL('..', import.meta.url)))
 
 const USAGE = '用法：pnpm golden:write --vectors 或 --cases（可同时给出）'
 
+/** 案例与流程的人工作用文件结构（flow_id、input、ops） */
 export const flowFileSchema = z.strictObject({
   flow_id: z.string().min(1),
   input: caseFileSchema,
   ops: opsSchema,
 })
-
-/** 对象键递归排序；数组顺序不变 */
-export function sortKeys(value: unknown): unknown {
-  if (Array.isArray(value)) return value.map(sortKeys)
-  if (value !== null && typeof value === 'object') {
-    const record = value as Record<string, unknown>
-    const out: Record<string, unknown> = {}
-    for (const key of Object.keys(record).sort()) out[key] = sortKeys(record[key])
-    return out
-  }
-  return value
-}
-
-/** toWire 之后按键排序，2 空格缩进，LF，末尾换行 */
-export function canonicalWire(value: unknown): string {
-  return `${JSON.stringify(sortKeys(toWire(value)), null, 2)}\n`
-}
 
 function stem(name: string, suffix: string): string {
   return name.slice(0, -suffix.length)

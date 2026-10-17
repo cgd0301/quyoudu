@@ -395,7 +395,8 @@ function entriesFrom(selected: readonly Runnable[], disputes: readonly Dispute[]
   })
 }
 
-async function runEntries(args: VecArgs, root: string): Promise<VecOutput> {
+/** 供 test:report 等脚本直接复用：不重新实现选向量与判定逻辑，也不另开进程 */
+export async function runEntries(args: VecArgs, root: string): Promise<VecOutput> {
   const modules = needsVectorModules(args, doneModules) ? loadVectorModules(root) : null
   const selected = selectVectors(loadRunnable(root), args, modules, doneModules)
   const disputes = loadDisputes(root)
