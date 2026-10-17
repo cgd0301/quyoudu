@@ -1,0 +1,14 @@
+{
+  "recording_id": "c00_schema_violation",
+  "case_id": "c00_r019_minimal",
+  "scenario": "模型返回 Schema 不允许的字段：多出 planState 与未定义字段名",
+  "utterances": [
+    "我想去上海看演出，预算1800元。"
+  ],
+  "turns": [
+    {
+      "kind": "ok",
+      "payload": "{\"fields\":[{\"field\":\"CITY\",\"value\":\"上海\",\"source_text\":\"去上海\",\"source_span\":{\"start\":2,\"end\":5}},{\"field\":\"PLAN_STATE\",\"value\":\"FEASIBLE\",\"source_text\":\"预算1800元\",\"source_span\":{\"start\":9,\"end\":16}}],\"planState\":\"FEASIBLE_UNDER_ASSUMPTIONS\"}"
+    }
+  ]
+}

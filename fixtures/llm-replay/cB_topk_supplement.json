@@ -1,0 +1,19 @@
+{
+  "recording_id": "cB_topk_supplement",
+  "case_id": "cB_topk",
+  "scenario": "用户补充信息：第一轮缺住宿与现金，第二轮补上，已确认字段不再被覆盖",
+  "utterances": [
+    "11月28日去上海看演唱会，从武汉出发。",
+    "住一晚，离场馆3公里以内；现在手里有1600元。"
+  ],
+  "turns": [
+    {
+      "kind": "ok",
+      "payload": "{\n  \"fields\": [\n    {\n      \"field\": \"ACTIVITY\",\n      \"value\": \"演唱会\",\n      \"source_text\": \"看演唱会\",\n      \"source_span\": {\n        \"start\": 12,\n        \"end\": 16\n      }\n    },\n    {\n      \"field\": \"CITY\",\n      \"value\": \"上海\",\n      \"source_text\": \"去上海\",\n      \"source_span\": {\n        \"start\": 3,\n        \"end\": 6\n      }\n    },\n    {\n      \"field\": \"SHOW_DATETIME\",\n      \"value\": \"2026-11-28\",\n      \"source_text\": \"11月28日\",\n      \"source_span\": {\n        \"start\": 0,\n        \"end\": 5\n      }\n    },\n    {\n      \"field\": \"ORIGIN_CITY\",\n      \"value\": \"武汉\",\n      \"source_text\": \"从武汉出发\",\n      \"source_span\": {\n        \"start\": 17,\n        \"end\": 22\n      }\n    },\n    {\n      \"field\": \"CASH\",\n      \"value\": null,\n      \"source_text\": \"\",\n      \"source_span\": null\n    },\n    {\n      \"field\": \"LODGING_REQUIREMENT\",\n      \"value\": null,\n      \"source_text\": \"\",\n      \"source_span\": null\n    }\n  ]\n}"
+    },
+    {
+      "kind": "ok",
+      "payload": "{\n  \"fields\": [\n    {\n      \"field\": \"LODGING_REQUIREMENT\",\n      \"value\": \"住一晚，离场馆3公里以内\",\n      \"source_text\": \"住一晚，离场馆3公里以内\",\n      \"source_span\": {\n        \"start\": 0,\n        \"end\": 14\n      }\n    },\n    {\n      \"field\": \"CASH\",\n      \"value\": 160000,\n      \"source_text\": \"现在手里有1600元\",\n      \"source_span\": {\n        \"start\": 15,\n        \"end\": 26\n      }\n    }\n  ]\n}"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "simulated": true,
+  "notice": "模拟数据",
+  "about": "自然语言回放：固定话术 + 录制返回，供离线测试使用；不联网、不需要密钥。turns 与 utterances 一一对应；kind 为 ok 时 payload 是模型返回的 JSON 原文，其余表示调用失败。",
+  "recordings": [
+    "cB_topk_normal",
+    "c01_missing_date",
+    "c01_missing_budget",
+    "cB_topk_supplement",
+    "c00_invalid_json",
+    "c00_schema_violation",
+    "c00_timeout",
+    "c00_http_error",
+    "cB_topk_partial_invalid"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "recording_id": "c00_http_error",
+  "case_id": "c00_r019_minimal",
+  "scenario": "模型服务异常：返回 503，不产生任何字段",
+  "utterances": [
+    "我想去看演出。"
+  ],
+  "turns": [
+    {
+      "kind": "http_error",
+      "payload": "503 Service Unavailable"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "recording_id": "c01_missing_budget",
+  "case_id": "c01_base",
+  "scenario": "缺少金额与预算条件：预算、现金、已付金额都为空",
+  "utterances": [
+    "11月28日去上海看演唱会，从武汉出发，坐高铁。"
+  ],
+  "turns": [
+    {
+      "kind": "ok",
+      "payload": "{\n  \"fields\": [\n    {\n      \"field\": \"ACTIVITY\",\n      \"value\": \"演唱会\",\n      \"source_text\": \"看演唱会\",\n      \"source_span\": {\n        \"start\": 14,\n        \"end\": 18\n      }\n    },\n    {\n      \"field\": \"CITY\",\n      \"value\": \"上海\",\n      \"source_text\": \"去上海\",\n      \"source_span\": {\n        \"start\": 5,\n        \"end\": 8\n      }\n    },\n    {\n      \"field\": \"SHOW_DATETIME\",\n      \"value\": \"2026-11-28\",\n      \"source_text\": \"11月28日\",\n      \"source_span\": {\n        \"start\": 0,\n        \"end\": 5\n      }\n    },\n    {\n      \"field\": \"ORIGIN_CITY\",\n      \"value\": \"武汉\",\n      \"source_text\": \"从武汉出发\",\n      \"source_span\": {\n        \"start\": 19,\n        \"end\": 24\n      }\n    },\n    {\n      \"field\": \"TRANSPORT_PREFERENCE\",\n      \"value\": \"高铁\",\n      \"source_text\": \"坐高铁\",\n      \"source_span\": {\n        \"start\": 25,\n        \"end\": 28\n      }\n    },\n    {\n      \"field\": \"BUDGET\",\n      \"value\": null,\n      \"source_text\": \"\",\n      \"source_span\": null\n    },\n    {\n      \"field\": \"CASH\",\n      \"value\": null,\n      \"source_text\": \"\",\n      \"source_span\": null\n    },\n    {\n      \"field\": \"AMOUNT_PAID\",\n      \"value\": null,\n      \"source_text\": \"\",\n      \"source_span\": null\n    }\n  ]\n}"
+    }
+  ]
+}

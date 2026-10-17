@@ -1,0 +1,14 @@
+{
+  "recording_id": "c01_missing_date",
+  "case_id": "c01_base",
+  "scenario": "缺少关键日期：演出日期没有提到，值必须为 null 而不是猜",
+  "utterances": [
+    "我想去上海看一场演唱会，还没买票。"
+  ],
+  "turns": [
+    {
+      "kind": "ok",
+      "payload": "{\n  \"fields\": [\n    {\n      \"field\": \"ACTIVITY\",\n      \"value\": \"演唱会\",\n      \"source_text\": \"看一场演唱会\",\n      \"source_span\": {\n        \"start\": 6,\n        \"end\": 12\n      }\n    },\n    {\n      \"field\": \"CITY\",\n      \"value\": \"上海\",\n      \"source_text\": \"去上海\",\n      \"source_span\": {\n        \"start\": 2,\n        \"end\": 5\n      }\n    },\n    {\n      \"field\": \"SHOW_DATETIME\",\n      \"value\": null,\n      \"source_text\": \"\",\n      \"source_span\": null\n    },\n    {\n      \"field\": \"TICKET_PURCHASED\",\n      \"value\": false,\n      \"source_text\": \"还没买票\",\n      \"source_span\": {\n        \"start\": 13,\n        \"end\": 17\n      }\n    }\n  ]\n}"
+    }
+  ]
+}

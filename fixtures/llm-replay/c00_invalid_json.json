@@ -1,0 +1,14 @@
+{
+  "recording_id": "c00_invalid_json",
+  "case_id": "c00_r019_minimal",
+  "scenario": "模型返回格式错误的数据：不是合法 JSON",
+  "utterances": [
+    "我想去看演出。"
+  ],
+  "turns": [
+    {
+      "kind": "invalid_json",
+      "payload": "{\"fields\": [ {\"field\": \"ACTIVITY\", "
+    }
+  ]
+}

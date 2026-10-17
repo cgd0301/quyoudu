@@ -1,0 +1,14 @@
+{
+  "recording_id": "c00_timeout",
+  "case_id": "c00_r019_minimal",
+  "scenario": "模型超时：调用层以 TIMEOUT 状态报告，不产生任何字段",
+  "utterances": [
+    "我想去看演出。"
+  ],
+  "turns": [
+    {
+      "kind": "timeout",
+      "payload": "30s 未返回"
+    }
+  ]
+}
