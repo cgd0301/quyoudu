@@ -9,7 +9,7 @@ import { REPO_ROOT, readJsonIfExists, readText, repoPath } from './repo.ts'
 
 export type Status = 'pass' | 'fail' | 'skipped' | 'none'
 
-const TEST_ID = /^T\d{3}-\d{2}/
+const TEST_ID = /^T\d{3}-\d{2}(?!\d)/
 const PARENT_ID = /^T\d{3}$/
 
 export function subIdOf(name: string): string | null {

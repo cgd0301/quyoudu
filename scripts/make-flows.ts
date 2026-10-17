@@ -69,7 +69,7 @@ async function readExisting(dir: string): Promise<Map<string, string>> {
   }
   for (const name of names) {
     if (!name.endsWith('.json')) continue
-    out.set(name, await readFile(path.join(dir, name), 'utf8'))
+    out.set(name, (await readFile(path.join(dir, name), 'utf8')).replace(/\r\n/g, '\n'))
   }
   return out
 }

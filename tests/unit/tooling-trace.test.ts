@@ -150,6 +150,62 @@ describe('trace 追溯表改写', () => {
     expect(next.split('\n')[2]).toBe('R001,乙,f,T001,"多行",章节,部分覆盖（abc1234，2026-10-17；端到端未执行）')
   })
 
+describe('results 编号映射的健壮性', () => {
+  test('results 编号必须写在用例名开头，describe 前缀不影响识别', () => {
+    expect(subIdOf('T015-01 gap 固定话术提取')).toBe('T015-01')
+    const parsed = parseVitestJson(
+      JSON.stringify({
+        numTotalTests: 1,
+        testResults: [
+          { assertionResults: [{ title: 'T015-01 gap 固定话术提取', fullName: '自然语言层：提取与追问 T015-01 gap 固定话术提取', status: 'passed' }] },
+        ],
+      }),
+    )
+    expect(parsed.named[0]?.name).toBe('T015-01 gap 固定话术提取')
+    expect(parsed.named[0]?.fullName).toContain('自然语言层')
+    expect(subIdOf(parsed.named[0]?.name ?? '')).toBe('T015-01')
+  })
+
+  test('results 不做“包含即命中”：编号不在开头或只是子串时不算', () => {
+    expect(subIdOf('补充 T015-01 的用例')).toBeNull()
+    expect(subIdOf('用例 T015-01')).toBeNull()
+    expect(subIdOf('flows 每个流程只使用界面白名单操作')).toBeNull()
+  })
+
+  test('results 相似编号不会被截断匹配（T015-010 不等于 T015-01）', () => {
+    expect(subIdOf('T015-010 gap 相似编号')).toBeNull()
+    expect(subIdOf('T015-01 gap 正常编号')).toBe('T015-01')
+  })
+
+  test('results 名称为空或缺失时不产生编号', () => {
+    expect(subIdOf('')).toBeNull()
+    const parsed = parseVitestJson(JSON.stringify({ numTotalTests: 1, testResults: [{ assertionResults: [{ status: 'passed' }] }] }))
+    expect(parsed.named[0]?.name).toBe('')
+    expect(subIdOf(parsed.named[0]?.name ?? '')).toBeNull()
+  })
+
+  test('results 同一编号多条测试时任一失败即失败，跳过不记通过', () => {
+    const parsed = parseVitestJson(
+      JSON.stringify({
+        numTotalTests: 3,
+        testResults: [
+          {
+            assertionResults: [
+              { title: 'T020-01 gap 甲', status: 'passed' },
+              { title: 'T020-01 gap 乙', status: 'failed' },
+              { title: 'T013-06 gap 丙', status: 'skipped' },
+            ],
+          },
+        ],
+      }),
+    )
+    expect(parsed.named.find((item) => item.name === 'T020-01 gap 甲')?.status).toBe('pass')
+    expect(parsed.named.find((item) => item.name === 'T020-01 gap 乙')?.status).toBe('fail')
+    expect(parsed.named.find((item) => item.name === 'T013-06 gap 丙')?.status).toBe('skipped')
+  })
+})
+
+describe('trace 状态文本与汇总', () => {
   test('trace 状态文本按四种判定生成，且不写入 SG/D/V 编号', () => {
     const stamp = 'abc1234，2026-10-17'
     const texts = [
@@ -174,4 +230,5 @@ describe('trace 追溯表改写', () => {
     expect(verdicts.parent.get('T001')?.status).toBe('pass')
     expect(verdicts.counts).toEqual({ pass: 2, partial: 0, failed: 0, pending: 0 })
   })
+})
 })

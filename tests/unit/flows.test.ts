@@ -48,7 +48,7 @@ describe('flows 演示流程与索引', () => {
     const built = buildFlows(index, cases)
     expect(built).toHaveLength(index.flows.length)
     for (const flow of built) {
-      const current = readFileSync(path.join(REPO_ROOT, 'fixtures/flows', `${flow.flow_id}.json`), 'utf8')
+      const current = readFileSync(path.join(REPO_ROOT, 'fixtures/flows', `${flow.flow_id}.json`), 'utf8').replace(/\r\n/g, '\n')
       expect(current, `${flow.flow_id}.json 与索引不一致，请运行 pnpm flows`).toBe(flow.text)
     }
   })

@@ -141,7 +141,7 @@ export async function main(argv: readonly string[]): Promise<number> {
   const built = buildBook()
   const target = repoPath(BUILD_DIR, '趣有度_项目书.md')
   if (check) {
-    const existing = readTextIfExists(target)
+    const existing = readTextIfExists(target)?.replace(/\r\n/g, '\n') ?? null
     if (existing === null) {
       console.error(`缺少 ${BUILD_DIR}/趣有度_项目书.md，请先运行 pnpm book:build`)
       return 1
