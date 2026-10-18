@@ -1,16 +1,35 @@
 import { describe, expect, test } from 'vitest'
-import { readFileSync } from 'node:fs'
 import { inspectBytes, parseTimestamp, renderIntakeReport } from '../../scripts/survey-intake.ts'
-import { REPO_ROOT } from '../../scripts/lib/repo.ts'
 
 /**
  * 本文件的 CSV 全部是**人工构造的检查用样本**，不是问卷结果，也不得被引用为客户证据。
+ * 这里使用独立的测试 schema，避免测试随实际投放问卷改版而失效。
  */
-const SCHEMA_TEXT = readFileSync(`${REPO_ROOT}/docs/_work/survey/schema.json`, 'utf8')
+const FIXTURE_SCHEMA = JSON.stringify({
+  version: 'test-1',
+  title: '测试用 schema',
+  rules: {
+    min_duration_seconds: 60,
+    attention_check: { question: 'Q9', expected: '4' },
+    duplicate_key: 'meta_respondent_id',
+    duplicate_keep: 'latest',
+    required: ['Q1', 'Q2', 'Q3', 'Q9'],
+    min_valid_for_conclusions: 3,
+  },
+  questions: [
+    { id: 'Q1', label: 'q1', type: 'single', options: ['1 次', '2—3 次'] },
+    { id: 'Q2', label: 'q2', type: 'single', options: ['1000 元以下', '2000—2999 元'] },
+    { id: 'Q3', label: 'q3', type: 'multi', options: ['当月生活费', '兼职或实习收入'] },
+    { id: 'Q9', label: 'attention', type: 'scale', min: 1, max: 5 },
+    { id: 'meta_respondent_id', label: 'id', type: 'meta' },
+    { id: 'meta_submitted_at', label: 'time', type: 'meta' },
+    { id: 'meta_duration_seconds', label: 'duration', type: 'meta' },
+  ],
+})
 const HEADER = 'meta_respondent_id,meta_submitted_at,meta_duration_seconds,Q1,Q2,Q3,Q9'
 
 function inspect(text: string) {
-  return inspectBytes(Buffer.from(text, 'utf8'), { name: 'test.csv', schemaText: SCHEMA_TEXT })
+  return inspectBytes(Buffer.from(text, 'utf8'), { name: 'test.csv', schemaText: FIXTURE_SCHEMA })
 }
 
 function csv(rows: readonly string[]): string {

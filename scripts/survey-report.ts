@@ -1,7 +1,7 @@
 /**
  * pnpm survey:report
  *
- * 按 docs/_work/survey/schema.json 的题型与清洗规则，统计 docs/_work/survey/raw/responses.csv。
+ * 按 docs/_work/survey/schema.json 的题型与清洗规则，统计 docs/_work/survey/analysis/responses.csv（脱敏分析数据）。
  *
  * 纪律（本脚本的存在理由）：
  * - 客户证据只能来自真实问卷。没有原始答卷时，本脚本只写“未运行（缺少输入）”，**不生成任何数字**；
@@ -19,8 +19,9 @@ import { readText, readTextIfExists, repoPath, writeFileAtomic } from './lib/rep
 import { looksLikeEncodingLoss, textSignals } from './lib/survey-integrity.ts'
 
 export const SURVEY_DIR = 'docs/_work/survey'
-export const RAW_CSV = `${SURVEY_DIR}/raw/responses.csv`
-export const RAW_META = `${SURVEY_DIR}/raw/metadata.json`
+export const ANALYSIS_DIR = `${SURVEY_DIR}/analysis`
+export const ANALYSIS_CSV = `${ANALYSIS_DIR}/responses.csv`
+export const ANALYSIS_META = `${ANALYSIS_DIR}/metadata.json`
 export const SCHEMA_PATH = `${SURVEY_DIR}/schema.json`
 export const REPORT_PATH = `${SURVEY_DIR}/report.md`
 
@@ -56,6 +57,8 @@ export type RawMetadata = {
   channel?: string
   sampling?: string
   distributed?: number
+  source_file?: string
+  source_file_sha256?: string
 }
 
 export type SurveyInputIssue = { code: string; message: string }
@@ -84,9 +87,11 @@ export function assessInput(schema: SurveySchema, csvText: string): SurveyInputI
   const table = parseCsv(text)
   const header = (table[0] ?? []).map((cell) => cell.trim())
   const required = new Set<string>(schema.rules.required)
-  if (schema.rules.duplicate_key !== null) required.add(schema.rules.duplicate_key)
+  if (schema.rules.duplicate_key !== null) {
+    required.add(schema.rules.duplicate_key)
+    required.add('meta_submitted_at')
+  }
   if (schema.rules.attention_check !== null) required.add(schema.rules.attention_check.question)
-  required.add('meta_submitted_at')
   required.add('meta_duration_seconds')
   const missing = [...required].filter((id) => !header.includes(id))
   if (missing.length > 0) {
@@ -134,6 +139,8 @@ export type SurveySummary = {
   collectedTo: string | null
   channel: string | null
   sampling: string | null
+  sourceFile: string | null
+  sourceSha256: string | null
   submitted: number
   valid: number
   invalid: { reason: string; count: number }[]
@@ -379,6 +386,8 @@ export function summarize(schema: SurveySchema, csvText: string, metadata: RawMe
     collectedTo: metadata.collected_to ?? null,
     channel: metadata.channel ?? null,
     sampling: metadata.sampling ?? null,
+    sourceFile: metadata.source_file ?? null,
+    sourceSha256: metadata.source_file_sha256 ?? null,
     submitted: cleaned.length,
     valid: valid.length,
     invalid: invalidSummary(cleaned.filter((row) => row.invalid.length > 0)),
@@ -395,7 +404,7 @@ export function renderNotRun(schema: SurveySchema): string {
     '# 问卷统计结果',
     '',
     '> **状态：未运行（缺少输入）**',
-    '> 仓库中没有 `docs/_work/survey/raw/responses.csv`，因此本文件不含任何统计数字。',
+    '> 仓库中没有 `docs/_work/survey/analysis/responses.csv`，因此本文件不含任何统计数字。',
     '> 问卷尚未形成可分析数据；本文件不得被当作“没有需求”或“样本为 0”的证据。',
     '> 若平台已收到提交但导出件未通过完整性校验，见 `docs/_work/survey/intake/report.md`；本报告只反映仓库内可分析数据的状态。',
     '',
@@ -407,9 +416,9 @@ export function renderNotRun(schema: SurveySchema): string {
     '',
     '## 恢复步骤',
     '',
-    '1. 导出去标识化答卷到 `docs/_work/survey/raw/responses.csv`（不入库）。',
-    '2. 在 `docs/_work/survey/raw/metadata.json` 记录 `data_version`、采集起止日期、渠道与抽样方式。',
-    '3. 先运行 `pnpm survey:intake --input docs/_work/survey/raw/responses.csv` 检查编码与字段，再运行 `pnpm survey:report`。',
+    '1. 把脱敏分析数据放到 `docs/_work/survey/analysis/responses.csv`（不含身份信息，可入库）；原始导出件不入库。',
+    '2. 在 `docs/_work/survey/analysis/metadata.json` 记录 `data_version`、采集起止日期、渠道与抽样方式。',
+    '3. 先运行 `pnpm survey:intake --input <原始导出件>` 检查编码与字段，再运行 `pnpm survey:report`。',
     '',
   ].join('\n')
 }
@@ -432,7 +441,7 @@ export function renderBlocked(schema: SurveySchema, issues: readonly SurveyInput
     '',
     '1. 从原始表单或工作簿重新导出 **XLSX** 或 **UTF-8 CSV**，确认题干与选项为可读中文。',
     '2. 确认导出字段与 `docs/_work/survey/schema.json` 对齐；不一致时先建立字段映射。',
-    '3. 把可读导出件放到 `docs/_work/survey/raw/responses.csv`（不入库），依次运行 `pnpm survey:intake` 与 `pnpm survey:report`。',
+    '3. 把脱敏分析数据放到 `docs/_work/survey/analysis/responses.csv`（不含身份信息，可入库），依次运行 `pnpm survey:intake` 与 `pnpm survey:report`。',
     '',
   ].join('\n')
 }
@@ -441,12 +450,15 @@ export function renderReport(summary: SurveySummary, schema: SurveySchema): stri
   const lines: string[] = []
   lines.push('# 问卷统计结果', '')
   lines.push(`- 数据版本：${summary.dataVersion}`)
-  lines.push(`- 原始文件 SHA-256：\`${summary.sha256 ?? ''}\``)
+  if (summary.sourceFile !== null) lines.push(`- 原始导出件：${summary.sourceFile}（SHA-256 \`${summary.sourceSha256 ?? '未标注'}\`）`)
+  lines.push(`- 分析数据 CSV SHA-256：\`${summary.sha256 ?? ''}\``)
   lines.push(`- 采集起止：${summary.collectedFrom ?? '未标注'} — ${summary.collectedTo ?? '未标注'}`)
   lines.push(`- 发放渠道：${summary.channel ?? '未标注'}；抽样方式：${summary.sampling ?? '未标注'}`)
   lines.push(`- 有效 / 提交：${summary.valid} / ${summary.submitted}`)
   if (summary.belowMinimum) lines.push(`- **样本量不足（<${summary.minValidForConclusions}）**：只作探索性描述，不用于推广结论。`)
   lines.push(`- 题型与清洗规则：\`${SCHEMA_PATH}\`（version ${schema.version}）`)
+  lines.push('- 样本性质：便利/非概率样本；30 条提交不等于 30 位独立受访者（导出件无应答编号）；不得外推为全国青年比例。')
+  lines.push('- 解读、证据强度与局限：见 `docs/_work/survey/findings.md`；本文件只含统计表，不构成需求结论。')
   lines.push('')
   lines.push('## 清洗明细', '')
   lines.push('| 剔除原因 | 条数 |')
@@ -490,10 +502,10 @@ export function readSchema(): SurveySchema {
 }
 
 export function readMetadata(): RawMetadata {
-  const text = readTextIfExists(repoPath(RAW_META))
+  const text = readTextIfExists(repoPath(ANALYSIS_META))
   if (text === null) return {}
   const data: unknown = JSON.parse(text)
-  if (data === null || typeof data !== 'object' || Array.isArray(data)) throw new Error(`${RAW_META} 不是对象`)
+  if (data === null || typeof data !== 'object' || Array.isArray(data)) throw new Error(`${ANALYSIS_META} 不是对象`)
   return data as RawMetadata
 }
 
@@ -550,14 +562,14 @@ export function renderIntakeBlocked(schema: SurveySchema, intake: IntakeSummary)
     '',
     '1. 从原始表单或工作簿重新导出 **XLSX** 或 **UTF-8 CSV**，确认题干与选项为可读中文。',
     '2. 确认导出字段与 `docs/_work/survey/schema.json` 对齐；不一致时先建立字段映射。',
-    '3. 把可读导出件放到 `docs/_work/survey/raw/responses.csv`（不入库），先运行 `pnpm survey:intake` 再运行 `pnpm survey:report`。',
+    '3. 把脱敏分析数据放到 `docs/_work/survey/analysis/responses.csv`（不含身份信息，可入库），先运行 `pnpm survey:intake` 再运行 `pnpm survey:report`。',
     '',
   ].join('\n')
 }
 
 export function runSurvey(): { written: boolean; summary: SurveySummary | null; blocked: SurveyInputIssue[] | null } {
   const schema = readSchema()
-  const csvPath = repoPath(RAW_CSV)
+  const csvPath = repoPath(ANALYSIS_CSV)
   if (!existsSync(csvPath)) {
     const intake = readIntakeSummary()
     if (intake !== null && intake.verdict !== 'ok') {
@@ -590,7 +602,7 @@ export async function main(): Promise<number> {
     return 0
   }
   if (summary === null) {
-    console.log(`缺少输入：${RAW_CSV} 不存在。已写入“未运行（缺少输入）”，未生成任何统计。`)
+    console.log(`缺少输入：${ANALYSIS_CSV} 不存在。已写入“未运行（缺少输入）”，未生成任何统计。`)
     return 0
   }
   console.log(

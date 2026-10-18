@@ -1,0 +1,43 @@
+{
+  "source_file": "趣有度｜青年消费计划与资金安排调查.xlsx",
+  "source_bytes": 14945,
+  "submissions": 30,
+  "questions": 10,
+  "duration_seconds": {
+    "min": 21,
+    "median": [
+      84,
+      92
+    ],
+    "max": 277,
+    "under_60": 8,
+    "under_30": 1
+  },
+  "identity_columns": {
+    "email_nonempty": 30,
+    "email_distinct": 1,
+    "name_nonempty": 0,
+    "note": "身份列不进入分析数据，也未读取具体值"
+  },
+  "pii_hits_in_all_cells": 0,
+  "none_option_cleaned": [
+    {
+      "row": "R11",
+      "question": "Q5",
+      "dropped": "没有明显影响；没有遇到相关问题"
+    },
+    {
+      "row": "R11",
+      "question": "Q6",
+      "dropped": "目前的方法已经足够好"
+    }
+  ],
+  "unknown_options": [],
+  "rules": [
+    "多选题按分号拆分；‘无’选项与其他选项同时出现时剔除‘无’选项并记录",
+    "选项不在清单内即停止，不猜测",
+    "身份列（电子邮件、名称）不进入分析数据",
+    "时长由完成时间减开始时间计算；不设 60 秒剔除门槛，<60 秒只做敏感性分析",
+    "R01—R30 只是行号重命名，不是身份编号，不能用于确认独立受访者"
+  ]
+}

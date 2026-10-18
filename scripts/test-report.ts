@@ -238,12 +238,12 @@ export function renderAppendix(input: ReportInput): string {
   )
   lines.push('')
   lines.push('## A.3 功能实现状态表', '')
-  lines.push('按“规则已确认／已实现／测试通过／真实用户验证”四级标注；真实用户验证一律为“未取得可用结果”（线上表单已收到 30 条提交，但导出件不可读、与问卷设计零重叠，见 `docs/_work/survey/discovery.md`）。')
+  lines.push('按“规则已确认／已实现／测试通过／真实用户验证”四级标注；真实用户验证一栏为“未做规则级验证”：30 条问卷只支持样本内需求与功能偏好，未验证任何单条规则的实际效果（见 `docs/_work/survey/findings.md`）。')
   lines.push('')
   lines.push('| 规则 | 规则已确认 | 已实现 | 测试通过 | 真实用户验证 |')
   lines.push('| --- | --- | --- | --- | --- |')
   for (const row of input.rules) {
-    lines.push(`| ${row.rule} | 是 | ${row.implemented ? '是' : '否'} | ${row.tested ? '是' : '否'} | 未取得可用结果 |`)
+    lines.push(`| ${row.rule} | 是 | ${row.implemented ? '是' : '否'} | ${row.tested ? '是' : '否'} | 未做规则级验证 |`)
   }
   lines.push('')
   lines.push('## A.4 未完成的检查及原因', '')
@@ -401,7 +401,7 @@ export async function main(): Promise<number> {
       pending: row.pending,
       implemented: row.implemented,
       tested: row.tested,
-      real_user_validation: '未取得可用结果',
+      real_user_validation: '未做规则级验证',
     })),
     unfinished: [
       e2eRemaining(input.e2e),

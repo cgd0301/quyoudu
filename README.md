@@ -33,8 +33,9 @@ pnpm presubmit                     # 完整门禁：按依赖顺序跑完除 E2E
 | 测试报告（附录A） | `book/chapters/91_appendix_test_report.md` | `pnpm test:report` | 由真实运行结果生成 |
 | 追溯表（181 行） | `docs/traceability.csv` | `pnpm trace:update` | 由真实证据生成 |
 | 参考实现对拍报告 | `docs/_work/diff_report.md` | `pnpm diff:oracle` | 每轮实跑，含来源与版本 |
-| 问卷方法与字段 | `docs/_work/survey/` | [README](docs/_work/survey/README.md)·[题面](docs/_work/survey/questionnaire.md)·[字段](docs/_work/survey/schema.json) | 设计稿；线上表单已投放，但与导出件字段零重叠 |
-| 问卷数据发现与接收检查 | `docs/_work/survey/discovery.md`、`docs/_work/survey/intake/` | [发现报告](docs/_work/survey/discovery.md)·[检查报告](docs/_work/survey/intake/report.md)·[机器可读](docs/_work/survey/intake/inventory.json) | **已收到 30 条提交；导出件中文题干与选项丢失，阻塞，无任何统计** |
+| 问卷方法与字段 | `docs/_work/survey/` | [README](docs/_work/survey/README.md)·[题面](docs/_work/survey/questionnaire.md)·[字段 schema v2](docs/_work/survey/schema.json)·[设计稿 v1](docs/_work/survey/schema_design_v1.json) | 实际投放 10 题版；设计稿保留追溯 |
+| 问卷结果（30 条） | `docs/_work/survey/` | [统计表](docs/_work/survey/report.md)·[研究发现](docs/_work/survey/findings.md)·[脱敏数据](docs/_work/survey/analysis/responses.csv)·[清洗日志](docs/_work/survey/analysis/cleaning_log.json) | **30 条有效提交；便利样本；部分支持客户需求；无价格/留存数据** |
+| 原始 CSV 阻塞记录 | `docs/_work/survey/discovery.md`、`intake/` | [发现报告](docs/_work/survey/discovery.md)·[检查报告](docs/_work/survey/intake/report.md) | 历史记录：CSV 编码丢失；已由 XLSX 取代 |
 | 市场与商业数字：事实锚点、公式与缺口 | `docs/_work/business_model.md` | `pnpm model:economics` | 只有已核验事实与符号公式；无市场规模、无情景数值 |
 | 数据溯源台账（逐项） | `docs/_work/data_evidence_register.md` | — | 每个数字的来源、公式、适用边界与放行状态 |
 | 外部公开资料核验记录 | `docs/sources.md` 文末 | [E01—E06](docs/sources.md) | 已核验 6 条 + 4 条待核验 |
@@ -59,8 +60,8 @@ pnpm presubmit                     # 完整门禁：按依赖顺序跑完除 E2E
 | `pnpm spec:lint` | 规格缺口状态与追溯表编号一致性 |
 | `pnpm export:results` | 用正式引擎导出案例与流程结果到 `book/data` |
 | `pnpm model:economics` | 由公开事实复算人均口径、写出公式与缺口清单，写 `book/data/model` 与 `docs/_work/business_model.md` |
-| `pnpm survey:intake --input <导出件>` | 问卷导出件接收检查（编码、字段、去重、时长、PII），写 `docs/_work/survey/intake`；阻塞时不生成统计 |
-| `pnpm survey:report` | 问卷统计；无可分析输入时只写“未运行”或“阻塞”，不生成任何数字 |
+| `pnpm survey:intake --input <导出件>` | 原始导出件接收检查（编码、字段、去重、时长、PII），写 `docs/_work/survey/intake`；阻塞时不生成统计 |
+| `pnpm survey:report` | 从脱敏分析数据 `docs/_work/survey/analysis/responses.csv` 生成逐题统计；无输入时只写“未运行/阻塞” |
 | `pnpm test:report` | 汇总真实运行结果，写附录A 与 `book/data/status.json` |
 | `pnpm trace:update` | 按真实证据更新追溯表状态列 |
 | `pnpm figures` | 由 `book/data` 生成 16 张 SVG |
@@ -85,8 +86,8 @@ pnpm presubmit                     # 完整门禁：按依赖顺序跑完除 E2E
 pnpm diff:oracle        # 1 先对拍（写 docs/_work/diff_report.md）
 pnpm export:results     # 2 导出案例与流程到 book/data
 pnpm model:economics    # 3 市场与商业数字：事实锚点、公式与缺口
-pnpm survey:intake --input <导出件>   # 4 问卷导出件接收检查（无导出件可跳过）
-pnpm survey:report      # 5 问卷统计；输入不可用时只写“未运行/阻塞”
+python docs/_work/survey/analysis/import_xlsx.py --input <原始XLSX>  # 4 生成脱敏分析数据
+pnpm survey:report      # 5 从 analysis/responses.csv 生成统计；输入不可用时只写“未运行/阻塞”
 pnpm doc:lint           # 6 文档检查（读 book/data）
 pnpm test:report        # 7 附录A + book/data/status.json
 pnpm trace:update       # 8 追溯表状态
@@ -98,15 +99,15 @@ pnpm book:build         # 10 成稿
 
 **已验收**
 
-- 计算引擎 M1—M9 + 规则 R001—R020 / D01—D88：单元测试 1177 注册、1176 通过、1 跳过（31 个测试文件）；向量 152/152、断言 1004/1004；对拍差异 0（检查点 180/180）；golden 冻结完整。
+- 计算引擎 M1—M9 + 规则 R001—R020 / D01—D88：单元测试 1179 注册、1178 通过、1 跳过（31 个测试文件）；向量 152/152、断言 1004/1004；对拍差异 0（检查点 180/180）；golden 冻结完整。
 - 文档链路：`doc:lint` 16 项自动检查通过；成稿 16 章、占位符残留 0、图表 16 张。
 - 前端主流程：`pnpm test:e2e` 1 条 spec 通过（概览→比较→确认→资金日历→计划管理），控制台 0 错误；四页截图已生成。
-- 研究纪律：客户证据只来自问卷；线上表单已收到 30 条提交，但导出件不可读、字段与问卷设计不一致，仓库内无任何统计结果，正文所有客户侧结论仍标"待验证"。
+- 客户问卷：30 条有效提交（便利样本），10 题全部作答；统计 `docs/_work/survey/report.md`、发现 `findings.md`；资金问题 22/30、焦虑 17/30、多方案比较 13/30、隐私 16/30；跨城观演 9/30、任何付费形式 8/30。正文只写"在这批受访者中"。
 
 **未完成（不计为通过）**
 
-- 客户问卷接入：30 条提交的导出件丢失中文题干与选项、与 `schema.json` 零重叠，无法统计；需重新导出 XLSX/UTF-8 CSV 并建立字段映射（见 `docs/_work/survey/discovery.md`）。
-- 商业与市场：只有人均支出量级可由公开事实复算；市场规模、收入、单位经济与盈亏平衡因缺证据不给出定量结论（见 `docs/_work/final_submission_audit.md` 与数据台账）。
+- 客户问卷：样本 30 条（目标 100），便利/非概率样本，无应答编号（不能确认 30 位独立受访者），无具体价格、真实支付、留存或 CAC；跨城观演 9/30，定位需扩样验证。
+- 商业与市场：只有人均支出量级可由公开事实复算；市场规模、价格、收入、单位经济与盈亏平衡因缺证据不给出定量结论（见 `docs/_work/final_submission_audit.md` 与数据台账）。
 - UI 层 21 条子用例尚未逐条覆盖，现有 1 条 E2E spec 只覆盖主流程。
 - 参考实现的输入指纹在 `docs/rules.md` 变更后未重录（只允许人工运行 `oracle:import`），`diff:oracle` 首行会告警，但用例与向量指纹未变、对拍结果仍有效。
 - 类别 B（结果契约未覆盖）与类别 C（规则未定义/样本门槛）的向量缺口仍保留，见 `docs/_work/vector_gaps.md`。

@@ -1,0 +1,11 @@
+{
+  "data_version": "2026-10-18-xlsx-v1",
+  "collected_from": "2026-10-18",
+  "collected_to": "2026-10-18",
+  "channel": "线上匿名表单（团队提供 XLSX 导出件；发放渠道未记录）",
+  "sampling": "未记录抽样设计；样本为香港/内地学生，推断为便利样本（非概率）",
+  "source_file": "趣有度｜青年消费计划与资金安排调查.xlsx",
+  "source_file_sha256": "06d6b63398328784ee08322b254aee26a3ee448f2fd6a0a756bf05feb002670a",
+  "submissions": 30,
+  "notes": "由 docs/_work/survey/analysis/import_xlsx.py 从原始 XLSX 生成；不含邮箱、姓名与精确时间戳；R01—R30 只是行号重命名，不是身份编号。清洗记录见 cleaning_log.json。"
+}
