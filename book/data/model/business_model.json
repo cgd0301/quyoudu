@@ -5,6 +5,7 @@
     "multiplier": 6.85,
     "other_cny_per_attendance": 5123,
     "ticket_cny_per_attendance": 748,
+    "ticket_exact": 747.89,
     "total_cny_per_attendance": 5871
   },
   "break_even": [
