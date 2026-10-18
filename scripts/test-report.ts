@@ -151,7 +151,9 @@ function ruleRows(table: ReturnType<typeof readTraceability>, index: EvidenceInd
     current.children += 1
     current[verdict.status] += 1
     const evidence = index.ids.get(row.testId)
-    if (evidence !== undefined && (evidence.vector === 'pass' || evidence.unit === 'pass' || evidence.e2e === 'pass')) {
+    // DOC 层的子用例由 doc:lint 的检查本身实现，因此文档检查通过也算实现证据；
+    // 否则 R014（阶段门槛与证据表述）会出现“测试通过=是、已实现=否”的自相矛盾
+    if (evidence !== undefined && (evidence.vector === 'pass' || evidence.unit === 'pass' || evidence.e2e === 'pass' || evidence.doc === 'pass')) {
       current.implemented = true
     }
     rows.set(row.ruleId, current)
