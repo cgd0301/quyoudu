@@ -2,7 +2,7 @@
 
 - 审计对象：`book/build/趣有度_项目书.md`（16 章、51 处数据占位符、16 张图）与 `book/chapters/**`、`book/data/**`、`docs/_work/business_model.*`、`docs/_work/data_evidence_register.md`
 - 审计日期：2026-10-18
-- 代码基线：`ed6b93c`（本轮门禁实际运行的代码提交）；手写内容提交 `f97f2e6`
+- 代码基线：`ed6b93c`（本轮门禁实际运行的代码提交）；本轮改动提交范围 `f97f2e6`—`0c15927`
 - 本轮门禁：`pnpm check` 通过；`pnpm presubmit` 16/16 通过；`pnpm doc:lint` 16 项自动检查通过
 - 结论口径：**"数据可验证性"门禁通过；"商业与市场可行性"不判定为通过**（市场规模、收入与单位经济缺证据，见第四节）
 
