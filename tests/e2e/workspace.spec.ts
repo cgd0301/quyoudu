@@ -1,6 +1,13 @@
 import { expect, test } from '@playwright/test'
 
 test('reviews a simulated plan and confirms a feasible candidate', async ({ page }) => {
+  // 控制台错误与未捕获异常都算失败：界面不得在运行时报错
+  const consoleErrors: string[] = []
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text())
+  })
+  page.on('pageerror', (error) => consoleErrors.push(error.message))
+
   await page.goto('/')
 
   await expect(page).toHaveTitle(/趣有度/)
@@ -29,4 +36,6 @@ test('reviews a simulated plan and confirms a feasible candidate', async ({ page
   await expect(page.getByRole('heading', { name: '计划管理' })).toBeVisible()
   await expect(page.getByRole('heading', { name: '购买行动清单' })).toBeVisible()
   await expect(page.getByText('待购买').first()).toBeVisible()
+
+  expect(consoleErrors, `控制台出现错误：\n${consoleErrors.join('\n')}`).toEqual([])
 })
