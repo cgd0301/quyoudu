@@ -679,7 +679,7 @@
 | 问卷统计（XLSX） | `python docs/_work/survey/analysis/import_xlsx.py --input <XLSX>`；`pnpm survey:report` | 30/30 干净；逐题 n/N 与分母一致；无 PII | 通过（`report.md`：30 条有效、10 题、0 缺失；清洗 2 处“无”选项冲突） |
 | 原始 XLSX | `.gitignore` 与 `git check-ignore` | 原始导出件不入库、历史无记录 | 通过（未跟踪；`git log --all -- "*调查*"` 无结果；忽略规则命中） |
 | 脱敏分析数据 | `docs/_work/survey/analysis/responses.csv` | 无邮箱/姓名/精确时间；可由脚本复算 | 通过（列与 schema 对齐；`pnpm survey:report` 可重跑） |
-| 门禁 | `pnpm presubmit` | 16 个步骤逐项核对退出码 | 通过（2026-10-18，代码提交 329df71；单元 1176／1177、向量 152／152、断言 1004／1004、追溯 116 通过／43 部分／0 未通过／22 待执行） |
+| 门禁 | `pnpm presubmit` | 16 个步骤逐项核对退出码 | 通过（2026-10-18/19，代码提交 52f88fe；单元 1178／1179、向量 152／152、断言 1004／1004、追溯 116 通过／43 部分／0 未通过／22 待执行） |
 
 ## 8. 维护规则
 

@@ -1,8 +1,8 @@
 # 最终提交审计报告
 
 - 审计对象：`book/build/趣有度_项目书.md`（16 章、51 处数据占位符、16 张图）与 `book/chapters/**`、`book/data/**`、`docs/_work/business_model.*`、`docs/_work/data_evidence_register.md`、`docs/_work/survey/**`
-- 审计日期：2026-10-18
-- 代码基线：`329df71`（本轮门禁实际运行的代码提交）
+- 审计日期：2026-10-19（数据采集 2026-10-18）
+- 代码基线：`52f88fe`（本轮门禁实际运行的代码提交）
 - 本轮门禁：`pnpm check` 通过；`pnpm presubmit` 16/16 通过（单元 1,178/1,179、向量 152/152、断言 1,004/1,004）；`pnpm doc:lint` 16 项通过
 - 结论口径：**客户问卷接入通过**（30 条有效提交，XLSX 可读；独立受访者数仍无法确认）；**客户需求部分支持**（资金问题普遍、比较/时间轴与隐私有支持；跨城观演 9/30、付款日错配 4/30 是少数）；**数据可验证性通过**；**商业与市场可行性不通过**（无具体价格、真实支付、留存或成本，市场规模仍不可验证）
 
@@ -382,7 +382,7 @@
 | `.gitignore` | 原始导出件文件名模式 | 防止原始答卷误入库 |
 | `book/chapters/01_problem.md`、`02_solution.md`、`09_business.md`、`11_validation.md`、`12_roadmap.md`、`00_overview.md` | 客户证据改为 n/N、假设状态、定位缩小、商业证据边界；不新增价格/收入/市场规模 | 项目书只写数据支持的结论 |
 | `docs/_work/data_evidence_register.md` | S01—S20；v4；索引与一致性表更新 | 样本内统计逐项可追溯 |
-| `book/data/**`、`book/chapters/91_appendix_test_report.md`、`docs/traceability.csv`、`book/figures/**` | 由 `pnpm presubmit` 重新生成（代码提交 `329df71`） | 生成物与代码一致 |
+| `book/data/**`、`book/chapters/91_appendix_test_report.md`、`docs/traceability.csv`、`book/figures/**` | 由 `pnpm presubmit` 重新生成（代码提交 `52f88fe`） | 生成物与代码一致 |
 
 **本轮从正式材料中删除的数字**（审计记录与复算证据保留）：27 组漏斗结果、27 组单位经济结果、0.0115—0.046 元单次成本区间、7.1 汇率、3000—12000／600—2400 token 区间、"低一到两个数量级"比较、"每 1 万元固定成本"换算、"27 组"表述。
 
