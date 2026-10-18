@@ -1333,8 +1333,8 @@
   "meta": {
     "case_data_version": "1",
     "case_id": "c01_base",
-    "commit": "9bb22b1",
-    "commit_time": "2026-10-18T14:29:05+08:00",
+    "commit": "f4b363f",
+    "commit_time": "2026-10-18T14:30:45+08:00",
     "config_version": "DEMO-CFG-1",
     "done_modules": [
       "M1",

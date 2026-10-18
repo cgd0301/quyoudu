@@ -18,8 +18,8 @@
     "status": "通过"
   },
   "meta": {
-    "commit": "9bb22b1",
-    "commit_time": "2026-10-18T14:29:05+08:00",
+    "commit": "f4b363f",
+    "commit_time": "2026-10-18T14:30:45+08:00",
     "config_version": "DEMO-CFG-1",
     "disclaimer": "技术测试结果，不代表需求成立或用户效果",
     "generated_by": "pnpm test:report",
@@ -204,7 +204,7 @@
     {
       "children": 8,
       "failed": 0,
-      "implemented": false,
+      "implemented": true,
       "partial": 0,
       "pass": 8,
       "pending": 0,
