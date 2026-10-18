@@ -96,7 +96,7 @@ describe('results 单行判定', () => {
       ['T001-03', { vector: 'pass' as const, unit: 'none' as const, e2e: 'none' as const, doc: 'none' as const, unitNames: [], vectorSkipped: 0, vectorFailed: 0, vectorPassed: 2 }],
     ])
     const index = indexOf({ ids, layers: new Map([['T001-03', new Set(['ENGINE', 'UI'])]]) })
-    expect(judgeSubRow('T001-03', index).detail).toContain('端到端未执行')
+    expect(judgeSubRow('T001-03', index).detail).toContain('端到端未覆盖该子用例')
   })
 
   test('results 缺口未处置时不能算通过，且没有任何执行记录时为待执行', () => {

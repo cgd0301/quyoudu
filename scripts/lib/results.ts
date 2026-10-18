@@ -302,7 +302,7 @@ export function judgeSubRow(id: string, index: EvidenceIndex): RowVerdict {
     else if (evidence.e2e === 'skipped') {
       executed.push('端到端')
       unexecuted.push('端到端被跳过')
-    } else unexecuted.push('端到端未执行（前端未交付）')
+    } else unexecuted.push('端到端未覆盖该子用例')
   }
   if (layers.has('DOC')) {
     if (evidence.doc === 'pass') executed.push('文档检查')

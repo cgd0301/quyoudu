@@ -120,6 +120,80 @@ function candidateReason(code: string): string {
   }
 }
 
+/** §11.4 的每日参考文案：AMOUNT 不是状态文案，有金额时不显示状态字样 */
+function dailyStatusText(display: ResultCore['dailyReference']['display']): string {
+  switch (display) {
+    case 'AMOUNT':
+      return ''
+    case 'NEED_CONFIRMED_PLAN':
+      return LABEL_TEXT.NEED_CONFIRMED_PLAN
+    case 'UNAVAILABLE':
+      return LABEL_TEXT.UNAVAILABLE
+    case 'NOT_RECOMMENDED':
+      return LABEL_TEXT.NOT_RECOMMENDED
+  }
+}
+
+/** 情景不可用原因的中文（§11.4、R018 异常、D87 的固定优先级只影响顺序，不改文案） */
+const SCENARIO_REASON_TEXT: Record<ResultCore['dailyReference']['unavailable'][number]['reason'], string> = {
+  HISTORY_INSUFFICIENT: '历史不足',
+  RECORDS_INCOMPLETE: '记录不完整',
+  CATEGORY_FLAGS_MISSING: '类别标注缺失',
+  COVERAGE_UNCLEAR: '覆盖关系不清',
+  CONFIG_VERSION_MISSING: '配置版本缺失',
+}
+
+/** 没有金额时给出真实原因，不统一写成“尚无已确认方案” */
+function dailyReasonText(reference: ResultCore['dailyReference']): string {
+  if (reference.amount != null) return LABEL_TEXT.DAILY_DISCLAIMER
+  if (reference.missingReasons.length > 0) return reference.missingReasons.map((reason) => LABEL_TEXT[reason]).join('、')
+  if (reference.unavailable.length > 0) {
+    return reference.unavailable.map((row) => `${row.scenario === 'RECENT_MONTH' ? '近月情景' : '仅已确认安排'}：${SCENARIO_REASON_TEXT[row.reason]}`).join('；')
+  }
+  if (reference.display === 'NEED_CONFIRMED_PLAN') return '还没有已确认方案'
+  if (reference.display === 'NOT_RECOMMENDED') return '待测额为 0 时已不通过：存在缺口、冲突或预算超限'
+  return '关键资金、付款、生活安排、用途或检查期间不足'
+}
+
+/** D13 的五档价格依据，逐档给文案；不把未知档位一律写成“模拟报价” */
+const PRICE_BASIS_TEXT: Record<string, string> = {
+  QUOTE: '有效期内报价',
+  FORECAST: '已确认的预测估算',
+  REFERENCE: '有效参考价，估算',
+  UNDATED_QUOTE: '有效期未知的报价',
+  PENDING: '待填，未估价',
+}
+
+function priceBasisText(basis: string): string {
+  return PRICE_BASIS_TEXT[basis] ?? basis
+}
+
+/** R017 第7条、D82：本版任务状态恒为待购买，界面按中文显示，不直接暴露枚举 */
+const TASK_STATE_TEXT: Record<ResultCore['actionList'][number]['taskState'], string> = {
+  PENDING_PURCHASE: '待购买',
+  PURCHASED: '已购买',
+  PAID: '已付款',
+}
+
+/** §9.4 的依赖种类 */
+const DEPENDENCY_TEXT: Record<ResultCore['dependencies'][number]['kind'], string> = {
+  EXPECTED_INCOME: '预计收入',
+  EXPECTED_RETURN: '预计返还',
+  CONFIRMED_FORECAST: '已确认的预测估算',
+  ESTIMATE: '估算费用',
+}
+
+/** 预测状态的中文（D80 的判定优先级决定只会出现其中一种） */
+const FORECAST_STATUS_TEXT: Record<NonNullable<ResultCore['forecasts']>[number]['status'], string> = {
+  AVAILABLE: '可用预测',
+  BACKTEST_INSUFFICIENT: '回测不足',
+  HISTORY_INSUFFICIENT: LABEL_TEXT.HISTORY_INSUFFICIENT,
+  NOT_COMPARABLE: '不可比',
+  FIT_FAILED: '拟合失败',
+  INVALID_RESULT: '结果无效',
+  CONFIG_NOT_FROZEN: LABEL_TEXT.FORECAST_CONFIG_NOT_FROZEN,
+}
+
 function eventName(kind: string): string {
   switch (kind) {
     case 'INCOME':
@@ -424,7 +498,8 @@ function App() {
   const cash = demoCase.snapshot.cash
   const lowestCandidate = rankedCandidates[0]
   const currentPage = pages.find((page) => page.id === activePage)!
-  const dailyLabel = LABEL_TEXT[result.dailyReference.display]
+  const dailyLabel = dailyStatusText(result.dailyReference.display)
+  const dailyReason = dailyReasonText(result.dailyReference)
   const disabledPlanControl = !isConfirmed || isCancelled
 
   return (
@@ -548,11 +623,11 @@ function App() {
                 <div className="metric-cell">
                   <span className="metric-label">今日额外支出参考</span>
                   <strong className="metric-status">{result.dailyReference.amount == null ? dailyLabel : moneyText(result.dailyReference.amount.value)}</strong>
-                  <small>{result.dailyReference.amount == null ? '尚无已确认方案' : LABEL_TEXT.DAILY_DISCLAIMER}</small>
+                  <small>{dailyReason}</small>
                 </div>
                 <div className="metric-cell metric-forecast">
                   <span className="metric-label">价格趋势</span>
-                  <strong>{LABEL_TEXT.HISTORY_INSUFFICIENT}</strong>
+                  <strong>{result.forecasts?.[0] ? FORECAST_STATUS_TEXT[result.forecasts[0].status] : '没有可比价格序列'}</strong>
                   <small>{result.forecasts?.[0]?.sampleCount ?? 0} 条模拟观测 · 不作确定报价</small>
                 </div>
               </div>
@@ -698,7 +773,7 @@ function App() {
                             {selectedCandidate.items.map((item) => (
                               <tr key={`${item.cost_item_id}-${item.channel}`}>
                                 <td>{categoryNames[item.cost_item_id] ?? item.cost_item_id}</td>
-                                <td><span>{item.spec}</span><small>{item.channel} · {item.price_basis === 'REFERENCE' ? '有效参考价，估算' : '模拟报价'}</small></td>
+                                <td><span>{item.spec}</span><small>{item.channel} · {priceBasisText(item.price_basis)}</small></td>
                                 <td>{shortDate(item.purchase_date)}</td>
                                 <td>{shortDate(item.payment_at)}</td>
                                 <td className="money-cell">{moneyText(item.price)}</td>
@@ -849,7 +924,7 @@ function App() {
                                 <td>{item.purchaseDate ? shortDate(item.purchaseDate) : '待确认'}<small>{item.channel}</small></td>
                                 <td>{item.offerIds.length ? item.offerIds.join(' · ') : '无'}</td>
                                 <td>{item.paymentAt ? shortDate(item.paymentAt) : '待确认'}<small>{item.amount == null ? '待核价' : moneyText(item.amount.value)}</small></td>
-                                <td><span className="task-state">{item.taskState}</span>{item.pendingChecks.length > 0 && <small>待核价条件 {item.pendingChecks.length} 项</small>}</td>
+                                <td><span className="task-state">{TASK_STATE_TEXT[item.taskState]}</span>{item.pendingChecks.length > 0 && <small>待核价条件 {item.pendingChecks.length} 项</small>}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -991,7 +1066,7 @@ function App() {
                     <div className="dependency-list">
                       {result.dependencies.map((dependency, index) => (
                         <div key={`${dependency.kind}-${index}`}>
-                          <span>{dependency.kind === 'INCOME' ? '预计收入' : dependency.kind}</span>
+                          <span>{DEPENDENCY_TEXT[dependency.kind]}</span>
                           <strong>{dependency.amount == null ? '条件未完整' : moneyText(dependency.amount.value)}</strong>
                           {dependency.at && <small>{shortDate(dependency.at)}</small>}
                         </div>

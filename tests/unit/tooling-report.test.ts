@@ -100,6 +100,17 @@ describe('test-report 测试报告', () => {
     expect(text).toContain('均已在对应文件中登记原因')
   })
 
+  test('端到端已通过时不列进“未完成的检查”，但仍写明 spec 数不等于 UI 子用例逐条覆盖', () => {
+    const passed = { ...base, e2e: { status: '通过', exit_code: 0, detail: '通过 1／失败 0／跳过 0；按 spec 计数，不等于 UI 层子用例逐条覆盖' } }
+    const text = renderAppendix(passed)
+    expect(text).toMatch(/端到端（Playwright） \| 通过/)
+    expect(text).toContain('端到端已运行并通过')
+    expect(text).toContain('UI 层子用例仍未逐条覆盖')
+    expect(text).not.toContain('未执行：前端未交付')
+    // 未运行时仍按“未完成”如实列出
+    expect(renderAppendix(base)).toContain('- 端到端：未执行：前端未交付')
+  })
+
   test('test-report 规则表按子行状态汇总，未全部通过时不标测试通过', () => {
     const text = renderAppendix(base)
     expect(text).toMatch(/\| R001 \| 7 \| 3 \| 2 \| 0 \| 2 \|/)

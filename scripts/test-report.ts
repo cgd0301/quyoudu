@@ -177,6 +177,15 @@ export type ReportInput = {
   commit: { hash: string; time: string }
 }
 
+/**
+ * 端到端还剩什么没做到：已通过时仍要说明“spec 数不等于 UI 子用例逐条覆盖”，
+ * 未运行时如实写未执行，不把已通过的端到端列成“未完成”。
+ */
+export function e2eRemaining(e2e: GateRun): string {
+  if (e2e.status === '通过') return `端到端已运行并通过（${e2e.detail}），UI 层子用例仍未逐条覆盖，界面不计为整体通过`
+  return `端到端：${e2e.detail}`
+}
+
 /** 附录正文：全部数字来自实跑结果，口径分行列出 */
 export function renderAppendix(input: ReportInput): string {
   const { commit } = input
@@ -236,7 +245,7 @@ export function renderAppendix(input: ReportInput): string {
   }
   lines.push('')
   lines.push('## A.4 未完成的检查及原因', '')
-  lines.push(`- 端到端：${input.e2e.detail}`)
+  lines.push(`- ${e2eRemaining(input.e2e)}`)
   if (input.docLint.status !== '通过') lines.push(`- 文档检查：${input.docLint.detail}`)
   lines.push(`- 案例与向量结构校验：${input.cases.status}`)
   lines.push(`- 单元测试跳过 ${input.unit.skipped} 条、向量断言跳过 ${input.vec.assertions_skipped} 条，均已在对应文件中登记原因。`)
@@ -340,8 +349,8 @@ export async function main(): Promise<number> {
       exit_code: index.playwright === null ? -1 : 0,
       detail:
         index.playwright === null
-          ? '未执行：tests/e2e 还没有业务用例，前端页面不在本轮交付范围；E2E 业务验收受前端未交付限制'
-          : `通过 ${index.playwright.passed}／失败 ${index.playwright.failed}／跳过 ${index.playwright.skipped}`,
+          ? '未执行：本轮没有运行 Playwright（pnpm test:e2e 需要已安装的浏览器）'
+          : `通过 ${index.playwright.passed}／失败 ${index.playwright.failed}／跳过 ${index.playwright.skipped}；按 spec 计数，不等于 UI 层子用例逐条覆盖`,
     },
     docLint: {
       status: docStatus,
@@ -393,7 +402,7 @@ export async function main(): Promise<number> {
       real_user_validation: '未开展',
     })),
     unfinished: [
-      `端到端：${input.e2e.detail}`,
+      e2eRemaining(input.e2e),
       ...(input.docLint.status === '通过' ? [] : [`文档检查：${input.docLint.detail}`]),
       `向量断言跳过 ${vec.assertions_skipped} 条；单元测试跳过 ${unit.skipped} 条`,
     ],

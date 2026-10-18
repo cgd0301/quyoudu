@@ -81,7 +81,7 @@ export async function main(): Promise<number> {
   console.log('')
   for (const result of results) console.log(`${result.status === '通过' ? '✓' : result.status === '跳过' ? '–' : '✗'} ${result.title}：${result.status}（${result.summary}）`)
   console.log('')
-  console.log('外部依赖：端到端业务验收与项目书截图依赖尚未交付的前端页面，本轮不计入通过；tests/e2e 没有业务用例时 playwright 会直接报错，不会被当成成功。')
+  console.log('外部依赖：端到端由 pnpm test:e2e 单独运行（Playwright 需要已安装的浏览器），本项目书截图尚未生成；presubmit 只汇总不依赖浏览器的检查，未运行的端到端不计入通过。')
   const dirty = dirtyFiles()
   if (dirty.length === 0) console.log('工作区：干净')
   else {
