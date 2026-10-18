@@ -1,66 +1,152 @@
 {
-  "version": "1",
+  "version": "2",
   "as_of": "2026-10-18",
-  "title": "趣有度：市场漏斗与单位经济模型的输入参数",
-  "discipline": "known 里的数字必须能在 docs/sources.md 的核验记录里找到；assumptions 里的一切都不是估计值，只是让公式可以演示的取值轴，项目书不得把任何一行写成市场规模或收入预测。",
+  "title": "趣有度：市场与商业数字的事实锚点、公式与缺口清单",
+  "discipline": "本文件只允许两类条目：known 是能在 docs/sources.md 核验记录里逐条查到原文的原始事实；open_items 是没有依据、禁止设数值的参数与待验证问题。不得在参数文件里预设取值轴或情景数值——条件式结果不是市场规模，示意价格与获客成本不是经营参数。",
   "sources": {
-    "E01": "中国演出行业协会《2025 年全国演出市场简报》，据《光明日报》2026-01-14 第09版报道（见 docs/sources.md 文末核验记录）",
-    "E02": "教育部《2024 年全国教育事业发展统计公报》（2025-06-11 发布）",
-    "E04": "DeepSeek API 官方定价页 docs.deepseek.com 定价（2026-10-18 访问）"
+    "E01": "中国演出行业协会《2025 年全国演出市场简报》，据《光明日报》2026-01-14 第09版报道（见 docs/sources.md 文末核验记录 E01）",
+    "E02": "教育部《2024 年全国教育事业发展统计公报》（2025-06-11 发布，见 docs/sources.md E02）",
+    "E03": "国家统计局《第七次全国人口普查公报（第五号）》（2021-05-11 发布，见 docs/sources.md E03）",
+    "E04": "DeepSeek API 官方定价页 Models & Pricing（2026-10-18 访问，见 docs/sources.md E04）"
   },
   "known": {
-    "large_event_attendance_2025_wan": { "value": 4338.58, "unit": "万人次", "source": "E01", "note": "5000 人以上大型营业性演出观众人数" },
-    "large_event_box_office_2025_yi": { "value": 324.48, "unit": "亿元", "source": "E01", "note": "5000 人以上大型营业性演出票房收入" },
-    "large_event_consumption_multiplier": { "value": 6.85, "unit": "倍", "source": "E01", "note": "大型演出对其他消费的平均带动系数 1:6.85" },
-    "he_students_2024_wan": { "value": 4846.0, "unit": "万人", "source": "E02", "note": "各种形式的高等教育在学总规模" },
-    "llm_input_usd_per_mtok_peak": { "value": 0.3, "unit": "USD/百万 token", "source": "E04", "note": "deepseek-flash，输入（缓存未命中），高峰价" },
-    "llm_output_usd_per_mtok_peak": { "value": 1.2, "unit": "USD/百万 token", "source": "E04", "note": "deepseek-flash，输出，高峰价" }
+    "large_event_event_count_2025": {
+      "value": 3000,
+      "display": "3000",
+      "unit": "场",
+      "source": "E01",
+      "note": "2025 年全国 5000 人以上大型营业性演出的场次；原文写作 3000 场（同比增长 12.70%）"
+    },
+    "large_event_box_office_2025_yi": {
+      "value": 324.48,
+      "display": "324.48",
+      "unit": "亿元",
+      "source": "E01",
+      "note": "同口径票房收入（同比增长 9.49%）；原文单位为亿元，保留两位小数"
+    },
+    "large_event_attendance_2025_wan": {
+      "value": 4338.58,
+      "display": "4338.58",
+      "unit": "万人次",
+      "source": "E01",
+      "note": "同口径观众人数（同比增长 18.81%）；这是人次，不是去重后的独立人数"
+    },
+    "large_event_consumption_multiplier": {
+      "value": 6.85,
+      "display": "6.85",
+      "unit": "倍",
+      "source": "E01",
+      "note": "大型演出对其他消费的平均带动系数 1:6.85，为协会采集与调研测算口径，不是因果系数"
+    },
+    "he_students_2024_wan": {
+      "value": 4846.0,
+      "display": "4846.00",
+      "unit": "万人",
+      "source": "E02",
+      "note": "各种形式的高等教育在学总规模（含研究生、普通与职业本专科、成人、网络、自考等），不等于 18—30 岁青年总量"
+    },
+    "working_age_15_59_population": {
+      "value": 894376020,
+      "display": "894376020",
+      "unit": "人",
+      "source": "E03",
+      "note": "第七次全国人口普查 15—59 岁人口（占 63.35%）；公报只给到 0—14、15—59、60 及以上三档，本稿不用它推算 18—30 岁人数"
+    },
+    "llm_input_usd_per_mtok_peak": {
+      "value": 0.3,
+      "display": "0.30",
+      "unit": "USD/百万 token",
+      "source": "E04",
+      "note": "deepseek-flash 输入（缓存未命中）高峰价；非高峰为半价 0.15"
+    },
+    "llm_output_usd_per_mtok_peak": {
+      "value": 1.2,
+      "display": "1.20",
+      "unit": "USD/百万 token",
+      "source": "E04",
+      "note": "deepseek-flash 输出高峰价；非高峰为半价 0.60"
+    }
   },
-  "assumptions": {
+  "formulas": {
+    "per_attendance_ticket_cny": "人均票房（元/人次）= 票房收入（亿元）× 10^8 ÷ 观众人数（万人次）× 10^4，四舍五入到元",
+    "per_attendance_other_cny": "人均票房外消费（元/人次）= 未取整的人均票房 × 带动系数，四舍五入到元",
+    "market_funnel": "可服务人次（人次/年）= 大型演出观众人次 × 18—30 岁占比 × 跨城观演比例 × 付款分散比例；三个比例均未验证，结果不是市场规模，单位是人次而不是独立用户数",
+    "unit_cost_cny": "单次模型调用成本（元）=（输入 token ÷ 10^6 × 0.30 + 输出 token ÷ 10^6 × 1.20）× 人民币汇率（元/美元）；高峰价，非高峰减半",
+    "contribution_cny_per_user_year": "每用户年度贡献额（元）= 单次价格 × 年使用次数 − 单次模型成本 × 年使用次数 − 年度获客成本；不含固定成本、支付通道费、退款与客服成本，因此不能称为毛利或净利润",
+    "break_even_users": "摊平固定成本所需付费用户 = 向上取整（年度固定成本 ÷ 每用户年度贡献额），仅当贡献额大于 0 时有意义"
+  },
+  "open_items": {
     "age_share": {
-      "label": "观演观众中 18—30 岁占比",
-      "axis": [0.2, 0.35, 0.5],
-      "evidence": "未验证：公开简报未给出该项年龄分布，需问卷或官方分年龄数据"
+      "label": "大型演出观众中 18—30 岁占比",
+      "status": "未验证",
+      "why": "E01 简报只给场次、票房与观众人次，未给观众年龄结构；任何百分比都是自设值",
+      "to_verify_by": "含分年龄结构的官方统计（如《中国人口普查年鉴》相关表）或本项目问卷 Q1/Q14 的分层结果"
     },
     "cross_city_share": {
-      "label": "其中跨城观演的比例",
-      "axis": [0.1, 0.2, 0.3],
-      "evidence": "未验证：单个项目报道出现过“外地观众接近 60%”，不能当作全市场比例"
+      "label": "大型演出观众中跨城观演的比例",
+      "status": "未验证",
+      "why": "公开材料只有单个项目的“外地观众接近 60%”（E01 附带案例），不能外推为全市场比例",
+      "to_verify_by": "含客源地信息的官方或平台级统计；单个项目的比例只能作案例描述"
     },
     "multi_payment_share": {
-      "label": "其中付款分散在多周、需要时点判断的比例",
-      "axis": [0.2, 0.4, 0.6],
-      "evidence": "未验证：本项目的三条痛点假设均待问卷检验"
+      "label": "跨城观演中付款分散在多周、需要时点判断的比例",
+      "status": "未验证",
+      "why": "没有公开统计口径；本项目的三条痛点假设本身还有待问卷检验",
+      "to_verify_by": "本项目问卷 Q5—Q7 的频率分布，且需说明抽样与回收口径"
+    },
+    "unique_attendee_ratio": {
+      "label": "观众人次去重后的独立人数比例",
+      "status": "未验证",
+      "why": "E01 只给“人次”，一人一年可能多场；没有去重数据，也没有可外推的去重方法",
+      "to_verify_by": "带用户标识的去重统计，或明确的去重抽样设计；在此之前不得把人次当人数、更不得当付费用户数"
     },
     "llm_input_tokens_per_session": {
       "label": "一次完整规划会话的输入 token 数",
-      "axis": [3000, 6000, 12000],
-      "evidence": "未实测：离线回放模式下不调用模型，为 0；实时模式下需实测"
+      "status": "未实测",
+      "why": "离线回放不调用模型，仓库内没有任何真实会话的 token 计量；3000—12000 一类的区间只是自设值",
+      "to_verify_by": "用真实会话记录 token 用量（含系统提示词与工具结果），按同一口径统计中位数与分布"
     },
     "llm_output_tokens_per_session": {
       "label": "一次完整规划会话的输出 token 数",
-      "axis": [600, 1200, 2400],
-      "evidence": "未实测：同上"
+      "status": "未实测",
+      "why": "同上；没有实测就不能给出单次成本，也不能与价格或获客成本比较",
+      "to_verify_by": "同 llm_input_tokens_per_session，与输入 token 同批采集"
     },
     "usd_cny": {
       "label": "美元兑人民币汇率",
-      "axis": [7.1],
-      "evidence": "未核验：应按中国外汇交易中心当期中间价替换"
-    },
-    "acquisition_cny_per_user": {
-      "label": "单个付费用户的获客成本",
-      "axis": [5, 20, 50],
-      "evidence": "未实测：无投放数据"
+      "status": "未核验",
+      "why": "本稿不做人民币换算，因此不设汇率；旧稿的 7.1 是未核验假设",
+      "to_verify_by": "中国外汇交易中心公布的当期人民币汇率中间价，记录日期与币种"
     },
     "price_cny_per_plan": {
       "label": "单次规划服务的价格",
-      "axis": [1, 5, 10],
-      "evidence": "未验证：付费意愿只能来自问卷 Q12，且自报不等于购买"
+      "status": "未验证",
+      "why": "没有报价、没有成交记录；1/5/10 元一类的档位只是自设值，自报付费意愿也不等于购买",
+      "to_verify_by": "本项目问卷 Q12 的自报区间（仅作探索），以及小范围试点中的真实成交价与支付记录"
+    },
+    "acquisition_cny_per_user": {
+      "label": "单个付费用户的获客成本",
+      "status": "未实测",
+      "why": "没有任何投放、渠道或校园推广的真实花费数据；5/20/50 元一类的取值只是自设值",
+      "to_verify_by": "试点期的渠道花费与新增付费用户数，按渠道分别记录并说明归因口径"
     },
     "annual_plans_per_user": {
       "label": "单个用户每年使用次数",
-      "axis": [1, 2, 3],
-      "evidence": "未验证：取决于观演频次，需问卷 Q1"
+      "status": "未验证",
+      "why": "取决于观演频次与复购，两者都没有数据；1/2/3 次一类的取值只是自设值",
+      "to_verify_by": "本项目问卷 Q1、Q4 的频次分布，以及试点期的实际使用记录"
+    },
+    "annual_fixed_cost": {
+      "label": "年度固定成本（开发、运维、客服、合规）",
+      "status": "未实测",
+      "why": "没有开发工时、云资源账单、人力与合规成本记录；“每 1 万元固定成本”只是换算单位，不是成本估计",
+      "to_verify_by": "真实资源账单与人力投入记录；在此之前不给盈亏平衡点与投资回报"
+    },
+    "competitor_price": {
+      "label": "竞品收费水平",
+      "status": "未核实",
+      "why": "只核对了竞品官方页面的功能描述（E05、E06），没有其付费方案与价格页面",
+      "to_verify_by": "竞品官方定价页或应用商店内购价格，记录访问日期与币种"
     }
   }
 }

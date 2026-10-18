@@ -34,7 +34,8 @@ pnpm presubmit                     # 完整门禁：按依赖顺序跑完除 E2E
 | 追溯表（181 行） | `docs/traceability.csv` | `pnpm trace:update` | 由真实证据生成 |
 | 参考实现对拍报告 | `docs/_work/diff_report.md` | `pnpm diff:oracle` | 每轮实跑，含来源与版本 |
 | 问卷（题面／字段／分析） | `docs/_work/survey/` | [README](docs/_work/survey/README.md)·[题面](docs/_work/survey/questionnaire.md)·[字段](docs/_work/survey/schema.json)·[分析状态](docs/_work/survey/report.md) | **问卷未发放，无任何统计结果** |
-| 市场漏斗与单位经济模型 | `docs/_work/business_model.md` | `pnpm model:economics` | 条件式模型（非预测） |
+| 市场与商业数字：事实锚点、公式与缺口 | `docs/_work/business_model.md` | `pnpm model:economics` | 只有已核验事实与符号公式；无市场规模、无情景数值 |
+| 数据溯源台账（逐项） | `docs/_work/data_evidence_register.md` | — | 每个数字的来源、公式、适用边界与放行状态 |
 | 外部公开资料核验记录 | `docs/sources.md` 文末 | [E01—E06](docs/sources.md) | 已核验 6 条 + 4 条待核验 |
 | 规格缺口与裁决记录 | `docs/_work/spec_gaps.md`、`spec_gaps_review.md` | — | AI 暂定项 0 条 |
 | PPT | **不存在** | — | 官方提交要求见下方「关于 PPT」 |
@@ -56,7 +57,7 @@ pnpm presubmit                     # 完整门禁：按依赖顺序跑完除 E2E
 | `pnpm golden:check` | 校验 golden 冻结完整性 |
 | `pnpm spec:lint` | 规格缺口状态与追溯表编号一致性 |
 | `pnpm export:results` | 用正式引擎导出案例与流程结果到 `book/data` |
-| `pnpm model:economics` | 复算市场漏斗与单位经济，写 `book/data/model` 与 `docs/_work/business_model.md` |
+| `pnpm model:economics` | 由公开事实复算人均口径、写出公式与缺口清单，写 `book/data/model` 与 `docs/_work/business_model.md` |
 | `pnpm survey:report` | 问卷统计；无原始答卷时只写"未运行（缺少输入）" |
 | `pnpm test:report` | 汇总真实运行结果，写附录A 与 `book/data/status.json` |
 | `pnpm trace:update` | 按真实证据更新追溯表状态列 |
@@ -100,6 +101,7 @@ pnpm book:build         # 8 成稿
 
 **未完成（不计为通过）**
 
+- 商业与市场：只有人均支出量级可由公开事实复算；市场规模、收入、单位经济与盈亏平衡因缺证据不给出定量结论（见 `docs/_work/final_submission_audit.md` 与数据台账）。
 - UI 层 21 条子用例尚未逐条覆盖，现有 1 条 E2E spec 只覆盖主流程。
 - 问卷未发放：目标 100 份有效、最低 30 份，回收后才可替换正文的"待验证假设"。
 - 参考实现的输入指纹在 `docs/rules.md` 变更后未重录（只允许人工运行 `oracle:import`），`diff:oracle` 首行会告警，但用例与向量指纹未变、对拍结果仍有效。

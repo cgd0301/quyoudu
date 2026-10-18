@@ -118,7 +118,7 @@ export function buildBook(): BuildResult {
     `成员：${meta.members.map((member) => `${member.name}（${member.role}）`).join('、')}`,
     '',
     '> 数据性质：本稿所有案例、报价、优惠、历史价格与消费记录均为**模拟数据**，用于规则与技术验证，不代表真实市场价格或真实用户反馈。',
-    '> 界面截图不在本轮交付范围内，正文未使用任何前端截图或占位图片。',
+    '> 界面截图单独交付（`submission/screenshots/`），正文未插入任何前端截图或占位图片。',
     '',
     '## 目录',
     '',

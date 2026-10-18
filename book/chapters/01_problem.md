@@ -14,19 +14,23 @@
 
 ## 公开市场锚点：这笔支出有多大
 
-可以核验的公开数据只有一层：2025 年全国 5000 人以上大型营业性演出 3000 场，票房 324.48 亿元，观众 4338.58 万人次[^E01]。
+可以核验的公开数据只有一层：2025 年全国 5000 人以上大型营业性演出 <!-- data: model/business_model.json#display.large_event_event_count_2025 --> 场，票房 <!-- data: model/business_model.json#display.large_event_box_office_2025_yi --> 亿元，观众 <!-- data: model/business_model.json#display.large_event_attendance_2025_wan --> 万人次[^E01]。
 
-把两个数字相除，每名观众平均贡献票房 <!-- data: model/business_model.json#display.ticket_per_attendance_cny --> 元；按同一简报的带动系数 1:6.85，票房外消费再摊 <!-- data: model/business_model.json#display.other_per_attendance_cny --> 元，合计 <!-- data: model/business_model.json#display.total_per_attendance_cny --> 元[^E01]。
+把票房与观众人数相除，每名观众平均贡献票房 <!-- data: model/business_model.json#display.ticket_per_attendance_cny --> 元/人次；按同一简报的带动系数 1:<!-- data: model/business_model.json#display.large_event_consumption_multiplier -->，票房外消费再摊 <!-- data: model/business_model.json#display.other_per_attendance_cny --> 元/人次，合计 <!-- data: model/business_model.json#display.total_per_attendance_cny --> 元/人次[^E01]。这三个派生值的单位换算、取整规则与复算过程见 `docs/_work/business_model.md`，逐项来源见 `docs/_work/data_evidence_register.md`。
 
-该数字是**全市场平均**，包含大量非跨城、非本目标人群的观演。它只能说明"跨城观演是一笔数千元量级的支出"，不能当作本产品的客单价，也不能当作市场规模。
+该数字是**全市场平均**，包含大量非跨城、非本目标人群的观演；分母是**人次**，一人一年可能看多场。它只能说明"跨城观演是一笔数千元量级的支出"，不能当作本产品的客单价、人均年度支出、独立用户数或市场规模。
 
-在校学生是规模明确、可触达的子群：2024 年各种形式的高等教育在学总规模 4846.00 万人[^E02]。但 18—30 岁青年不只有在校生；非在校部分的人数本稿不推算，因为公开公报只给到 15—59 岁的宽口径[^E03]。
+在校学生是规模明确、可触达的子群：2024 年各种形式的高等教育在学总规模 <!-- data: model/business_model.json#display.he_students_2024_wan --> 万人[^E02]。但 18—30 岁青年不只有在校生；非在校部分的人数本稿不推算，因为公开公报只给到 15—59 岁的宽口径[^E03]。
 
 ## 市场漏斗：用变量表达，不给点估计
 
-可服务人群写成一条乘法式：观众人次 × 18—30 岁占比 × 跨城观演比例 × 付款分散比例。后三个比例**都没有证据**：官方简报未给观众年龄结构[^X01]，全市场跨城观演率也没有公开统计[^X02]。
+可服务人次写成一条乘法式：
 
-因此本稿不写"目标市场是 N 万人"。`docs/_work/business_model.md` 给出三个比例各取三档时的 27 组条件式结果，跨一个数量级以上；它证明的是"结论对参数高度敏感、必须靠问卷收敛"，不是"市场有多大"。
+> 可服务人次（人次/年）= 大型演出观众人次 × 18—30 岁占比 × 跨城观演比例 × 付款分散比例
+
+后三个比例**都没有证据**：官方简报未给观众年龄结构[^X01]，全市场跨城观演率也没有公开统计[^X02]，付款分散比例同样只能由本项目的问卷回答。因此本稿不写"目标市场是 N 万人"，也不预设三个比例的取值区间——没有依据的区间会把条件式结果伪装成估计。
+
+**目前无法给出可验证的市场规模。** 这条公式能说明的只有两件事：三个比例必须靠问卷或官方分年龄数据补齐；结果单位是**人次/年**，不是人数。一人一年可能看多场，即使将来三个比例都有数据，也要另做去重才能谈独立用户规模，在此之前不得换算成付费用户数。
 
 ## 客户证据的状态：只有问卷
 
