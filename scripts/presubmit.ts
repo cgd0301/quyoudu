@@ -4,7 +4,7 @@
  * 提交前门禁：按依赖顺序执行本轮应通过的全部检查，逐步核对退出码，最后给出一张汇总表。
  * - 上游失败时，依赖它的步骤标为“跳过（上游失败）”，绝不报通过；
  * - 本脚本只调用仓库自己的工具，不联网、不读 .env、不运行仅限人工的脚本（golden:write、golden:freeze、oracle:export、oracle:import）；
- * - 端到端与前端截图不在本轮交付范围，单独列为外部依赖，不计入通过。
+ * - 端到端与前端截图单独交付：端到端不进本门禁，截图已由 pnpm shots 生成，均不计入通过。
  */
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -82,7 +82,7 @@ export async function main(): Promise<number> {
   console.log('')
   for (const result of results) console.log(`${result.status === '通过' ? '✓' : result.status === '跳过' ? '–' : '✗'} ${result.title}：${result.status}（${result.summary}）`)
   console.log('')
-  console.log('外部依赖：端到端由 pnpm test:e2e 单独运行（Playwright 需要已安装的浏览器），本项目书截图尚未生成；presubmit 只汇总不依赖浏览器的检查，未运行的端到端不计入通过。')
+  console.log('外部依赖：端到端由 pnpm test:e2e 单独运行（Playwright 需要已安装的浏览器）；界面截图已由 pnpm shots 生成到 submission/screenshots，未插入正文；presubmit 只汇总不依赖浏览器的检查，未运行的端到端不计入通过。')
   const dirty = dirtyFiles()
   if (dirty.length === 0) console.log('工作区：干净')
   else {
