@@ -27,4 +27,4 @@
 
 ## 复现方式
 
-全部结果可由仓库内的受控输入重建：`pnpm test:report` 生成附录A 与计数，`pnpm export:results` 生成 `book/data`，`pnpm figures` 生成图表，`pnpm doc:lint`、`pnpm count:chars`、`pnpm book:build` 依次检查并合成成稿。步骤与环境要求见附录B。
+全部结果可由仓库内的受控输入重建：`pnpm test:report` 生成附录A 与计数，`pnpm export:results` 生成 `book/data`，`pnpm model:economics` 复算市场与单位经济模型，`pnpm figures` 生成图表，`pnpm doc:lint`、`pnpm count:chars`、`pnpm book:build` 依次检查并合成成稿。步骤与环境要求见附录B。

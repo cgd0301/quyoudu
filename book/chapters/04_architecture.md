@@ -19,7 +19,7 @@
 
 ![数据流与依赖](../figures/fig_data_flow.svg)
 
-从受控输入到成稿的每一步都由脚本串联，可整体重跑：向量与案例 → golden 冻结与对拍 → `book/data` → 图表 → 正文 → `doc:lint` → `count:chars` → `book:build`。任一环节失败即以非零退出码结束，不覆盖上一份成稿。
+从受控输入到成稿的每一步都由脚本串联，可整体重跑：向量与案例 → golden 冻结与对拍 → `book/data` → 市场与单位经济模型 → 图表 → 正文 → `doc:lint` → `count:chars` → `book:build`。任一环节失败即以非零退出码结束，不覆盖上一份成稿。
 
 ## 本轮没有做的部分
 
