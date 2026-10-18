@@ -606,7 +606,7 @@
 | 问卷接收 | `pnpm survey:intake --input <导出件>` | 编码、字段、去重、时长、PII | 阻塞（`encoding_loss`、`schema_mismatch`、`schema_no_overlap`；见 `docs/_work/survey/intake/report.md`） |
 | 问卷统计 | `pnpm survey:report` | 无可分析输入时只写“未运行/阻塞”，不生成回答分布 | 阻塞（`docs/_work/survey/report.md` 引用 intake 文件，不含任何回答统计） |
 | 原始答卷 | `.gitignore` 与 `git check-ignore` | 原始导出件不入库、历史无记录 | 通过（未跟踪；`git log --all -- "*调查*"` 无结果；忽略规则命中） |
-| 门禁 | `pnpm presubmit` | 16 个步骤逐项核对退出码 | 通过（2026-10-18，代码提交：本轮待提交；单元与向量结果见附录A） |
+| 门禁 | `pnpm presubmit` | 16 个步骤逐项核对退出码 | 通过（2026-10-18，代码提交 329df71；单元 1176／1177、向量 152／152、断言 1004／1004、追溯 116 通过／43 部分／0 未通过／22 待执行） |
 
 ## 8. 维护规则
 

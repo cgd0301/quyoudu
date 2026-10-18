@@ -18,8 +18,8 @@
     "status": "通过"
   },
   "meta": {
-    "commit": "ed6b93c",
-    "commit_time": "2026-10-18T15:57:14+08:00",
+    "commit": "329df71",
+    "commit_time": "2026-10-18T18:51:48+08:00",
     "config_version": "DEMO-CFG-1",
     "disclaimer": "技术测试结果，不代表需求成立或用户效果",
     "generated_by": "pnpm test:report",
@@ -65,7 +65,7 @@
       "partial": 1,
       "pass": 4,
       "pending": 2,
-      "real_user_validation": "未开展",
+      "real_user_validation": "未取得可用结果",
       "rule": "R001",
       "tested": false
     },
@@ -76,7 +76,7 @@
       "partial": 3,
       "pass": 4,
       "pending": 0,
-      "real_user_validation": "未开展",
+      "real_user_validation": "未取得可用结果",
       "rule": "R002",
       "tested": false
     },
@@ -87,7 +87,7 @@
       "partial": 0,
       "pass": 8,
       "pending": 0,
-      "real_user_validation": "未开展",
+      "real_user_validation": "未取得可用结果",
       "rule": "R003",
       "tested": true
     },
@@ -98,7 +98,7 @@
       "partial": 0,
       "pass": 7,
       "pending": 0,
-      "real_user_validation": "未开展",
+      "real_user_validation": "未取得可用结果",
       "rule": "R004",
       "tested": true
     },
@@ -109,7 +109,7 @@
       "partial": 1,
       "pass": 5,
       "pending": 0,
-      "real_user_validation": "未开展",
+      "real_user_validation": "未取得可用结果",
       "rule": "R005",
       "tested": false
     },
@@ -120,7 +120,7 @@
       "partial": 0,
       "pass": 5,
       "pending": 1,
-      "real_user_validation": "未开展",
+      "real_user_validation": "未取得可用结果",
       "rule": "R006",
       "tested": false
     },
@@ -131,7 +131,7 @@
       "partial": 0,
       "pass": 4,
       "pending": 2,
-      "real_user_validation": "未开展",
+      "real_user_validation": "未取得可用结果",
       "rule": "R007",
       "tested": false
     },
@@ -142,7 +142,7 @@
       "partial": 0,
       "pass": 7,
       "pending": 0,
-      "real_user_validation": "未开展",
+      "real_user_validation": "未取得可用结果",
       "rule": "R008",
       "tested": true
     },
@@ -153,7 +153,7 @@
       "partial": 2,
       "pass": 2,
       "pending": 3,
-      "real_user_validation": "未开展",
+      "real_user_validation": "未取得可用结果",
       "rule": "R009",
       "tested": false
     },
@@ -164,7 +164,7 @@
       "partial": 1,
       "pass": 8,
       "pending": 0,
-      "real_user_validation": "未开展",
+      "real_user_validation": "未取得可用结果",
       "rule": "R010",
       "tested": false
     },
@@ -175,7 +175,7 @@
       "partial": 2,
       "pass": 2,
       "pending": 1,
-      "real_user_validation": "未开展",
+      "real_user_validation": "未取得可用结果",
       "rule": "R011",
       "tested": false
     },
@@ -186,7 +186,7 @@
       "partial": 1,
       "pass": 5,
       "pending": 0,
-      "real_user_validation": "未开展",
+      "real_user_validation": "未取得可用结果",
       "rule": "R012",
       "tested": false
     },
@@ -197,7 +197,7 @@
       "partial": 3,
       "pass": 5,
       "pending": 0,
-      "real_user_validation": "未开展",
+      "real_user_validation": "未取得可用结果",
       "rule": "R013",
       "tested": false
     },
@@ -208,7 +208,7 @@
       "partial": 0,
       "pass": 8,
       "pending": 0,
-      "real_user_validation": "未开展",
+      "real_user_validation": "未取得可用结果",
       "rule": "R014",
       "tested": true
     },
@@ -219,7 +219,7 @@
       "partial": 0,
       "pass": 8,
       "pending": 1,
-      "real_user_validation": "未开展",
+      "real_user_validation": "未取得可用结果",
       "rule": "R015",
       "tested": false
     },
@@ -230,7 +230,7 @@
       "partial": 1,
       "pass": 8,
       "pending": 0,
-      "real_user_validation": "未开展",
+      "real_user_validation": "未取得可用结果",
       "rule": "R016",
       "tested": false
     },
@@ -241,7 +241,7 @@
       "partial": 4,
       "pass": 7,
       "pending": 1,
-      "real_user_validation": "未开展",
+      "real_user_validation": "未取得可用结果",
       "rule": "R017",
       "tested": false
     },
@@ -252,7 +252,7 @@
       "partial": 4,
       "pass": 4,
       "pending": 4,
-      "real_user_validation": "未开展",
+      "real_user_validation": "未取得可用结果",
       "rule": "R018",
       "tested": false
     },
@@ -263,7 +263,7 @@
       "partial": 0,
       "pass": 10,
       "pending": 0,
-      "real_user_validation": "未开展",
+      "real_user_validation": "未取得可用结果",
       "rule": "R019",
       "tested": true
     },
@@ -274,7 +274,7 @@
       "partial": 5,
       "pass": 0,
       "pending": 7,
-      "real_user_validation": "未开展",
+      "real_user_validation": "未取得可用结果",
       "rule": "R020",
       "tested": false
     }
@@ -297,11 +297,11 @@
   ],
   "unit": {
     "failed": 0,
-    "files": 30,
-    "passed": 1165,
+    "files": 31,
+    "passed": 1176,
     "skipped": 1,
-    "suites": 152,
-    "tests": 1166
+    "suites": 154,
+    "tests": 1177
   },
   "vectors": {
     "assertions_passed": 1004,

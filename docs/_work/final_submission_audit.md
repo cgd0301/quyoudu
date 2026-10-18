@@ -2,9 +2,9 @@
 
 - 审计对象：`book/build/趣有度_项目书.md`（16 章、51 处数据占位符、16 张图）与 `book/chapters/**`、`book/data/**`、`docs/_work/business_model.*`、`docs/_work/data_evidence_register.md`、`docs/_work/survey/**`
 - 审计日期：2026-10-18
-- 代码基线：上一轮 `c1ba0da`；本轮代码提交与门禁结果见附录A（本轮 presubmit 实跑后回填）
-- 本轮门禁：`pnpm check` 通过（单元 1,176/1,177）；`pnpm doc:lint` 16 项通过；`pnpm presubmit` 结果见附录A
-- 结论口径：**客户问卷接入阻塞**（30 条提交存在，但导出件中文题干与选项丢失、字段与 schema 零重叠，未生成任何客户统计）；**数据可验证性通过**；**商业与市场可行性不判定为通过**（市场规模、收入与单位经济缺证据，见第五节）
+- 代码基线：`329df71`（本轮门禁实际运行的代码提交）
+- 本轮门禁：`pnpm check` 通过；`pnpm presubmit` 16/16 通过（单元 1,176/1,177、向量 152/152、断言 1,004/1,004）；`pnpm doc:lint` 16 项通过
+- 结论口径：**客户问卷接入阻塞**（30 条提交存在，但导出件中文题干与选项丢失、字段与 schema 零重叠，未生成任何客户统计）；**数据可验证性通过**；**商业与市场可行性不判定为通过**（市场规模、收入与单位经济缺证据，见 1.5—1.7 与第五节）
 
 ---
 
@@ -311,7 +311,7 @@
 | `docs/_work/survey/README.md`、`questionnaire.md`、`schema.json`、`analysis_template.md`、`report.md` | 状态改为“已收到 30 条提交、导出件不可读、阻塞”；补 intake 步骤 | 文档状态与实际一致 |
 | `.gitignore` | 增加原始导出件文件名模式 | 防止原始答卷误入库 |
 | `book/chapters/**`、`README.md`、`docs/_work/data_evidence_register.md` | 问卷状态与 S01—S08 台账更新 | 项目书只写状态，不写客户结论 |
-| `book/data/**`、`book/chapters/91_appendix_test_report.md`、`docs/traceability.csv`、`book/figures/**` | 由 `pnpm presubmit` 重新生成（代码提交 `ed6b93c`） | 生成物与代码一致 |
+| `book/data/**`、`book/chapters/91_appendix_test_report.md`、`docs/traceability.csv`、`book/figures/**` | 由 `pnpm presubmit` 重新生成（代码提交 `329df71`） | 生成物与代码一致 |
 
 **本轮从正式材料中删除的数字**（审计记录与复算证据保留）：27 组漏斗结果、27 组单位经济结果、0.0115—0.046 元单次成本区间、7.1 汇率、3000—12000／600—2400 token 区间、"低一到两个数量级"比较、"每 1 万元固定成本"换算、"27 组"表述。
 
