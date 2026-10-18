@@ -187,7 +187,41 @@ def main() -> None:
     lines.append("- 处置：该比较句删除；单次成本与获客成本均改为符号公式，等实测后再算。")
     lines.append("")
 
-    lines.append("## 五、复算结论")
+    lines.append("## 五、变化方向与边界检查")
+    lines.append("")
+    per_double_attendance = (BOX_OFFICE_YI * Decimal("1e8")) / (ATTENDANCE_WAN * 2 * Decimal("1e4"))
+    other_double_multiplier = a["per_attendance_exact"] * (MULTIPLIER * 2)
+    cost_base = unit_cost_usd(6000, 1200, True)
+    cost_double = unit_cost_usd(12000, 2400, True)
+    lines.append("| 检查 | 输入变化 | 输出 | 是否符合公式 |")
+    lines.append("| --- | --- | --- | --- |")
+    lines.append(
+        "| 观众人次翻倍 | 票房 324.48 亿元不变，人次 4338.58→8677.16 万人次 | 人均票房 "
+        + str(half_up(per_double_attendance, 2))
+        + " 元/人次（取整后 "
+        + str(half_up(per_double_attendance, 0))
+        + "） | 是：与人次成反比 |"
+    )
+    lines.append(
+        "| 带动系数翻倍 | 6.85→13.70，人均票房按未取整的 747.894472 元 | 人均票房外消费 "
+        + str(half_up(other_double_multiplier, 2))
+        + " 元/人次 | 是：与系数成正比 |"
+    )
+    lines.append(
+        "| token 翻倍 | 输入 6000→12000、输出 1200→2400 | 成本 "
+        + str(normalize(cost_base))
+        + "→"
+        + str(normalize(cost_double))
+        + " 美元 | 是：线性，恰为 2 倍 |"
+    )
+    lines.append("| 观众人次为 0 | 分母为 0 | 生产代码抛「观众人次必须为正」，拒绝计算 | 是：不返回 0 或无穷大 |")
+    lines.append("| 来源编号不存在 | source 改成 E99 | 生产代码抛「引用了不存在的来源」，拒绝生成 | 是：缺来源不猜 |")
+    lines.append("| 事实取值非正 | value ≤ 0 | 参数解析抛「必须是正数」，拒绝生成 | 是：不把 0/负数当事实 |")
+    lines.append("")
+    lines.append("说明：前三条由本脚本复算；后三条是 `scripts/business-model.ts` 的校验行为，其中来源缺失与非正数由 `tests/unit/business-model.test.ts` 覆盖。")
+    lines.append("")
+
+    lines.append("## 六、复算结论")
     lines.append("")
     lines.append("| 层级 | 结论 |")
     lines.append("| --- | --- |")
