@@ -18,8 +18,8 @@
     "status": "通过"
   },
   "meta": {
-    "commit": "053bbd3",
-    "commit_time": "2026-10-18T00:11:36+08:00",
+    "commit": "bd99fa8",
+    "commit_time": "2026-10-18T14:16:11+08:00",
     "config_version": "DEMO-CFG-1",
     "disclaimer": "技术测试结果，不代表需求成立或用户效果",
     "generated_by": "pnpm test:report",
@@ -42,10 +42,20 @@
     "vectors": 152
   },
   "precheck": {
-    "assertions": "1004／1004（跳过",
-    "run_errors": "0",
-    "unit_exit": "0",
-    "vectors": "152／152"
+    "assertions_passed": 1004,
+    "assertions_skipped": 0,
+    "assertions_total": 1004,
+    "display": {
+      "assertions": "1004／1004（跳过 0 条）",
+      "run_errors": "0",
+      "unit_exit": "0",
+      "vectors": "152／152"
+    },
+    "run_errors": 0,
+    "source": "docs/_work/precheck_report.md",
+    "unit_exit": 0,
+    "vectors_passed": 152,
+    "vectors_total": 152
   },
   "rules": [
     {
@@ -272,7 +282,7 @@
   "spec_lint": {
     "exit_code": 0,
     "status": "通过",
-    "warnings": 15
+    "warnings": 0
   },
   "traceability": {
     "failed": 0,
@@ -287,10 +297,11 @@
   ],
   "unit": {
     "failed": 0,
-    "files": 148,
-    "passed": 1141,
+    "files": 28,
+    "passed": 1149,
     "skipped": 1,
-    "tests": 1142
+    "suites": 148,
+    "tests": 1150
   },
   "vectors": {
     "assertions_passed": 1004,
