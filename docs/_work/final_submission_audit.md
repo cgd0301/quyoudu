@@ -265,6 +265,7 @@
 - `analysis/import_xlsx.py` 从 XLSX 生成脱敏数据：选项校验、无选项修正、时长计算、身份列排除、PII 扫描；结果写入 `responses.csv` 与 `cleaning_log.json`。
 - `schema.json` v2 与 10 题实际投放版对齐；`pnpm survey:report` 生成逐题 n/N 与分母；`findings.md` 只引用 `report.md` 的计数。
 - 敏感性检查：剔除 <60 秒的 8 条后，试用前两档 14/22（63.6%），方向不变；不据此做子组结论。
+- 独立复算：`analysis/recompute_from_xlsx.py` 直接读原始 XLSX、不调用 `survey-report`/schema，25/25 项与 `report.md` 一致（见 `analysis/recompute.md`）。
 - 原始 XLSX 在检查前后字节未变（SHA-256 一致）；脱敏数据不含身份列与精确时间；原始 XLSX 未进入 Git。
 - 测试：`tests/unit/survey.test.ts` 与 `tests/unit/survey-intake.test.ts` 覆盖空文件、字段不符、编码丢失、PII 不回显、连续行号、负时长、多选分母；新增“脱敏数据列与 schema 对齐”检查。
 

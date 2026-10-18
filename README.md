@@ -34,7 +34,7 @@ pnpm presubmit                     # 完整门禁：按依赖顺序跑完除 E2E
 | 追溯表（181 行） | `docs/traceability.csv` | `pnpm trace:update` | 由真实证据生成 |
 | 参考实现对拍报告 | `docs/_work/diff_report.md` | `pnpm diff:oracle` | 每轮实跑，含来源与版本 |
 | 问卷方法与字段 | `docs/_work/survey/` | [README](docs/_work/survey/README.md)·[题面](docs/_work/survey/questionnaire.md)·[字段 schema v2](docs/_work/survey/schema.json)·[设计稿 v1](docs/_work/survey/schema_design_v1.json) | 实际投放 10 题版；设计稿保留追溯 |
-| 问卷结果（30 条） | `docs/_work/survey/` | [统计表](docs/_work/survey/report.md)·[研究发现](docs/_work/survey/findings.md)·[脱敏数据](docs/_work/survey/analysis/responses.csv)·[清洗日志](docs/_work/survey/analysis/cleaning_log.json) | **30 条有效提交；便利样本；部分支持客户需求；无价格/留存数据** |
+| 问卷结果（30 条） | `docs/_work/survey/` | [统计表](docs/_work/survey/report.md)·[研究发现](docs/_work/survey/findings.md)·[脱敏数据](docs/_work/survey/analysis/responses.csv)·[清洗日志](docs/_work/survey/analysis/cleaning_log.json)·[独立复算](docs/_work/survey/analysis/recompute.md) | **30 条有效提交；便利样本；部分支持客户需求；无价格/留存数据** |
 | 原始 CSV 阻塞记录 | `docs/_work/survey/discovery.md`、`intake/` | [发现报告](docs/_work/survey/discovery.md)·[检查报告](docs/_work/survey/intake/report.md) | 历史记录：CSV 编码丢失；已由 XLSX 取代 |
 | 市场与商业数字：事实锚点、公式与缺口 | `docs/_work/business_model.md` | `pnpm model:economics` | 只有已核验事实与符号公式；无市场规模、无情景数值 |
 | 数据溯源台账（逐项） | `docs/_work/data_evidence_register.md` | — | 每个数字的来源、公式、适用边界与放行状态 |

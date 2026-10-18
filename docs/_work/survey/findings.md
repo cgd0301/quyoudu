@@ -3,6 +3,7 @@
 > **统计附表**：`docs/_work/survey/report.md`（逐题人数、分母、百分比）
 > **脱敏数据**：`docs/_work/survey/analysis/responses.csv`（不含邮箱、姓名、精确时间戳）
 > **清洗记录**：`docs/_work/survey/analysis/cleaning_log.json`
+> **独立复算**：`docs/_work/survey/analysis/recompute.md`（直接读 XLSX，25/25 项与统计表一致）
 > **原始导出件**：`趣有度｜青年消费计划与资金安排调查.xlsx`（SHA-256 `06d6b633…02670a`，不入库）
 >
 > 本文件把“这批受访者说了什么”与“能支持什么结论”分开写。所有比例都写清 n/N 与分母；**30 条提交不等于 30 位独立受访者**，也不是全国样本。
