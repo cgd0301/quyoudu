@@ -16,7 +16,7 @@
 
 可以核验的公开数据只有一层：2025 年全国 5000 人以上大型营业性演出 <!-- data: model/business_model.json#display.large_event_event_count_2025 --> 场，票房 <!-- data: model/business_model.json#display.large_event_box_office_2025_yi --> 亿元，观众 <!-- data: model/business_model.json#display.large_event_attendance_2025_wan --> 万人次[^E01]。
 
-把票房与观众人数相除，每名观众平均贡献票房 <!-- data: model/business_model.json#display.ticket_per_attendance_cny --> 元/人次；按同一简报的带动系数 1:<!-- data: model/business_model.json#display.large_event_consumption_multiplier -->，票房外消费再摊 <!-- data: model/business_model.json#display.other_per_attendance_cny --> 元/人次，合计 <!-- data: model/business_model.json#display.total_per_attendance_cny --> 元/人次[^E01]。这三个派生值的单位换算、取整规则与复算过程见 `docs/_work/business_model.md`，逐项来源见 `docs/_work/data_evidence_register.md`。
+把票房与观众人数相除，每名观众平均贡献票房 <!-- data: model/business_model.json#display.ticket_per_attendance_cny --> 元/人次；按同一简报的带动系数 1:<!-- data: model/business_model.json#display.large_event_consumption_multiplier -->，票房外消费再摊 <!-- data: model/business_model.json#display.other_per_attendance_cny --> 元/人次，合计 <!-- data: model/business_model.json#display.total_per_attendance_cny --> 元/人次[^E01]。分摊用的是全市场平均比例：协会未公布分人群、分城市结构，这里只能按平均系数线性摊到每人次，这是一个简化。三个派生值的单位换算、取整规则与复算过程见 `docs/_work/business_model.md`，逐项来源见 `docs/_work/data_evidence_register.md`。
 
 该数字是**全市场平均**，包含大量非跨城、非本目标人群的观演；分母是**人次**，一人一年可能看多场。它只能说明"跨城观演是一笔数千元量级的支出"，不能当作本产品的客单价、人均年度支出、独立用户数或市场规模。
 
