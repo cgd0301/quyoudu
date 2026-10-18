@@ -435,13 +435,14 @@
 
 | 环节 | 文件／命令 | 核对内容 | 结果 |
 | --- | --- | --- | --- |
-| 参数 | `docs/_work/business_model.params.json` | 只含 known / open_items / formulas；无 assumptions、无 axis | 通过（`pnpm check` 的 business-model 测试断言） |
-| 计算 | `pnpm model:economics` | 人均口径 748/5123/5871；不产出情景数值 | 待本轮复跑记录 |
-| 机器可读 | `book/data/model/business_model.json` | 无 sweep、无 break_even、无 unit_cost 字段；notice 声明"不含市场规模" | 待本轮复跑记录 |
-| 人读版 | `docs/_work/business_model.md` | 只有公式与缺口；写明"目前无法给出可验证的市场规模" | 待本轮复跑记录 |
-| 正文 | `book/chapters/01_problem.md`、`09_business.md` | 数字全部走占位符；无 27 组、无价格档位、无"每 1 万元" | 待本轮复跑记录 |
-| 成稿 | `book/build/趣有度_项目书.md` | 占位符全部替换；正文不再出现被删除的数字 | 待本轮复跑记录 |
-| 独立复算 | `docs/_work/evidence/recompute_business_numbers.md` | 用 Decimal 重算，不复用脚本代码 | 已通过（748／5123／5871 一致） |
+| 参数 | `docs/_work/business_model.params.json` | 只含 known / open_items / formulas；无 assumptions、无 axis | 通过（`tests/unit/business-model.test.ts` 的 8 条断言） |
+| 计算 | `pnpm model:economics` | 人均口径 748/5123/5871；不产出情景数值 | 通过（2026-10-18 实跑：事实 8 条、缺口 12 项、无情景数值） |
+| 机器可读 | `book/data/model/business_model.json` | 无 sweep、无 break_even、无 unit_cost 字段；notice 声明"不含市场规模" | 通过（文件内无 `sweep`／`break_even`／`unit_cost`／`conditional_wan` 键） |
+| 人读版 | `docs/_work/business_model.md` | 只有公式与缺口；写明"目前无法给出可验证的市场规模" | 通过（第六节逐条列"不能回答什么"） |
+| 正文 | `book/chapters/01_problem.md`、`09_business.md` | 数字全部走占位符；无 27 组、无价格档位、无"每 1 万元" | 通过（两章共 12 处占位符引用模型文件；成稿扫描无被删数字） |
+| 成稿 | `book/build/趣有度_项目书.md` | 占位符全部替换；正文不再出现被删除的数字 | 通过（51 处占位符，0 残留；扫描 0.0115、0.046、27 组、1—10 元、5—50、1—3 次、7.1、3000—12000 均为 0 命中） |
+| 独立复算 | `docs/_work/evidence/recompute_business_numbers.md` | 用 Decimal 重算，不复用脚本代码 | 通过（748／5123／5871 一致；旧 27 组表算术一致但参数无依据） |
+| 门禁 | `pnpm presubmit` | 16 个步骤逐项核对退出码 | 通过（2026-10-18，代码提交 ed6b93c；单元 1165／1166、向量 152／152、断言 1004／1004、追溯 116 通过／43 部分／0 未通过／22 待执行） |
 
 ## 7. 维护规则
 
