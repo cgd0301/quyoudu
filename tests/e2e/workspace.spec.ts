@@ -23,4 +23,10 @@ test('reviews a simulated plan and confirms a feasible candidate', async ({ page
   // 该页副标题由目标名与所选方案拼成（goal.name 去掉“资金”后缀），不渲染“上海演唱会资金”
   await expect(page.getByText('上海演唱会 · 方案 C02')).toBeVisible()
   await expect(page.getByText('检查起点')).toBeVisible()
+
+  // 第四页：确认后应能进入计划管理并看到购买行动清单
+  await page.getByRole('button', { name: /^计划管理/ }).click()
+  await expect(page.getByRole('heading', { name: '计划管理' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: '购买行动清单' })).toBeVisible()
+  await expect(page.getByText('待购买').first()).toBeVisible()
 })
