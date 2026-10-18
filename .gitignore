@@ -39,4 +39,6 @@ docs/_work/survey/raw/
 
 # 线上表单导出件（放在仓库根目录时也不得入库）
 趣有度｜*.csv
+趣有度｜*.xlsx
 *调查(Sheet1).csv
+*调查*.xlsx
