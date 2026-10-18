@@ -43,10 +43,11 @@ pnpm install --frozen-lockfile
 - `src/engine/`：确定性引擎（M1—M9）与结果契约。
 - `src/nl/`：自然语言契约、会话状态机、传输适配与解释句校验。
 - `fixtures/`：案例、向量、演示流程、自然语言回放。
-- `tests/unit/`：单元测试；`tests/golden/`：冻结结果；`tests/e2e/`：端到端（**尚未交付业务用例**，依赖前端页面）。
+- `tests/unit/`：单元测试；`tests/golden/`：冻结结果；`tests/e2e/`：端到端（1 条 Playwright spec 覆盖主流程，需要先 `pnpm exec playwright install chromium`）。
+- `src/App.tsx`、`src/App.css`、`src/index.css`：四页界面，只消费 `ResultCore`，不参与金额计算。
 - `scripts/`：数据导出、测试报告、追溯、图表、文档与门禁脚本。
 - `book/`：项目书章节、导出数据、图表与构建产物。
 
 ## 当前状态
 
-规则与技术验证已完成：单元测试、向量、golden、案例校验、规格自洽、对拍与文档链路由 `pnpm presubmit` 一次跑通。四页界面与端到端业务验收**尚未交付**，属外部依赖；项目书中未使用任何界面截图，也未开展真实用户研究。已知缺口与待裁决事项见 `docs/_work/spec_gaps.md`、`docs/_work/vector_gaps.md` 与 `docs/_work/spec_gaps_review.md`。
+规则与技术验证已完成：单元测试、向量、golden、案例校验、规格自洽、对拍与文档链路由 `pnpm presubmit` 一次跑通。四页界面已与主线合并，端到端由 `pnpm test:e2e` 单独运行（现有 1 条 spec 通过，按 spec 计数）；**UI 层 21 条子用例尚未逐条覆盖，项目书截图尚未生成，这两项不算通过**。项目书中未使用任何界面截图，也未开展真实用户研究。已知缺口与未决事项见 `docs/_work/spec_gaps.md`、`docs/_work/vector_gaps.md` 与 `docs/_work/spec_gaps_review.md`。

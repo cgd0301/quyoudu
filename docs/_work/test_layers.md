@@ -5,6 +5,9 @@ traceability.csv 的 161 个子用例按断言对象分层，父行（T001、T00
 - ENGINE：用 evaluate＋ops 断言 ResultCore。“A4 向量”指 fixtures/vectors 中有对应向量（文件名为测试编号，分情形的加 #n）；写不出的断言登记在 vector_gaps.md。“A4 不可表达”指整行写不成向量，只登记在 vector_gaps.md。
 - NL：依赖自然语言提取、追问或解释句，由 A6 覆盖。
 - UI：断言页面、组件或 §11.4 以外的文案（含 AGENTS.md 要求的“模拟数据”标识），由 A7 e2e 覆盖。
+  当前 `tests/e2e` 只有 1 条 Playwright spec（覆盖“看方案比较 → 选择 C02 → 确认 → 看资金日历”一条主流程），
+  所以 UI 层 21 条子用例**没有被 21 条端到端用例逐条覆盖**：spec 数不等于子用例数，追溯表里 UI 子行仍按
+  “端到端未覆盖该子用例”标部分覆盖，不因为端到端跑通就整体转为通过。
 - DOC：文档检查，由 C4 doc:lint 覆盖。
 
 向量的结构与断言语义见 spec_gaps.md SG-38，输入建模约定见 SG-39。

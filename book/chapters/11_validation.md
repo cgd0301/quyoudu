@@ -10,7 +10,7 @@
 
 ## 当前覆盖的真实状况
 
-追溯表共 <!-- data: status.json#traceability.rows --> 条数据行：通过 <!-- data: status.json#traceability.pass -->、部分覆盖 <!-- data: status.json#traceability.partial -->、已执行未通过 <!-- data: status.json#traceability.failed -->、待执行 <!-- data: status.json#traceability.pending -->。**"部分覆盖"与"待执行"不折算为通过**：它们对应尚未交付的界面层、尚未运行的端到端，以及结果契约里没有对应字段、只能由单元测试或人工复核的断言。
+追溯表共 <!-- data: status.json#traceability.rows --> 条数据行：通过 <!-- data: status.json#traceability.pass -->、部分覆盖 <!-- data: status.json#traceability.partial -->、已执行未通过 <!-- data: status.json#traceability.failed -->、待执行 <!-- data: status.json#traceability.pending -->。**"部分覆盖"与"待执行"不折算为通过**：它们对应 UI 层尚未逐条覆盖的端到端子用例，以及结果契约里没有对应字段、只能由单元测试或人工复核的断言。
 
 ![测试覆盖矩阵](../figures/fig_test_matrix.svg)
 
@@ -18,7 +18,7 @@
 
 ## 局限
 
-1. **界面与端到端未交付**：四页界面、路由与页面状态不在本轮范围，`tests/e2e` 没有业务用例，Playwright 不会以"无测试"当成功；项目书未使用任何界面截图或占位图片。
+1. **界面与端到端只部分验收**：四页界面已合入主线，`pnpm test:e2e` 有 1 条 Playwright spec 覆盖"看方案比较 → 选择 C02 → 确认 → 看资金日历"这一条主流程并实际通过；但追溯表里 UI 层共 21 条子用例，**没有被 21 条端到端用例逐条覆盖**，spec 数与 UI 子用例数不是一回事。项目书未使用任何界面截图（本轮没有生成截图，也没有用示意图代替）。
 2. **自然语言的确认方式（方案 A，已裁决）**：抽取→追问→草稿→逐字段确认→重建输入版本→重算已实现并可离线回放，确认值会写入案例输入的 `confirmations[]` 并参与判断；"在一次会话内追加确认并自动加版本"（方案 B）需要新增流程操作、属正式数据契约变更，**已裁决不启用**，如将来需要须单独授权（见第八章与 `docs/_work/spec_gaps_review.md`）。
 3. **结果契约的表达力**：部分断言（如无日均参考字段、无待确认差异字段、价格依据不逐项输出）无法写成向量，只能由单元测试覆盖或明确登记为缺口（`docs/_work/vector_gaps.md`），不通过修改预期值来"消除"缺口。
 4. **预测方法简单**：Holt 阻尼趋势只在少量样本上评估，结论限定为"按当前假设"，不构成价格承诺；历史不足时不给预测。

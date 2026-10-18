@@ -108,3 +108,14 @@ SG-76 的处理理由：它约束的是"哪条测试算作哪个子用例的证�
 2. **`unit.files` 语义歧义（已修）**：该字段实际取的是 vitest 的 `numTotalTestSuites`（含 `describe` 分组，148），不是文件数（28）。现拆成 `unit.suites`（148）与 `unit.files`（28，取 `testResults` 长度），附录 A 也分成"测试套件""测试文件"两行并注明口径。
 3. **NL 编号映射加固（已修）**：`subIdOf` 收紧为 `^T\d{3}-\d{2}(?![0-9A-Za-z])`，`T015-010`／`T015-011` 不截断，`T015-01a` 这类非法写法不命中，`T015-05#1`、`T020-07③` 仍归同一子用例。加固后追溯计数不变（116/43/0/22）。
 4. **对拍报告缺来源（已修）**：`docs/_work/diff_report.md` 现在带"来源与版本"一节（生成命令、代码提交与提交时间、Node／pnpm／Python 版本、比较对象与"未读 oracle 源码"的声明），由 `pnpm diff:oracle` 实跑写入，不使用系统时钟。
+
+## 八、前端工作线合并与验收（本轮）
+
+- **分支**：`LBW_after_dada` @ `8ad204a`（feat: build planning workspace UI），merge base `a5b1e0a`；与 `main` 的文件差异 5 个（`index.html`、`src/App.css`、`src/App.tsx`、`src/index.css`、`tests/e2e/workspace.spec.ts`），与 `main` 自 merge base 以来的改动**零重叠**，合并无冲突（合并提交 `e52686e`，`--no-ff` 保留独立提交）。
+- **合并后必须修的问题（都已修，未删除任何前端实现）**：
+  1. `pnpm typecheck` 失败 2 处：`LABEL_TEXT[display]` 用了不存在的 `AMOUNT` 键；`dependency.kind === 'INCOME'` 与枚举无交集。改为按枚举全量映射的 `dailyStatusText` 与 `DEPENDENCY_TEXT`。
+  2. 端到端 spec 原样**跑不通**：三处断言与界面实际不符（"方案比较"按钮 strict mode 命中 2 个元素、`K=3（演示配置v1）` 命中 2 个元素、`上海演唱会资金` 文案界面从不渲染）。只改选择器与断言文本，保留原有断言意图，未放宽任何断言；修正后 `pnpm test:e2e` **1 passed**。
+  3. 三处显示口径会误导：金额为空时一律写"尚无已确认方案"（实际可能是历史不足、生活安排未提供或不建议新增支出）；`price_basis` 只分两档，把"有效期未知的报价""待填"都写成"模拟报价"；任务状态直接显示 `PENDING_PURCHASE` 枚举。改为按 `ResultCore` 真实字段与 §11.4／D13／D82 分别映射。
+- **验收结论**：四页可启动（Playwright 实际访问并完成主流程），类型检查与 `vite build` 通过，端到端 1 条通过；**UI 层 21 条子用例未逐条覆盖**，项目书截图未生成（不画示意图冒充），因此界面不计为整体通过。
+- **遗留（非阻塞）**：`oxlint` 有 2 条 `react(preserve-manual-memoization)` 警告（0 error，退出码 0），来自前端分支原有的 `timelineRows` 记忆化写法，本轮未重构该组件。
+
