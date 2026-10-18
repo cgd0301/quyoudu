@@ -17,7 +17,7 @@
     "email_nonempty": 30,
     "email_distinct": 1,
     "name_nonempty": 0,
-    "note": "身份列不进入分析数据，也未读取具体值"
+    "note": "身份列不进入分析数据，也未在报告中输出具体值"
   },
   "pii_hits_in_all_cells": 0,
   "none_option_cleaned": [

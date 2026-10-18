@@ -303,7 +303,7 @@ def main() -> None:
             "email_nonempty": sum(1 for row in data if row[3]),
             "email_distinct": len({row[3] for row in data if row[3]}),
             "name_nonempty": sum(1 for row in data if row[4]),
-            "note": "身份列不进入分析数据，也未读取具体值",
+            "note": "身份列不进入分析数据，也未在报告中输出具体值",
         },
         "pii_hits_in_all_cells": pii_hits,
         "none_option_cleaned": cleaned_none,
