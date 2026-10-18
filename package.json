@@ -36,6 +36,9 @@
     "golden:write": "tsx scripts/golden-write.ts",
     "export:results": "tsx scripts/export-results.ts",
     "doc:lint": "tsx scripts/doc-lint.ts",
+    "survey:report": "tsx scripts/survey-report.ts",
+    "model:economics": "tsx scripts/business-model.ts",
+    "shots": "tsx scripts/screenshots.ts",
     "presubmit": "tsx scripts/presubmit.ts"
   },
   "dependencies": {

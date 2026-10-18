@@ -1,0 +1,66 @@
+{
+  "version": "1",
+  "as_of": "2026-10-18",
+  "title": "趣有度：市场漏斗与单位经济模型的输入参数",
+  "discipline": "known 里的数字必须能在 docs/sources.md 的核验记录里找到；assumptions 里的一切都不是估计值，只是让公式可以演示的取值轴，项目书不得把任何一行写成市场规模或收入预测。",
+  "sources": {
+    "E01": "中国演出行业协会《2025 年全国演出市场简报》，据《光明日报》2026-01-14 第09版报道（见 docs/sources.md 文末核验记录）",
+    "E02": "教育部《2024 年全国教育事业发展统计公报》（2025-06-11 发布）",
+    "E04": "DeepSeek API 官方定价页 docs.deepseek.com 定价（2026-10-18 访问）"
+  },
+  "known": {
+    "large_event_attendance_2025_wan": { "value": 4338.58, "unit": "万人次", "source": "E01", "note": "5000 人以上大型营业性演出观众人数" },
+    "large_event_box_office_2025_yi": { "value": 324.48, "unit": "亿元", "source": "E01", "note": "5000 人以上大型营业性演出票房收入" },
+    "large_event_consumption_multiplier": { "value": 6.85, "unit": "倍", "source": "E01", "note": "大型演出对其他消费的平均带动系数 1:6.85" },
+    "he_students_2024_wan": { "value": 4846.0, "unit": "万人", "source": "E02", "note": "各种形式的高等教育在学总规模" },
+    "llm_input_usd_per_mtok_peak": { "value": 0.3, "unit": "USD/百万 token", "source": "E04", "note": "deepseek-flash，输入（缓存未命中），高峰价" },
+    "llm_output_usd_per_mtok_peak": { "value": 1.2, "unit": "USD/百万 token", "source": "E04", "note": "deepseek-flash，输出，高峰价" }
+  },
+  "assumptions": {
+    "age_share": {
+      "label": "观演观众中 18—30 岁占比",
+      "axis": [0.2, 0.35, 0.5],
+      "evidence": "未验证：公开简报未给出该项年龄分布，需问卷或官方分年龄数据"
+    },
+    "cross_city_share": {
+      "label": "其中跨城观演的比例",
+      "axis": [0.1, 0.2, 0.3],
+      "evidence": "未验证：单个项目报道出现过“外地观众接近 60%”，不能当作全市场比例"
+    },
+    "multi_payment_share": {
+      "label": "其中付款分散在多周、需要时点判断的比例",
+      "axis": [0.2, 0.4, 0.6],
+      "evidence": "未验证：本项目的三条痛点假设均待问卷检验"
+    },
+    "llm_input_tokens_per_session": {
+      "label": "一次完整规划会话的输入 token 数",
+      "axis": [3000, 6000, 12000],
+      "evidence": "未实测：离线回放模式下不调用模型，为 0；实时模式下需实测"
+    },
+    "llm_output_tokens_per_session": {
+      "label": "一次完整规划会话的输出 token 数",
+      "axis": [600, 1200, 2400],
+      "evidence": "未实测：同上"
+    },
+    "usd_cny": {
+      "label": "美元兑人民币汇率",
+      "axis": [7.1],
+      "evidence": "未核验：应按中国外汇交易中心当期中间价替换"
+    },
+    "acquisition_cny_per_user": {
+      "label": "单个付费用户的获客成本",
+      "axis": [5, 20, 50],
+      "evidence": "未实测：无投放数据"
+    },
+    "price_cny_per_plan": {
+      "label": "单次规划服务的价格",
+      "axis": [1, 5, 10],
+      "evidence": "未验证：付费意愿只能来自问卷 Q12，且自报不等于购买"
+    },
+    "annual_plans_per_user": {
+      "label": "单个用户每年使用次数",
+      "axis": [1, 2, 3],
+      "evidence": "未验证：取决于观演频次，需问卷 Q1"
+    }
+  }
+}

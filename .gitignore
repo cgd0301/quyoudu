@@ -33,3 +33,6 @@ blob-report/
 
 __pycache__/
 *.pyc
+
+# 问卷原始答卷与采集元数据：含潜在可识别信息，只在本地保存，绝不入库
+docs/_work/survey/raw/
