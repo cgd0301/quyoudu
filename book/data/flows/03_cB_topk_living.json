@@ -2901,8 +2901,8 @@
   "meta": {
     "case_data_version": "1",
     "case_id": "cB_topk",
-    "commit": "053bbd3",
-    "commit_time": "2026-10-18T00:11:36+08:00",
+    "commit": "4c9dd12",
+    "commit_time": "2026-10-18T14:24:13+08:00",
     "config_version": "DEMO-CFG-1",
     "done_modules": [
       "M1",

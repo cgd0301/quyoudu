@@ -11,7 +11,7 @@
 ## 来源与版本
 
 - 生成命令：`pnpm diff:oracle`
-- 代码提交：`bd99fa8`（2026-10-18T14:16:11+08:00，提交时间）
+- 代码提交：`4c9dd12`（2026-10-18T14:24:13+08:00，提交时间）
 - 运行环境：Node v24.17.0；pnpm 12.11.2；Python 3.11.9
 - 比较对象：fixtures/cases 与 fixtures/vectors 的检查点；参考实现只经 `python -m oracle` 调用，输出读 `.cache/oracle-out`，未打开 `oracle/` 源码（AGENTS.md §3）
 

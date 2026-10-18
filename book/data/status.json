@@ -10,16 +10,16 @@
     "status": "通过"
   },
   "e2e": {
-    "detail": "未执行：tests/e2e 还没有业务用例，前端页面不在本轮交付范围；E2E 业务验收受前端未交付限制",
-    "status": "未执行"
+    "detail": "通过 1／失败 0／跳过 0；按 spec 计数，不等于 UI 层子用例逐条覆盖",
+    "status": "通过"
   },
   "golden": {
     "exit_code": 0,
     "status": "通过"
   },
   "meta": {
-    "commit": "bd99fa8",
-    "commit_time": "2026-10-18T14:16:11+08:00",
+    "commit": "4c9dd12",
+    "commit_time": "2026-10-18T14:24:13+08:00",
     "config_version": "DEMO-CFG-1",
     "disclaimer": "技术测试结果，不代表需求成立或用户效果",
     "generated_by": "pnpm test:report",
@@ -292,16 +292,16 @@
     "rows": 181
   },
   "unfinished": [
-    "端到端：未执行：tests/e2e 还没有业务用例，前端页面不在本轮交付范围；E2E 业务验收受前端未交付限制",
+    "端到端已运行并通过（通过 1／失败 0／跳过 0；按 spec 计数，不等于 UI 层子用例逐条覆盖），UI 层子用例仍未逐条覆盖，界面不计为整体通过",
     "向量断言跳过 0 条；单元测试跳过 1 条"
   ],
   "unit": {
     "failed": 0,
     "files": 28,
-    "passed": 1149,
+    "passed": 1150,
     "skipped": 1,
     "suites": 148,
-    "tests": 1150
+    "tests": 1151
   },
   "vectors": {
     "assertions_passed": 1004,
