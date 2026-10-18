@@ -2370,8 +2370,8 @@
   "meta": {
     "case_data_version": "1",
     "case_id": "cB_v5_cancel",
-    "commit": "f4b363f",
-    "commit_time": "2026-10-18T14:30:45+08:00",
+    "commit": "268f713",
+    "commit_time": "2026-10-18T15:16:49+08:00",
     "config_version": "DEMO-CFG-1",
     "done_modules": [
       "M1",

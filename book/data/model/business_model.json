@@ -1,0 +1,497 @@
+{
+  "anchors": {
+    "attendance_wan": 4338.58,
+    "box_office_yi": 324.48,
+    "multiplier": 6.85,
+    "other_cny_per_attendance": 5123,
+    "ticket_cny_per_attendance": 748,
+    "total_cny_per_attendance": 5871
+  },
+  "break_even": [
+    {
+      "acquisition_cny_per_user": 5,
+      "annual_plans_per_user": 1,
+      "break_even_users_per_10k_fixed": null,
+      "margin_cny_per_user_year": -4.02,
+      "model_cost_cny_per_user_year": 0.02,
+      "price_cny_per_plan": 1,
+      "revenue_cny_per_user_year": 1
+    },
+    {
+      "acquisition_cny_per_user": 5,
+      "annual_plans_per_user": 2,
+      "break_even_users_per_10k_fixed": null,
+      "margin_cny_per_user_year": -3.05,
+      "model_cost_cny_per_user_year": 0.05,
+      "price_cny_per_plan": 1,
+      "revenue_cny_per_user_year": 2
+    },
+    {
+      "acquisition_cny_per_user": 5,
+      "annual_plans_per_user": 3,
+      "break_even_users_per_10k_fixed": null,
+      "margin_cny_per_user_year": -2.07,
+      "model_cost_cny_per_user_year": 0.07,
+      "price_cny_per_plan": 1,
+      "revenue_cny_per_user_year": 3
+    },
+    {
+      "acquisition_cny_per_user": 20,
+      "annual_plans_per_user": 1,
+      "break_even_users_per_10k_fixed": null,
+      "margin_cny_per_user_year": -19.02,
+      "model_cost_cny_per_user_year": 0.02,
+      "price_cny_per_plan": 1,
+      "revenue_cny_per_user_year": 1
+    },
+    {
+      "acquisition_cny_per_user": 20,
+      "annual_plans_per_user": 2,
+      "break_even_users_per_10k_fixed": null,
+      "margin_cny_per_user_year": -18.05,
+      "model_cost_cny_per_user_year": 0.05,
+      "price_cny_per_plan": 1,
+      "revenue_cny_per_user_year": 2
+    },
+    {
+      "acquisition_cny_per_user": 20,
+      "annual_plans_per_user": 3,
+      "break_even_users_per_10k_fixed": null,
+      "margin_cny_per_user_year": -17.07,
+      "model_cost_cny_per_user_year": 0.07,
+      "price_cny_per_plan": 1,
+      "revenue_cny_per_user_year": 3
+    },
+    {
+      "acquisition_cny_per_user": 50,
+      "annual_plans_per_user": 1,
+      "break_even_users_per_10k_fixed": null,
+      "margin_cny_per_user_year": -49.02,
+      "model_cost_cny_per_user_year": 0.02,
+      "price_cny_per_plan": 1,
+      "revenue_cny_per_user_year": 1
+    },
+    {
+      "acquisition_cny_per_user": 50,
+      "annual_plans_per_user": 2,
+      "break_even_users_per_10k_fixed": null,
+      "margin_cny_per_user_year": -48.05,
+      "model_cost_cny_per_user_year": 0.05,
+      "price_cny_per_plan": 1,
+      "revenue_cny_per_user_year": 2
+    },
+    {
+      "acquisition_cny_per_user": 50,
+      "annual_plans_per_user": 3,
+      "break_even_users_per_10k_fixed": null,
+      "margin_cny_per_user_year": -47.07,
+      "model_cost_cny_per_user_year": 0.07,
+      "price_cny_per_plan": 1,
+      "revenue_cny_per_user_year": 3
+    },
+    {
+      "acquisition_cny_per_user": 5,
+      "annual_plans_per_user": 1,
+      "break_even_users_per_10k_fixed": null,
+      "margin_cny_per_user_year": -0.02,
+      "model_cost_cny_per_user_year": 0.02,
+      "price_cny_per_plan": 5,
+      "revenue_cny_per_user_year": 5
+    },
+    {
+      "acquisition_cny_per_user": 5,
+      "annual_plans_per_user": 2,
+      "break_even_users_per_10k_fixed": 2021,
+      "margin_cny_per_user_year": 4.95,
+      "model_cost_cny_per_user_year": 0.05,
+      "price_cny_per_plan": 5,
+      "revenue_cny_per_user_year": 10
+    },
+    {
+      "acquisition_cny_per_user": 5,
+      "annual_plans_per_user": 3,
+      "break_even_users_per_10k_fixed": 1008,
+      "margin_cny_per_user_year": 9.93,
+      "model_cost_cny_per_user_year": 0.07,
+      "price_cny_per_plan": 5,
+      "revenue_cny_per_user_year": 15
+    },
+    {
+      "acquisition_cny_per_user": 20,
+      "annual_plans_per_user": 1,
+      "break_even_users_per_10k_fixed": null,
+      "margin_cny_per_user_year": -15.02,
+      "model_cost_cny_per_user_year": 0.02,
+      "price_cny_per_plan": 5,
+      "revenue_cny_per_user_year": 5
+    },
+    {
+      "acquisition_cny_per_user": 20,
+      "annual_plans_per_user": 2,
+      "break_even_users_per_10k_fixed": null,
+      "margin_cny_per_user_year": -10.05,
+      "model_cost_cny_per_user_year": 0.05,
+      "price_cny_per_plan": 5,
+      "revenue_cny_per_user_year": 10
+    },
+    {
+      "acquisition_cny_per_user": 20,
+      "annual_plans_per_user": 3,
+      "break_even_users_per_10k_fixed": null,
+      "margin_cny_per_user_year": -5.07,
+      "model_cost_cny_per_user_year": 0.07,
+      "price_cny_per_plan": 5,
+      "revenue_cny_per_user_year": 15
+    },
+    {
+      "acquisition_cny_per_user": 50,
+      "annual_plans_per_user": 1,
+      "break_even_users_per_10k_fixed": null,
+      "margin_cny_per_user_year": -45.02,
+      "model_cost_cny_per_user_year": 0.02,
+      "price_cny_per_plan": 5,
+      "revenue_cny_per_user_year": 5
+    },
+    {
+      "acquisition_cny_per_user": 50,
+      "annual_plans_per_user": 2,
+      "break_even_users_per_10k_fixed": null,
+      "margin_cny_per_user_year": -40.05,
+      "model_cost_cny_per_user_year": 0.05,
+      "price_cny_per_plan": 5,
+      "revenue_cny_per_user_year": 10
+    },
+    {
+      "acquisition_cny_per_user": 50,
+      "annual_plans_per_user": 3,
+      "break_even_users_per_10k_fixed": null,
+      "margin_cny_per_user_year": -35.07,
+      "model_cost_cny_per_user_year": 0.07,
+      "price_cny_per_plan": 5,
+      "revenue_cny_per_user_year": 15
+    },
+    {
+      "acquisition_cny_per_user": 5,
+      "annual_plans_per_user": 1,
+      "break_even_users_per_10k_fixed": 2009,
+      "margin_cny_per_user_year": 4.98,
+      "model_cost_cny_per_user_year": 0.02,
+      "price_cny_per_plan": 10,
+      "revenue_cny_per_user_year": 10
+    },
+    {
+      "acquisition_cny_per_user": 5,
+      "annual_plans_per_user": 2,
+      "break_even_users_per_10k_fixed": 669,
+      "margin_cny_per_user_year": 14.95,
+      "model_cost_cny_per_user_year": 0.05,
+      "price_cny_per_plan": 10,
+      "revenue_cny_per_user_year": 20
+    },
+    {
+      "acquisition_cny_per_user": 5,
+      "annual_plans_per_user": 3,
+      "break_even_users_per_10k_fixed": 402,
+      "margin_cny_per_user_year": 24.93,
+      "model_cost_cny_per_user_year": 0.07,
+      "price_cny_per_plan": 10,
+      "revenue_cny_per_user_year": 30
+    },
+    {
+      "acquisition_cny_per_user": 20,
+      "annual_plans_per_user": 1,
+      "break_even_users_per_10k_fixed": null,
+      "margin_cny_per_user_year": -10.02,
+      "model_cost_cny_per_user_year": 0.02,
+      "price_cny_per_plan": 10,
+      "revenue_cny_per_user_year": 10
+    },
+    {
+      "acquisition_cny_per_user": 20,
+      "annual_plans_per_user": 2,
+      "break_even_users_per_10k_fixed": null,
+      "margin_cny_per_user_year": -0.05,
+      "model_cost_cny_per_user_year": 0.05,
+      "price_cny_per_plan": 10,
+      "revenue_cny_per_user_year": 20
+    },
+    {
+      "acquisition_cny_per_user": 20,
+      "annual_plans_per_user": 3,
+      "break_even_users_per_10k_fixed": 1008,
+      "margin_cny_per_user_year": 9.93,
+      "model_cost_cny_per_user_year": 0.07,
+      "price_cny_per_plan": 10,
+      "revenue_cny_per_user_year": 30
+    },
+    {
+      "acquisition_cny_per_user": 50,
+      "annual_plans_per_user": 1,
+      "break_even_users_per_10k_fixed": null,
+      "margin_cny_per_user_year": -40.02,
+      "model_cost_cny_per_user_year": 0.02,
+      "price_cny_per_plan": 10,
+      "revenue_cny_per_user_year": 10
+    },
+    {
+      "acquisition_cny_per_user": 50,
+      "annual_plans_per_user": 2,
+      "break_even_users_per_10k_fixed": null,
+      "margin_cny_per_user_year": -30.05,
+      "model_cost_cny_per_user_year": 0.05,
+      "price_cny_per_plan": 10,
+      "revenue_cny_per_user_year": 20
+    },
+    {
+      "acquisition_cny_per_user": 50,
+      "annual_plans_per_user": 3,
+      "break_even_users_per_10k_fixed": null,
+      "margin_cny_per_user_year": -20.07,
+      "model_cost_cny_per_user_year": 0.07,
+      "price_cny_per_plan": 10,
+      "revenue_cny_per_user_year": 30
+    }
+  ],
+  "display": {
+    "attendance_wan": "4338.58",
+    "other_per_attendance_cny": "5123",
+    "ticket_per_attendance_cny": "748",
+    "total_per_attendance_cny": "5871",
+    "unit_cost_offpeak_cny_low": "0.0058",
+    "unit_cost_peak_cny_high": "0.046",
+    "unit_cost_peak_cny_low": "0.0115"
+  },
+  "meta": {
+    "as_of": "2026-10-18",
+    "generated_by": "pnpm model:economics",
+    "kind": "assumption_model",
+    "notice": "条件式模型，不是市场规模或收入预测",
+    "params": "docs/_work/business_model.params.json",
+    "params_version": "1"
+  },
+  "sources": {
+    "_e01": "中国演出行业协会《2025 年全国演出市场简报》，据《光明日报》2026-01-14 第09版报道（见 docs/sources.md 文末核验记录）",
+    "_e02": "教育部《2024 年全国教育事业发展统计公报》（2025-06-11 发布）",
+    "_e04": "DeepSeek API 官方定价页 docs.deepseek.com 定价（2026-10-18 访问）"
+  },
+  "sweep": [
+    {
+      "age_share": 0.2,
+      "conditional_wan": 17.35,
+      "cross_city_share": 0.1,
+      "multi_payment_share": 0.2
+    },
+    {
+      "age_share": 0.2,
+      "conditional_wan": 34.71,
+      "cross_city_share": 0.1,
+      "multi_payment_share": 0.4
+    },
+    {
+      "age_share": 0.2,
+      "conditional_wan": 52.06,
+      "cross_city_share": 0.1,
+      "multi_payment_share": 0.6
+    },
+    {
+      "age_share": 0.2,
+      "conditional_wan": 34.71,
+      "cross_city_share": 0.2,
+      "multi_payment_share": 0.2
+    },
+    {
+      "age_share": 0.2,
+      "conditional_wan": 69.42,
+      "cross_city_share": 0.2,
+      "multi_payment_share": 0.4
+    },
+    {
+      "age_share": 0.2,
+      "conditional_wan": 104.13,
+      "cross_city_share": 0.2,
+      "multi_payment_share": 0.6
+    },
+    {
+      "age_share": 0.2,
+      "conditional_wan": 52.06,
+      "cross_city_share": 0.3,
+      "multi_payment_share": 0.2
+    },
+    {
+      "age_share": 0.2,
+      "conditional_wan": 104.13,
+      "cross_city_share": 0.3,
+      "multi_payment_share": 0.4
+    },
+    {
+      "age_share": 0.2,
+      "conditional_wan": 156.19,
+      "cross_city_share": 0.3,
+      "multi_payment_share": 0.6
+    },
+    {
+      "age_share": 0.35,
+      "conditional_wan": 30.37,
+      "cross_city_share": 0.1,
+      "multi_payment_share": 0.2
+    },
+    {
+      "age_share": 0.35,
+      "conditional_wan": 60.74,
+      "cross_city_share": 0.1,
+      "multi_payment_share": 0.4
+    },
+    {
+      "age_share": 0.35,
+      "conditional_wan": 91.11,
+      "cross_city_share": 0.1,
+      "multi_payment_share": 0.6
+    },
+    {
+      "age_share": 0.35,
+      "conditional_wan": 60.74,
+      "cross_city_share": 0.2,
+      "multi_payment_share": 0.2
+    },
+    {
+      "age_share": 0.35,
+      "conditional_wan": 121.48,
+      "cross_city_share": 0.2,
+      "multi_payment_share": 0.4
+    },
+    {
+      "age_share": 0.35,
+      "conditional_wan": 182.22,
+      "cross_city_share": 0.2,
+      "multi_payment_share": 0.6
+    },
+    {
+      "age_share": 0.35,
+      "conditional_wan": 91.11,
+      "cross_city_share": 0.3,
+      "multi_payment_share": 0.2
+    },
+    {
+      "age_share": 0.35,
+      "conditional_wan": 182.22,
+      "cross_city_share": 0.3,
+      "multi_payment_share": 0.4
+    },
+    {
+      "age_share": 0.35,
+      "conditional_wan": 273.33,
+      "cross_city_share": 0.3,
+      "multi_payment_share": 0.6
+    },
+    {
+      "age_share": 0.5,
+      "conditional_wan": 43.39,
+      "cross_city_share": 0.1,
+      "multi_payment_share": 0.2
+    },
+    {
+      "age_share": 0.5,
+      "conditional_wan": 86.77,
+      "cross_city_share": 0.1,
+      "multi_payment_share": 0.4
+    },
+    {
+      "age_share": 0.5,
+      "conditional_wan": 130.16,
+      "cross_city_share": 0.1,
+      "multi_payment_share": 0.6
+    },
+    {
+      "age_share": 0.5,
+      "conditional_wan": 86.77,
+      "cross_city_share": 0.2,
+      "multi_payment_share": 0.2
+    },
+    {
+      "age_share": 0.5,
+      "conditional_wan": 173.54,
+      "cross_city_share": 0.2,
+      "multi_payment_share": 0.4
+    },
+    {
+      "age_share": 0.5,
+      "conditional_wan": 260.31,
+      "cross_city_share": 0.2,
+      "multi_payment_share": 0.6
+    },
+    {
+      "age_share": 0.5,
+      "conditional_wan": 130.16,
+      "cross_city_share": 0.3,
+      "multi_payment_share": 0.2
+    },
+    {
+      "age_share": 0.5,
+      "conditional_wan": 260.31,
+      "cross_city_share": 0.3,
+      "multi_payment_share": 0.4
+    },
+    {
+      "age_share": 0.5,
+      "conditional_wan": 390.47,
+      "cross_city_share": 0.3,
+      "multi_payment_share": 0.6
+    }
+  ],
+  "units": [
+    {
+      "cost_offpeak_cny": 0.005750999999999999,
+      "cost_peak_cny": 0.011501999999999998,
+      "input_tokens": 3000,
+      "output_tokens": 600
+    },
+    {
+      "cost_offpeak_cny": 0.008307,
+      "cost_peak_cny": 0.016614,
+      "input_tokens": 3000,
+      "output_tokens": 1200
+    },
+    {
+      "cost_offpeak_cny": 0.013418999999999997,
+      "cost_peak_cny": 0.026837999999999994,
+      "input_tokens": 3000,
+      "output_tokens": 2400
+    },
+    {
+      "cost_offpeak_cny": 0.008945999999999999,
+      "cost_peak_cny": 0.017891999999999998,
+      "input_tokens": 6000,
+      "output_tokens": 600
+    },
+    {
+      "cost_offpeak_cny": 0.011501999999999998,
+      "cost_peak_cny": 0.023003999999999997,
+      "input_tokens": 6000,
+      "output_tokens": 1200
+    },
+    {
+      "cost_offpeak_cny": 0.016614,
+      "cost_peak_cny": 0.033228,
+      "input_tokens": 6000,
+      "output_tokens": 2400
+    },
+    {
+      "cost_offpeak_cny": 0.015335999999999999,
+      "cost_peak_cny": 0.030671999999999998,
+      "input_tokens": 12000,
+      "output_tokens": 600
+    },
+    {
+      "cost_offpeak_cny": 0.017891999999999998,
+      "cost_peak_cny": 0.035783999999999996,
+      "input_tokens": 12000,
+      "output_tokens": 1200
+    },
+    {
+      "cost_offpeak_cny": 0.023003999999999997,
+      "cost_peak_cny": 0.04600799999999999,
+      "input_tokens": 12000,
+      "output_tokens": 2400
+    }
+  ]
+}
