@@ -25,7 +25,8 @@ const STATUS_PATH = 'book/data/status.json'
 
 type GateRun = { status: string; exit_code: number; detail: string }
 
-export type UnitSummary = { files: number; tests: number; passed: number; failed: number; skipped: number }
+/** suites 为 vitest 的 suite 数（含文件内的 describe 分组）；files 为实际测试文件数。两者不是一回事。 */
+export type UnitSummary = { suites: number; files: number; tests: number; passed: number; failed: number; skipped: number }
 export type VecReportSummary = {
   vectors_passed: number
   vectors_total: number
@@ -56,14 +57,68 @@ function parseDiffReport(text: string | null): OracleDiff {
   }
 }
 
-function parsePrecheckSection(text: string | null): { vectors: string; assertions: string; run_errors: string; unit_exit: string } | null {
-  if (text === null) return null
-  const vectors = /- 向量通过数：(\S+)/.exec(text)?.[1]
-  const assertions = /- 断言通过数：(\S+)/.exec(text)?.[1]
-  const runErrors = /- 运行错误数：(\S+)/.exec(text)?.[1]
-  const unitExit = /- 退出码：(\S+)/.exec(text)?.[1]
-  if (vectors === undefined || assertions === undefined || runErrors === undefined) return null
-  return { vectors, assertions, run_errors: runErrors, unit_exit: unitExit ?? '未给出' }
+/**
+ * A4 预检记录的机器可读形态。
+ *
+ * 根因说明：早先这里用 `/- 断言通过数：(\S+)/` 从报告正文里截取整段文字，`\S` 遇到空格就停，
+ * 于是 "1004／1004（跳过 0）" 被写成 "1004／1004（跳过"。现在只从正文取整数，展示串由整数拼出，
+ * 结构上不可能再被截断；正文缺失或格式不符时返回 null（记为“未取得”），不返回半截值。
+ */
+export type PrecheckRecord = {
+  source: string
+  vectors_passed: number
+  vectors_total: number
+  assertions_passed: number
+  assertions_total: number
+  assertions_skipped: number
+  run_errors: number
+  unit_exit: number | null
+}
+
+export type PrecheckDisplay = { vectors: string; assertions: string; run_errors: string; unit_exit: string }
+
+const PRECHECK_REPORT = 'docs/_work/precheck_report.md'
+
+/** 只从 A4 预检报告正文取整数；每项都要求整行匹配，取不到就整体返回 null */
+export function parsePrecheckReport(text: string): PrecheckRecord | null {
+  const head = /^- 向量通过数：(\d+)／(\d+)\r?$/m.exec(text)
+  const use = /^- 断言通过数：(\d+)／(\d+)(?:（跳过 (\d+)(?: 条)?）)?\r?$/m.exec(text)
+  const errors = /^- 运行错误数：(\d+)\r?$/m.exec(text)
+  const exit = /^- 退出码：(-?\d+)\r?$/m.exec(text)
+  if (head === null || use === null || errors === null) return null
+  return {
+    source: PRECHECK_REPORT,
+    vectors_passed: Number(head[1]),
+    vectors_total: Number(head[2]),
+    assertions_passed: Number(use[1]),
+    assertions_total: Number(use[2]),
+    assertions_skipped: Number(use[3] ?? 0),
+    run_errors: Number(errors[1]),
+    unit_exit: exit === null ? null : Number(exit[1]),
+  }
+}
+
+/** 展示串只由上面的整数拼出，因此与数值永远一致 */
+export function precheckDisplay(record: PrecheckRecord): PrecheckDisplay {
+  return {
+    vectors: `${record.vectors_passed}／${record.vectors_total}`,
+    assertions: `${record.assertions_passed}／${record.assertions_total}（跳过 ${record.assertions_skipped} 条）`,
+    run_errors: String(record.run_errors),
+    unit_exit: record.unit_exit === null ? '未给出' : String(record.unit_exit),
+  }
+}
+
+/** 预检记录与本轮向量运行必须一致；不一致说明记录已过期，不能拿它当本轮结果 */
+export function precheckMismatches(record: PrecheckRecord, vec: VecReportSummary): string[] {
+  const pairs: [string, number, number][] = [
+    ['向量通过数', record.vectors_passed, vec.vectors_passed],
+    ['向量总数', record.vectors_total, vec.vectors_total],
+    ['断言通过数', record.assertions_passed, vec.assertions_passed],
+    ['断言总数', record.assertions_total, vec.assertions_total],
+    ['断言跳过数', record.assertions_skipped, vec.assertions_skipped],
+    ['运行错误数', record.run_errors, vec.run_errors],
+  ]
+  return pairs.filter(([, recorded, live]) => recorded !== live).map(([name, recorded, live]) => `${name}：记录 ${recorded}，本轮 ${live}`)
 }
 
 export type RuleRow = {
@@ -118,7 +173,7 @@ export type ReportInput = {
   e2e: GateRun
   docLint: GateRun
   oracleDiff: OracleDiff
-  precheck: ReturnType<typeof parsePrecheckSection>
+  precheck: PrecheckRecord | null
   commit: { hash: string; time: string }
 }
 
@@ -133,7 +188,8 @@ export function renderAppendix(input: ReportInput): string {
   lines.push('## A.1 分层结果（口径分开计数）', '')
   lines.push('| 口径 | 结果 | 说明 |')
   lines.push('| --- | --- | --- |')
-  lines.push(`| 测试套件 | ${input.unit.files} | vitest 的 suite 计数（含文件内的 describe 分组），不是文件数 |`)
+  lines.push(`| 测试套件 | ${input.unit.suites} | vitest 的 suite 计数：含文件内的 describe 分组，不是文件数 |`)
+  lines.push(`| 测试文件 | ${input.unit.files} | vitest 实际运行的测试文件数，与上一行的 suite 数不是同一口径 |`)
   lines.push(`| 单元测试用例 | 通过 ${input.unit.passed}／失败 ${input.unit.failed}／跳过 ${input.unit.skipped}／注册 ${input.unit.tests} | 注册数含跳过的用例 |`)
   lines.push(
     `| 测试向量 | 通过 ${input.vec.vectors_passed}／${input.vec.vectors_total} | 一个向量含多条断言，不等于单元测试数 |`,
@@ -141,9 +197,15 @@ export function renderAppendix(input: ReportInput): string {
   lines.push(
     `| 向量断言 | 通过 ${input.vec.assertions_passed}／失败 ${input.vec.assertions_total - input.vec.assertions_passed - input.vec.assertions_skipped}／跳过 ${input.vec.assertions_skipped} | 运行错误 ${input.vec.run_errors} |`,
   )
+  const precheck = input.precheck === null ? null : precheckDisplay(input.precheck)
+  lines.push(
+    precheck === null
+      ? '| 向量预检记录（A4） | 未取得 | 没有可读的 A4 预检报告，不能视为通过 |'
+      : `| 向量预检记录（A4） | 向量 ${precheck.vectors}；断言 ${precheck.assertions} | 来源 ${input.precheck?.source ?? ''}，与本轮向量运行逐项一致 |`,
+  )
   lines.push(`| Golden 冻结 | ${input.golden.status} | 退出码 ${input.golden.exit_code} |`)
   lines.push(`| 案例与向量结构校验（validate:cases） | ${input.cases.status} | 退出码 ${input.cases.exit_code} |`)
-  lines.push(`| 规格自洽（spec:lint） | ${input.specLint.status} | 警告 ${input.specLint.warnings} 条（AI暂定条目待团队复核） |`)
+  lines.push(`| 规格自洽（spec:lint） | ${input.specLint.status} | 警告 ${input.specLint.warnings} 条${input.specLint.warnings > 0 ? '（待团队复核的 AI 暂定条目）' : '，无待复核条目'} |`)
   lines.push(
     `| 参考实现对拍 | ${input.oracleDiff === null ? '未取得报告' : `差异 ${input.oracleDiff.differences}（P1 ${input.oracleDiff.p1}，P2 ${input.oracleDiff.p2}，P3 ${input.oracleDiff.p3}）`} | 只读 docs/_work/diff_report.md，不在本脚本内运行 |`,
   )
@@ -199,9 +261,11 @@ async function collectUnit(): Promise<UnitSummary> {
     numPassedTests?: number
     numFailedTests?: number
     numPendingTests?: number
+    testResults?: unknown[]
   }
   const summary: UnitSummary = {
-    files: data.numTotalTestSuites ?? 0,
+    suites: data.numTotalTestSuites ?? 0,
+    files: data.testResults?.length ?? 0,
     tests: data.numTotalTests ?? 0,
     passed: data.numPassedTests ?? 0,
     failed: data.numFailedTests ?? 0,
@@ -252,6 +316,15 @@ export async function main(): Promise<number> {
   const e2eStatus = index.playwright === null ? '未执行' : index.playwright.failed > 0 ? '未通过' : '通过'
 
   const commit = codeCommitInfo()
+  const precheck = parsePrecheckReport(readTextIfExists(repoPath(PRECHECK_REPORT)) ?? '')
+  // 预检记录是历史产物；与本轮向量运行不一致说明它已过期，不能当作本轮结果
+  const mismatch = precheck === null ? [] : precheckMismatches(precheck, vec)
+  if (mismatch.length > 0) {
+    throw new Error(
+      `${PRECHECK_REPORT} 与本轮向量运行不一致（${mismatch.join('；')}）。该报告已过期，` +
+        '请先在有 A4 预检产物的环境重跑 pnpm vec:precheck；不要用旧记录冒充本轮结果。',
+    )
+  }
   const input: ReportInput = {
     unit,
     vec,
@@ -281,7 +354,7 @@ export async function main(): Promise<number> {
             : `${docChecks.filter((check) => !check.passed).map((check) => check.id).join('、')} 未通过`,
     },
     oracleDiff: parseDiffReport(readTextIfExists(repoPath('docs/_work/diff_report.md'))),
-    precheck: parsePrecheckSection(readTextIfExists(repoPath('docs/_work/precheck_report.md'))),
+    precheck,
     commit,
   }
 
@@ -296,13 +369,14 @@ export async function main(): Promise<number> {
       commit_time: commit.time,
       disclaimer: '技术测试结果，不代表需求成立或用户效果',
     },
-    unit: { files: unit.files, tests: unit.tests, passed: unit.passed, failed: unit.failed, skipped: unit.skipped },
+    unit: { suites: unit.suites, files: unit.files, tests: unit.tests, passed: unit.passed, failed: unit.failed, skipped: unit.skipped },
     vectors: vec,
     golden: { status: input.golden.status, exit_code: input.golden.exit_code },
     cases: { status: input.cases.status, exit_code: input.cases.exit_code },
     spec_lint: { status: input.specLint.status, exit_code: input.specLint.exit_code, warnings: input.specLint.warnings },
     oracle_diff: input.oracleDiff,
-    precheck: input.precheck,
+    // 数值保持数值；display 由数值生成，不从正文截取
+    precheck: precheck === null ? null : { ...precheck, display: precheckDisplay(precheck) },
     doc_lint: { status: input.docLint.status, exit_code: input.docLint.exit_code, checks: index.doc?.checks.length ?? 0, failed: index.doc?.checks.filter((check) => !check.passed).length ?? 0 },
     e2e: { status: input.e2e.status, detail: input.e2e.detail },
     nl_layer: input.nlLayer,

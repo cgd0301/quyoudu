@@ -9,7 +9,14 @@ import { REPO_ROOT, readJsonIfExists, readText, repoPath } from './repo.ts'
 
 export type Status = 'pass' | 'fail' | 'skipped' | 'none'
 
-const TEST_ID = /^T\d{3}-\d{2}(?!\d)/
+/**
+ * 用例编号只从用例名的**开头**提取，且编号后不能再接 ASCII 数字或字母：
+ * - `T015-010` 不会被截成 `T015-01`（相似编号不得误判命中，SG-76）；
+ * - `T015-01a` 这类非法写法不命中，宁可记为“未执行”；
+ * - `T015-05#1`、`T020-07③` 这类子情形后缀（非 ASCII 数字/字母）仍归到同一子用例编号。
+ * describe 前缀不算编号：调用方传的是 test() 的 title，不是 fullName。
+ */
+const TEST_ID = /^T\d{3}-\d{2}(?![0-9A-Za-z])/
 const PARENT_ID = /^T\d{3}$/
 
 export function subIdOf(name: string): string | null {

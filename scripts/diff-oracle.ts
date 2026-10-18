@@ -6,6 +6,7 @@
 import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { spawnSync } from 'node:child_process'
 import { DEMO_CFG_1 } from '../src/engine/config.ts'
 import { evaluate } from '../src/engine/evaluate.ts'
 import { moneyPaths } from '../src/engine/money.ts'
@@ -15,6 +16,8 @@ import { toSnakeKey, toWire } from '../src/engine/wire.ts'
 import { parsePath, type PathSegment } from '../tests/lib/path.ts'
 import { loadVectorFiles, vectorSchema } from '../tests/lib/vector.ts'
 import { runOracle, type OracleSpawn } from './lib/oracle-run.ts'
+import { pythonCmd } from './lib/py.ts'
+import { codeCommitInfo, readJson } from './lib/repo.ts'
 
 const repoRoot = path.resolve(fileURLToPath(new URL('..', import.meta.url)))
 const REPORT = 'docs/_work/diff_report.md'
@@ -96,6 +99,15 @@ export type ReportFailure = {
   message: string
 }
 
+/** 报告的可追溯来源：命令、代码提交、运行环境。时间取提交时间，不读系统时钟（AGENTS.md §3） */
+export type DiffProvenance = {
+  command: string
+  commit: { hash: string; time: string }
+  node: string
+  pnpm: string
+  python: string
+}
+
 export type ReportInput = {
   stale: readonly string[]
   caseCount: number
@@ -104,6 +116,8 @@ export type ReportInput = {
   oracleCheckpoints: number
   failures: readonly ReportFailure[]
   diffs: readonly ReportDiff[]
+  /** 没有来源信息时不写“来源与版本”一节，避免编造 */
+  provenance?: DiffProvenance
 }
 
 export type ExpectRef = {
@@ -530,6 +544,29 @@ function showCell(value: unknown): string {
   return text === undefined ? '缺失' : text
 }
 
+/** 报告首页的来源与版本：命令、提交、运行环境；取不到的写“未知”，不猜 */
+function provenanceLines(provenance: DiffProvenance): string[] {
+  const commit = provenance.commit.hash === '' ? '未知' : `\`${provenance.commit.hash}\`（${provenance.commit.time || '时间未知'}，提交时间）`
+  return [
+    '## 来源与版本',
+    '',
+    `- 生成命令：\`${provenance.command}\``,
+    `- 代码提交：${commit}`,
+    `- 运行环境：Node ${provenance.node}；pnpm ${provenance.pnpm}；Python ${provenance.python}`,
+    '- 比较对象：fixtures/cases 与 fixtures/vectors 的检查点；参考实现只经 `python -m oracle` 调用，输出读 `.cache/oracle-out`，未打开 `oracle/` 源码（AGENTS.md §3）',
+  ]
+}
+
+/** 只在本脚本被直接运行时调用：需要一次 python 版本探测，单元测试不走这里 */
+export function collectProvenance(command = 'pnpm diff:oracle'): DiffProvenance {
+  const manifest = readJson<{ packageManager?: string }>(path.join(repoRoot, 'package.json'))
+  const declared = manifest.packageManager ?? ''
+  const pnpm = declared.includes('@') ? declared.slice(declared.indexOf('@') + 1) : declared || '未知'
+  const probe = spawnSync(pythonCmd, ['--version'], { encoding: 'utf8', windowsHide: true })
+  const python = `${probe.stdout ?? ''}${probe.stderr ?? ''}`.trim().replace(/^Python\s+/i, '') || '未知'
+  return { command, commit: codeCommitInfo(), node: process.version, pnpm, python }
+}
+
 export function formatDiffReport(input: ReportInput): string {
   const lines: string[] = []
   const stale = [...input.stale].sort(byCodePoint)
@@ -540,6 +577,7 @@ export function formatDiffReport(input: ReportInput): string {
   lines.push(`案例 ${input.caseCount}，向量 ${input.vectorCount}，检查点 TS ${input.tsCheckpoints} / oracle ${input.oracleCheckpoints}`)
   lines.push(`差异 合计 ${counts.P1 + counts.P2 + counts.P3}（P1 ${counts.P1}，P2 ${counts.P2}，P3 ${counts.P3}）`)
   lines.push(`运行失败 ${input.failures.length}`)
+  if (input.provenance !== undefined) lines.push('', ...provenanceLines(input.provenance))
   if (input.failures.length > 0) {
     lines.push('', '对象｜说明')
     const failures = [...input.failures].sort((left, right) => byCodePoint(left.object, right.object) || byCodePoint(left.message, right.message))
@@ -706,7 +744,7 @@ function rowsFor(kind: 'case' | 'vector', id: string, data: unknown, ts: readonl
   return rows
 }
 
-export async function runDiff(options: { root?: string; spawn?: OracleSpawn; runTs?: RunTs; reportPath?: string } = {}): Promise<{ text: string; exitCode: number }> {
+export async function runDiff(options: { root?: string; spawn?: OracleSpawn; runTs?: RunTs; reportPath?: string; provenance?: DiffProvenance } = {}): Promise<{ text: string; exitCode: number }> {
   const root = options.root ?? repoRoot
   const runTs = options.runTs ?? defaultRunTs
   const outcome = await runOracle({ root, spawn: options.spawn })
@@ -747,6 +785,7 @@ export async function runDiff(options: { root?: string; spawn?: OracleSpawn; run
     oracleCheckpoints,
     failures,
     diffs,
+    ...(options.provenance === undefined ? {} : { provenance: options.provenance }),
   })
   const reportPath = options.reportPath ?? path.join(root, REPORT)
   await mkdir(path.dirname(reportPath), { recursive: true })
@@ -761,7 +800,7 @@ function isDirectRun(): boolean {
 }
 
 if (isDirectRun()) {
-  runDiff()
+  runDiff({ provenance: collectProvenance() })
     .then(() => {
       process.exitCode = 0
     })

@@ -7,7 +7,7 @@ import { caseFileSchema } from '../../src/engine/schema.ts'
 import { canonicalWire } from '../../scripts/lib/canonical.ts'
 import { REPO_ROOT } from '../../scripts/lib/repo.ts'
 import { buildCaseFile, buildExports, exportMeta } from '../../scripts/export-results.ts'
-import { renderAppendix, type ReportInput } from '../../scripts/test-report.ts'
+import { renderAppendix, parsePrecheckReport, precheckDisplay, precheckMismatches, type ReportInput } from '../../scripts/test-report.ts'
 import { runPresubmit, STEPS } from '../../scripts/presubmit.ts'
 
 const meta = exportMeta({ hash: 'abc1234', time: '2026-10-17T10:00:00+08:00' })
@@ -59,7 +59,7 @@ describe('export-results 结果导出', () => {
 
 describe('test-report 测试报告', () => {
   const base: ReportInput = {
-    unit: { files: 23, tests: 10, passed: 9, failed: 0, skipped: 1 },
+    unit: { suites: 148, files: 28, tests: 10, passed: 9, failed: 0, skipped: 1 },
     vec: { vectors_passed: 152, vectors_total: 152, assertions_passed: 1004, assertions_total: 1004, assertions_skipped: 0, run_errors: 0 },
     golden: { status: '通过', exit_code: 0, detail: '' },
     cases: { status: '通过', exit_code: 0, detail: '' },
@@ -84,6 +84,14 @@ describe('test-report 测试报告', () => {
     expect(text).toContain('不代表需求成立')
   })
 
+  test('test-report 把 suite 数与测试文件数分成两行，不把 describe 分组当文件数', () => {
+    const text = renderAppendix(base)
+    expect(text).toContain('| 测试套件 | 148 |')
+    expect(text).toContain('| 测试文件 | 28 |')
+    expect(text).toContain('不是文件数')
+    expect(text).toContain('与上一行的 suite 数不是同一口径')
+  })
+
   test('test-report 未执行的检查如实写“未执行”，不写成通过', () => {
     const text = renderAppendix({ ...base, docLint: { status: '未执行', exit_code: -1, detail: '本轮未执行' } })
     expect(text).toMatch(/文档检查（doc:lint） \| 未执行/)
@@ -96,6 +104,51 @@ describe('test-report 测试报告', () => {
     const text = renderAppendix(base)
     expect(text).toMatch(/\| R001 \| 7 \| 3 \| 2 \| 0 \| 2 \|/)
     expect(text).toMatch(/\| R001 \| 是 \| 是 \| 否 \| 未开展 \|/)
+  })
+
+  test('A4 预检记录只取整数并重新拼出展示串，含空格的“（跳过 0）”不会被截断', () => {
+    const report = [
+      '# 向量预检报告',
+      '',
+      '- 向量通过数：152／152',
+      '- 断言通过数：1004／1004（跳过 0）',
+      '- 运行错误数：0',
+      '',
+      '## 单元核对',
+      '',
+      '- 退出码：0',
+      '',
+    ].join('\n')
+    const record = parsePrecheckReport(report)
+    expect(record).toEqual({
+      source: 'docs/_work/precheck_report.md',
+      vectors_passed: 152,
+      vectors_total: 152,
+      assertions_passed: 1004,
+      assertions_total: 1004,
+      assertions_skipped: 0,
+      run_errors: 0,
+      unit_exit: 0,
+    })
+    // 展示串由整数拼出：完整、无截断、带单位
+    expect(precheckDisplay(record!).assertions).toBe('1004／1004（跳过 0 条）')
+    expect(precheckDisplay(record!).assertions).not.toBe('1004／1004（跳过')
+    expect(renderAppendix({ ...base, precheck: record })).toContain('断言 1004／1004（跳过 0 条）')
+  })
+
+  test('A4 预检记录格式不符或缺失时整体记为未取得，不返回半截字符串', () => {
+    expect(parsePrecheckReport('')).toBeNull()
+    // 截断的正文（缺少“跳过”的右括号）不再被当成可用的值
+    expect(parsePrecheckReport('- 向量通过数：152／152\n- 断言通过数：1004／1004（跳过 0\n- 运行错误数：0\n')).toBeNull()
+    expect(renderAppendix(base)).toContain('未取得')
+  })
+
+  test('A4 预检记录与本轮向量运行逐项比对，任何一项不符都报出来', () => {
+    const record = parsePrecheckReport('- 向量通过数：152／152\n- 断言通过数：1004／1004（跳过 0）\n- 运行错误数：0\n- 退出码：0\n')
+    expect(record).not.toBeNull()
+    expect(precheckMismatches(record!, base.vec)).toEqual([])
+    expect(precheckMismatches({ ...record!, assertions_passed: 1003 }, base.vec)).toEqual(['断言通过数：记录 1003，本轮 1004'])
+    expect(precheckMismatches({ ...record!, run_errors: 1 }, base.vec)).toEqual(['运行错误数：记录 1，本轮 0'])
   })
 })
 

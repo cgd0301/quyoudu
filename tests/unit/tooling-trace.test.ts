@@ -175,6 +175,17 @@ describe('results 编号映射的健壮性', () => {
   test('results 相似编号不会被截断匹配（T015-010 不等于 T015-01）', () => {
     expect(subIdOf('T015-010 gap 相似编号')).toBeNull()
     expect(subIdOf('T015-01 gap 正常编号')).toBe('T015-01')
+    expect(subIdOf('T015-011 gap 相似编号')).toBeNull()
+  })
+
+  test('results 编号后接 ASCII 字母的非法写法不命中，非 ASCII 的子情形后缀仍归同一编号', () => {
+    // 规范写法是“编号 + 空格 + 说明”，或“编号 + #n／①②③”；接字母属非法写法，宁可记为未执行
+    expect(subIdOf('T015-01a gap 非法后缀')).toBeNull()
+    expect(subIdOf('T015-01gap 缺少分隔')).toBeNull()
+    // 子情形后缀不是 ASCII 数字或字母，照旧归到同一子用例编号
+    expect(subIdOf('T015-05#1 gap 确认免费为 0')).toBe('T015-05')
+    expect(subIdOf('T020-07③ 预测未引用配置版本')).toBe('T020-07')
+    expect(subIdOf('T020-07② 预测值为负')).toBe('T020-07')
   })
 
   test('results 名称为空或缺失时不产生编号', () => {
