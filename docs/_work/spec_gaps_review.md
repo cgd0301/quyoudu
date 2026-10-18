@@ -5,7 +5,7 @@
 
 ## 一、原 14 条 AI 暂定项：已全部裁决并写回
 
-本轮开始前 `spec_gaps.md` 有 14 条状态为"AI暂定（保守）"、1 条为 SG-76，`pnpm spec:lint` 报 15 条警告；本轮结束后 AI暂定（保守）为 **0** 条。逐条写回位置如下（"已裁决"不等于"已实现"或"已验证"，两者分开列）。
+本轮开始前 `spec_gaps.md` 有 **15** 条状态为"AI暂定（保守）"（SG-47、48、49、64、65、66、68、69、70、71、72、73、74、75、76），`pnpm spec:lint` 报 15 条警告；本轮结束后 AI暂定（保守）为 **0** 条、警告 0 条。逐条写回位置如下（"已裁决"不等于"已实现"或"已验证"，两者分开列）。
 
 | 编号 | 裁决结论 | 写回位置（正式条文） | 实现位置 | 验证证据 |
 | --- | --- | --- | --- | --- |
@@ -23,11 +23,13 @@
 | SG-73 | 当日实际支出仅在 `as_of` 已可获得时参与；情景支出不冒充实际 | §8.8 D86 | `src/engine/scenarios/recent-month.ts`（`spentToday`） | `tests/unit/scenarios.test.ts`、性质「历史记录不进入现金流」 |
 | SG-74 | 多个不可用原因只按一个固定优先级输出 | §8.8 D87（顺序取自实现与既有测试，未自行发明） | `src/engine/scenarios/recent-month.ts` 的四处 `unavailable(...)` 依次判断 | `tests/unit/scenarios.test.ts`「SG-74 不可用原因的先后」「SG-74 检查期间终点未定…」 |
 | SG-75 | 引用标识按与区域设置无关的 UTF-16 码元顺序排序 | §8.8 D88 | `src/engine/compare/index.ts`（`compareRefs`） | `tests/unit/compare.test.ts`（pending/excluded 排序） |
-| SG-76 | NL 证据映射严格匹配规范编号，禁止宽松包含匹配 | **不是业务计算规则**，写回 `docs/_work/test_layers.md`「证据映射契约」 | `scripts/lib/results.ts`（`subIdOf`） | `tests/unit/tooling-trace.test.ts`「results 编号映射的健壮性」 |
+| SG-76 | NL 证据映射严格匹配规范编号，禁止宽松包含匹配；NL 数据契约按原处理实现（**编号说明见下**） | 证据映射契约写回 `docs/_work/test_layers.md`「证据映射契约」（不占用 D 编号）；`spec_gaps.md` 的 SG-76 行本身是 NL 数据契约，状态指向 `src/nl/` 与 `tests/unit/nl.test.ts` | `scripts/lib/results.ts`（`subIdOf`）、`src/nl/` | `tests/unit/tooling-trace.test.ts`「results 编号映射的健壮性」、`tests/unit/nl.test.ts` |
 
 SG-74 的优先级依据：实现里四处提前返回的顺序为 配置版本 → 历史 → 类别标注 → 覆盖关系，`tests/unit/scenarios.test.ts` 已用"多条件同时成立"的用例锁定该顺序（配置版本+历史+覆盖同时成立时只报配置版本；历史+覆盖同时成立时只报历史）；因此按实现与既有测试把这一个顺序写进条文，没有另选顺序。
 
 SG-76 的处理理由：它约束的是"哪条测试算作哪个子用例的证据"，属于测试证据层契约，不是会改变演示数字的业务规则；若为编号整齐硬塞一个 D 编号，会让人误以为它是计算规则。因此写在 `docs/_work/test_layers.md` 并配解析器回归测试。
+
+**SG-76 的编号说明（不臆造）**：`docs/_work/spec_gaps.md` 里的 SG-76 讲的是"自然语言层的数据契约定没有写成条文"（13 个提取字段的类型、确认记录形态、追问计数等），而本轮人工批准里以"SG-76"名义给出的方向是"NL 证据映射严格匹配用例编号"。两者是不同主题、共用了一个编号。处理方式：不新造编号，也不把两者的内容混成一条——`spec_gaps.md` 的 SG-76 行保持其原有 NL 数据契约内容（实现见 `src/nl/`，由 `tests/unit/nl.test.ts` 锁定），证据映射契约单独写进 `docs/_work/test_layers.md`「证据映射契约」，并在两处互相交叉引用。这一点在交付报告里也列为需要团队确认的编号问题。
 
 ## 二、SG-68：已裁决，历史差异当前未复现
 
