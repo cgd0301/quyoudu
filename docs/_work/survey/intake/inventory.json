@@ -1,0 +1,276 @@
+{
+  "format": 1,
+  "tool": "pnpm survey:intake",
+  "input": {
+    "name": "趣有度｜青年消费计划与资金安排调查(Sheet1).csv",
+    "bytes": 7277,
+    "sha256": "4713c6d1cb2df4564a0a705cf65c1c64630881878ef0f4046f07c5584924a9e7",
+    "bom": false
+  },
+  "encoding": {
+    "nonAsciiBytes": 0,
+    "cjkChars": 0,
+    "replacementChars": 0,
+    "questionMarks": 4863,
+    "questionMarkRuns": 465
+  },
+  "table": {
+    "headerCells": 16,
+    "dataRows": 30,
+    "columns": 16,
+    "duplicateRows": 0,
+    "emptyColumns": [
+      4
+    ],
+    "blankHeaderCells": []
+  },
+  "respondents": {
+    "candidateColumn": 0,
+    "header": "Id",
+    "uniqueValues": 30,
+    "looksSequential": true,
+    "note": "Id 取值为连续行号 1..30，判断为导出行号而非应答编号：不能据此确认独立受访者数"
+  },
+  "columns": [
+    {
+      "index": 0,
+      "header": "Id",
+      "answered": 30,
+      "blank": 0,
+      "distinct": 30,
+      "maxLength": 2,
+      "asciiOnly": true,
+      "pii": [],
+      "safeValues": null
+    },
+    {
+      "index": 1,
+      "header": "[?×4]",
+      "answered": 30,
+      "blank": 0,
+      "distinct": 27,
+      "maxLength": 16,
+      "asciiOnly": true,
+      "pii": [],
+      "safeValues": null
+    },
+    {
+      "index": 2,
+      "header": "[?×4]",
+      "answered": 30,
+      "blank": 0,
+      "distinct": 28,
+      "maxLength": 16,
+      "asciiOnly": true,
+      "pii": [],
+      "safeValues": null
+    },
+    {
+      "index": 3,
+      "header": "[?×4]",
+      "answered": 30,
+      "blank": 0,
+      "distinct": 1,
+      "maxLength": 9,
+      "asciiOnly": true,
+      "pii": [],
+      "safeValues": [
+        {
+          "value": "anonymous",
+          "count": 30
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "header": "[?×2]",
+      "answered": 0,
+      "blank": 30,
+      "distinct": 0,
+      "maxLength": 0,
+      "asciiOnly": true,
+      "pii": [],
+      "safeValues": null
+    },
+    {
+      "index": 5,
+      "header": "[?×2]",
+      "answered": 9,
+      "blank": 21,
+      "distinct": 2,
+      "maxLength": 25,
+      "asciiOnly": true,
+      "pii": [],
+      "safeValues": null
+    },
+    {
+      "index": 6,
+      "header": "[?×6]",
+      "answered": 30,
+      "blank": 0,
+      "distinct": 5,
+      "maxLength": 5,
+      "asciiOnly": true,
+      "pii": [],
+      "safeValues": [
+        {
+          "value": "18-20",
+          "count": 22
+        },
+        {
+          "value": "<18",
+          "count": 4
+        },
+        {
+          "value": "21-23",
+          "count": 2
+        },
+        {
+          "value": "24-26",
+          "count": 1
+        },
+        {
+          "value": ">30",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "header": "[?×10]",
+      "answered": 30,
+      "blank": 0,
+      "distinct": 1,
+      "maxLength": 4,
+      "asciiOnly": true,
+      "pii": [],
+      "safeValues": null
+    },
+    {
+      "index": 8,
+      "header": "[?×2] 12 [?×15]",
+      "answered": 30,
+      "blank": 0,
+      "distinct": 10,
+      "maxLength": 46,
+      "asciiOnly": true,
+      "pii": [],
+      "safeValues": null
+    },
+    {
+      "index": 9,
+      "header": "[?×2] 12 [?×16]",
+      "answered": 30,
+      "blank": 0,
+      "distinct": 15,
+      "maxLength": 85,
+      "asciiOnly": true,
+      "pii": [],
+      "safeValues": null
+    },
+    {
+      "index": 10,
+      "header": "[?×14]",
+      "answered": 30,
+      "blank": 0,
+      "distinct": 17,
+      "maxLength": 67,
+      "asciiOnly": true,
+      "pii": [],
+      "safeValues": null
+    },
+    {
+      "index": 11,
+      "header": "[?×20]",
+      "answered": 30,
+      "blank": 0,
+      "distinct": 16,
+      "maxLength": 91,
+      "asciiOnly": true,
+      "pii": [],
+      "safeValues": null
+    },
+    {
+      "index": 12,
+      "header": "[?×15] 3 [?×13]",
+      "answered": 30,
+      "blank": 0,
+      "distinct": 4,
+      "maxLength": 6,
+      "asciiOnly": true,
+      "pii": [],
+      "safeValues": null
+    },
+    {
+      "index": 13,
+      "header": "[?×13]",
+      "answered": 30,
+      "blank": 0,
+      "distinct": 21,
+      "maxLength": 80,
+      "asciiOnly": true,
+      "pii": [],
+      "safeValues": null
+    },
+    {
+      "index": 14,
+      "header": "[?×18]",
+      "answered": 30,
+      "blank": 0,
+      "distinct": 16,
+      "maxLength": 30,
+      "asciiOnly": true,
+      "pii": [],
+      "safeValues": null
+    },
+    {
+      "index": 15,
+      "header": "[?×15]",
+      "answered": 30,
+      "blank": 0,
+      "distinct": 6,
+      "maxLength": 17,
+      "asciiOnly": true,
+      "pii": [],
+      "safeValues": null
+    }
+  ],
+  "durations": {
+    "startColumn": 1,
+    "endColumn": 2,
+    "rows": 30,
+    "minMinutes": 0,
+    "medianMinutes": 1,
+    "maxMinutes": 5,
+    "underOneMinute": 3,
+    "negative": 0
+  },
+  "verdict": "blocked_unreadable",
+  "issues": [
+    {
+      "code": "encoding_loss",
+      "severity": "block",
+      "message": "编码丢失：文件没有非 ASCII 字节，却有 465 段连续 \"?\"，中文题干与选项疑似在导出时被替换"
+    },
+    {
+      "code": "schema_mismatch",
+      "severity": "block",
+      "message": "表头缺少 schema 必需字段：Q1、Q2、Q3、Q9、meta_respondent_id、meta_submitted_at、meta_duration_seconds；导出件与受治理问卷不是同一套字段"
+    },
+    {
+      "code": "schema_no_overlap",
+      "severity": "warn",
+      "message": "导出件没有任何字段命中受治理问卷的 18 个题号：无法建立字段映射，不能把作答列当成 Q1—Q15"
+    },
+    {
+      "code": "dedupe_unusable",
+      "severity": "warn",
+      "message": "Id 取值为连续行号 1..30，判断为导出行号而非应答编号：不能据此确认独立受访者数"
+    },
+    {
+      "code": "empty_columns",
+      "severity": "info",
+      "message": "有 1 列在全部数据行中为空：第 5 列"
+    }
+  ]
+}

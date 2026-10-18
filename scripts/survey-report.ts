@@ -16,6 +16,7 @@ import { fileURLToPath } from 'node:url'
 import { existsSync } from 'node:fs'
 import { parseCsv } from './lib/csv.ts'
 import { readText, readTextIfExists, repoPath, writeFileAtomic } from './lib/repo.ts'
+import { looksLikeEncodingLoss, textSignals } from './lib/survey-integrity.ts'
 
 export const SURVEY_DIR = 'docs/_work/survey'
 export const RAW_CSV = `${SURVEY_DIR}/raw/responses.csv`
@@ -55,6 +56,53 @@ export type RawMetadata = {
   channel?: string
   sampling?: string
   distributed?: number
+}
+
+export type SurveyInputIssue = { code: string; message: string }
+
+/** 输入在统计之前就不可用：宁可停下，也不生成看似正常的数字 */
+export class SurveyInputBlocked extends Error {
+  readonly issues: SurveyInputIssue[]
+  constructor(issues: SurveyInputIssue[]) {
+    super(`问卷输入不可用：${issues.map((issue) => issue.message).join('；')}`)
+    this.name = 'SurveyInputBlocked'
+    this.issues = issues
+  }
+}
+
+/**
+ * 统计前的输入检查：空文件、字段与 schema 不一致、中文题干被替换。
+ * 只做阻断判断，不修数据、不补字段。
+ */
+export function assessInput(schema: SurveySchema, csvText: string): SurveyInputIssue[] {
+  const issues: SurveyInputIssue[] = []
+  const text = csvText.replace(/^\uFEFF/, '')
+  if (text.trim() === '') {
+    issues.push({ code: 'empty', message: 'CSV 为空' })
+    return issues
+  }
+  const table = parseCsv(text)
+  const header = (table[0] ?? []).map((cell) => cell.trim())
+  const required = new Set<string>(schema.rules.required)
+  if (schema.rules.duplicate_key !== null) required.add(schema.rules.duplicate_key)
+  if (schema.rules.attention_check !== null) required.add(schema.rules.attention_check.question)
+  required.add('meta_submitted_at')
+  required.add('meta_duration_seconds')
+  const missing = [...required].filter((id) => !header.includes(id))
+  if (missing.length > 0) {
+    issues.push({ code: 'schema_mismatch', message: `表头缺少 schema 必需字段：${missing.join('、')}` })
+  }
+  const signals = textSignals(text)
+  if (looksLikeEncodingLoss({ ...signals, nonAsciiBytes: /[^\x00-\x7F]/.test(text) ? 1 : 0 })) {
+    issues.push({
+      code: 'encoding_loss',
+      message:
+        signals.replacementChars > 0
+          ? `编码损坏：检测到 ${signals.replacementChars} 个 U+FFFD 替换符，文件不是有效的 UTF-8`
+          : `编码丢失：文件没有任何非 ASCII 字符，却有 ${signals.questionMarkRuns} 段连续 "?"，中文题干与选项疑似在导出时被替换`,
+    })
+  }
+  return issues
 }
 
 /** 一条答卷 + 剔除原因；invalid 为空表示有效 */
@@ -308,6 +356,8 @@ function invalidSummary(rows: readonly ResponseRow[]): { reason: string; count: 
 }
 
 export function summarize(schema: SurveySchema, csvText: string, metadata: RawMetadata): SurveySummary {
+  const issues = assessInput(schema, csvText)
+  if (issues.length > 0) throw new SurveyInputBlocked(issues)
   const table = parseCsv(csvText.replace(/^\uFEFF/, ''))
   const [header = [], ...body] = table
   const rows = body
@@ -346,7 +396,8 @@ export function renderNotRun(schema: SurveySchema): string {
     '',
     '> **状态：未运行（缺少输入）**',
     '> 仓库中没有 `docs/_work/survey/raw/responses.csv`，因此本文件不含任何统计数字。',
-    '> 问卷尚未发放；本文件不得被当作“没有需求”或“样本为 0”的证据。',
+    '> 问卷尚未形成可分析数据；本文件不得被当作“没有需求”或“样本为 0”的证据。',
+    '> 若平台已收到提交但导出件未通过完整性校验，见 `docs/_work/survey/intake/report.md`；本报告只反映仓库内可分析数据的状态。',
     '',
     '## 口径来源',
     '',
@@ -358,7 +409,30 @@ export function renderNotRun(schema: SurveySchema): string {
     '',
     '1. 导出去标识化答卷到 `docs/_work/survey/raw/responses.csv`（不入库）。',
     '2. 在 `docs/_work/survey/raw/metadata.json` 记录 `data_version`、采集起止日期、渠道与抽样方式。',
-    '3. 运行 `pnpm survey:report`。',
+    '3. 先运行 `pnpm survey:intake --input docs/_work/survey/raw/responses.csv` 检查编码与字段，再运行 `pnpm survey:report`。',
+    '',
+  ].join('\n')
+}
+
+/** 输入不可用时的报告：写清阻塞原因与恢复步骤，不产生任何统计数字 */
+export function renderBlocked(schema: SurveySchema, issues: readonly SurveyInputIssue[]): string {
+  return [
+    '# 问卷统计结果',
+    '',
+    '> **状态：阻塞（原始导出不可用）**',
+    `> 原因：${issues.map((issue) => `（${issue.code}）${issue.message}`).join('；')}。`,
+    '> 本文件不包含任何统计数字，也不得被当作“没有需求”“样本为 0”或“付费意愿低”的证据。',
+    '',
+    '## 口径来源',
+    '',
+    `- 题型与清洗规则：\`${SCHEMA_PATH}\`（version ${schema.version}）`,
+    '- 接收检查与证据：`docs/_work/survey/intake/report.md`、`docs/_work/survey/intake/inventory.json`',
+    '',
+    '## 处理步骤',
+    '',
+    '1. 从原始表单或工作簿重新导出 **XLSX** 或 **UTF-8 CSV**，确认题干与选项为可读中文。',
+    '2. 确认导出字段与 `docs/_work/survey/schema.json` 对齐；不一致时先建立字段映射。',
+    '3. 把可读导出件放到 `docs/_work/survey/raw/responses.csv`（不入库），依次运行 `pnpm survey:intake` 与 `pnpm survey:report`。',
     '',
   ].join('\n')
 }
@@ -423,20 +497,98 @@ export function readMetadata(): RawMetadata {
   return data as RawMetadata
 }
 
-export function runSurvey(): { written: boolean; summary: SurveySummary | null } {
+/** 接收检查结果摘要：只取文件级事实，不含任何回答内容 */
+export type IntakeSummary = {
+  verdict: string
+  dataRows: number
+  sha256: string
+  blockers: string[]
+}
+
+export function readIntakeSummary(): IntakeSummary | null {
+  const file = repoPath(`${SURVEY_DIR}/intake/inventory.json`)
+  if (!existsSync(file)) return null
+  try {
+    const data: unknown = JSON.parse(readText(file))
+    if (data === null || typeof data !== 'object' || Array.isArray(data)) return null
+    const record = data as Record<string, unknown>
+    const input = record.input
+    const table = record.table
+    const issues = record.issues
+    if (typeof record.verdict !== 'string' || typeof input !== 'object' || input === null || typeof table !== 'object' || table === null) return null
+    const sha = (input as Record<string, unknown>).sha256
+    const rows = (table as Record<string, unknown>).dataRows
+    const blockers = Array.isArray(issues)
+      ? issues
+          .filter((issue): issue is Record<string, unknown> => issue !== null && typeof issue === 'object')
+          .filter((issue) => issue.severity === 'block')
+          .map((issue) => `${String(issue.code ?? '')}：${String(issue.message ?? '')}`)
+      : []
+    if (typeof sha !== 'string' || typeof rows !== 'number') return null
+    return { verdict: record.verdict, dataRows: rows, sha256: sha, blockers }
+  } catch {
+    return null
+  }
+}
+
+/** 原始导出件存在但接收检查为阻塞：只写文件级事实与恢复步骤，不写任何回答统计 */
+export function renderIntakeBlocked(schema: SurveySchema, intake: IntakeSummary): string {
+  return [
+    '# 问卷统计结果',
+    '',
+    '> **状态：阻塞（原始导出件未通过完整性校验）**',
+    `> 接收检查判定：${intake.verdict}；导出件数据行 ${intake.dataRows}；原始文件 SHA-256 \`${intake.sha256}\`。`,
+    `> 阻塞原因：${intake.blockers.length === 0 ? '见接收检查报告' : intake.blockers.join('；')}。`,
+    '> 本文件不包含任何统计数字，也不得被当作“没有需求”“样本为 0”或“付费意愿低”的证据。',
+    '',
+    '## 口径来源',
+    '',
+    `- 题型与清洗规则：\`${SCHEMA_PATH}\`（version ${schema.version}）`,
+    '- 接收检查报告：`docs/_work/survey/intake/report.md`；机器可读结果：`docs/_work/survey/intake/inventory.json`',
+    '',
+    '## 恢复步骤',
+    '',
+    '1. 从原始表单或工作簿重新导出 **XLSX** 或 **UTF-8 CSV**，确认题干与选项为可读中文。',
+    '2. 确认导出字段与 `docs/_work/survey/schema.json` 对齐；不一致时先建立字段映射。',
+    '3. 把可读导出件放到 `docs/_work/survey/raw/responses.csv`（不入库），先运行 `pnpm survey:intake` 再运行 `pnpm survey:report`。',
+    '',
+  ].join('\n')
+}
+
+export function runSurvey(): { written: boolean; summary: SurveySummary | null; blocked: SurveyInputIssue[] | null } {
   const schema = readSchema()
   const csvPath = repoPath(RAW_CSV)
   if (!existsSync(csvPath)) {
+    const intake = readIntakeSummary()
+    if (intake !== null && intake.verdict !== 'ok') {
+      writeFileAtomic(repoPath(REPORT_PATH), renderIntakeBlocked(schema, intake))
+      return { written: true, summary: null, blocked: intake.blockers.map((message) => ({ code: 'intake_blocked', message })) }
+    }
     writeFileAtomic(repoPath(REPORT_PATH), renderNotRun(schema))
-    return { written: true, summary: null }
+    return { written: true, summary: null, blocked: null }
   }
-  const summary = summarize(schema, readText(csvPath), readMetadata())
-  writeFileAtomic(repoPath(REPORT_PATH), renderReport(summary, schema))
-  return { written: true, summary }
+  try {
+    const summary = summarize(schema, readText(csvPath), readMetadata())
+    writeFileAtomic(repoPath(REPORT_PATH), renderReport(summary, schema))
+    return { written: true, summary, blocked: null }
+  } catch (error) {
+    if (error instanceof SurveyInputBlocked) {
+      writeFileAtomic(repoPath(REPORT_PATH), renderBlocked(schema, error.issues))
+      return { written: true, summary: null, blocked: error.issues }
+    }
+    throw error
+  }
 }
 
 export async function main(): Promise<number> {
-  const { summary } = runSurvey()
+  const { summary, blocked } = runSurvey()
+  if (blocked !== null) {
+    console.log(
+      `输入被阻塞：${blocked.map((issue) => `（${issue.code}）${issue.message}`).join('；')}。` +
+        `已写入 ${REPORT_PATH}，未生成任何统计。`,
+    )
+    return 0
+  }
   if (summary === null) {
     console.log(`缺少输入：${RAW_CSV} 不存在。已写入“未运行（缺少输入）”，未生成任何统计。`)
     return 0

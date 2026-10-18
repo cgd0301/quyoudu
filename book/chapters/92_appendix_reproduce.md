@@ -17,7 +17,8 @@
 | 参考实现对拍 | `pnpm diff:oracle` | `docs/_work/diff_report.md` |
 | 结果导出 | `pnpm export:results` | `book/data/cases`、`book/data/flows`、`book/data/index.json` |
 | 市场与单位经济模型 | `pnpm model:economics` | `book/data/model/business_model.json`、`docs/_work/business_model.md` |
-| 问卷统计 | `pnpm survey:report` | `docs/_work/survey/report.md`（无原始答卷时只写“未运行（缺少输入）”） |
+| 问卷接收检查 | `pnpm survey:intake --input <导出件>` | `docs/_work/survey/intake/report.md`、`inventory.json`（编码、字段、去重、时长、PII） |
+| 问卷统计 | `pnpm survey:report` | `docs/_work/survey/report.md`（无可分析输入时只写“未运行”或“阻塞”，不生成统计） |
 | 界面截图 | `pnpm shots` | `submission/screenshots/*.png`（真实启动后截取，需已装 Playwright chromium） |
 | 测试报告 | `pnpm test:report` | `book/chapters/91_appendix_test_report.md`、`book/data/status.json` |
 | 追溯状态 | `pnpm trace:update` | `docs/traceability.csv` 的状态列 |

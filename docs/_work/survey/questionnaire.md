@@ -1,4 +1,6 @@
-# 问卷发放口径（设计稿，尚未发放）
+# 问卷发放口径（设计稿；线上表单已实际投放，导出件不可读）
+
+> 2026-10-18 线上表单已收到 30 条提交，但导出件丢失全部中文题干与选项，且字段与本目录 `schema.json` 零重叠（8 个作答列 vs 15 道题，无 `meta_*` 字段）。实际投放表单的题面、选项与字段顺序尚未留存到仓库；在补齐题面与可读导出件之前，**不得分析、不得引用任何回答**。证据见 `discovery.md` 与 `intake/report.md`。
 
 题目清单以 `schema.json` 为唯一来源，本文件只写"怎么发、发给谁、怎么算有效"，避免两处题目不一致。
 
@@ -31,9 +33,9 @@
 
 ## 四、发放后的流程
 
-1. 导出 CSV → 放在 `docs/_work/survey/raw/responses.csv`（不入库）。
-2. 在 `raw/metadata.json` 记录 `data_version`、采集起止日期、渠道、回收量、剔除量。
-3. 运行 `pnpm survey:report`，得到 `docs/_work/survey/report.md`。
+1. 导出 **XLSX 或 UTF-8 CSV**（不要用 Excel 的旧版 CSV 导出）→ 先运行 `pnpm survey:intake --input <导出件>` 检查编码与字段。
+2. 检查通过后，把去标识化答卷放到 `docs/_work/survey/raw/responses.csv`（不入库）；在 `raw/metadata.json` 记录 `data_version`、采集起止日期、渠道、回收量、剔除量。
+3. 运行 `pnpm survey:report`，得到 `docs/_work/survey/report.md`；若报告为“阻塞”，按报告中的恢复步骤重新导出，不得手工补数字。
 4. 把 `report.md` 的有效样本量、各题分布与"不能支持的结论"抄进项目书对应章节；**不得**把自报意愿写成实际使用。
 
 ## 五、本轮明确不做

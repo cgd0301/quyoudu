@@ -1,6 +1,16 @@
 import { describe, expect, test } from 'vitest'
 import { readFileSync } from 'node:fs'
-import { cleanResponses, parseSchema, renderNotRun, renderReport, summarize, summarizeQuestions } from '../../scripts/survey-report.ts'
+import {
+  assessInput,
+  cleanResponses,
+  parseSchema,
+  renderBlocked,
+  renderNotRun,
+  renderReport,
+  summarize,
+  summarizeQuestions,
+  SurveyInputBlocked,
+} from '../../scripts/survey-report.ts'
 import { REPO_ROOT } from '../../scripts/lib/repo.ts'
 
 /**
@@ -131,5 +141,33 @@ describe('survey 问卷统计口径', () => {
     expect(text).toContain('有效 / 提交：1 / 1')
     expect(text).toContain('样本量不足')
     expect(text).toContain('只能写“在这批受访者中……”')
+  })
+
+  test('字段与 schema 不一致时在统计前阻断，不按缺失值算出一份“0 答卷”', () => {
+    const schema = schemaOf(SCHEMA_TEXT)
+    const issues = assessInput(schema, 'a,b\n1,2')
+    expect(issues.map((issue) => issue.code)).toContain('schema_mismatch')
+    expect(() => summarize(schema, 'a,b\n1,2', {})).toThrow(SurveyInputBlocked)
+    const report = renderBlocked(schema, issues)
+    expect(report).toContain('状态：阻塞（原始导出不可用）')
+    expect(report).not.toMatch(/\d+\.\d%/)
+  })
+
+  test('中文题干被替换成问号的导出件在统计前阻断，报告不出现回答分布', () => {
+    const schema = schemaOf(SCHEMA_TEXT)
+    const header = 'meta_respondent_id,meta_submitted_at,meta_duration_seconds,Q1,Q2,Q3,Q9'
+    const text = [header, 'a,2026-10-01T10:00:00+08:00,200,???;????,?????,???,4'].join('\n')
+    const issues = assessInput(schema, text)
+    expect(issues.map((issue) => issue.code)).toContain('encoding_loss')
+    expect(() => summarize(schema, text, {})).toThrow(SurveyInputBlocked)
+    const report = renderBlocked(schema, issues)
+    expect(report).toContain('编码')
+    expect(report).not.toContain('| 选项 |')
+  })
+
+  test('空 CSV 在统计前阻断', () => {
+    const schema = schemaOf(SCHEMA_TEXT)
+    expect(assessInput(schema, '').map((issue) => issue.code)).toContain('empty')
+    expect(() => summarize(schema, '', {})).toThrow(SurveyInputBlocked)
   })
 })
