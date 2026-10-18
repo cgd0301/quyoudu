@@ -114,7 +114,7 @@ describe('test-report 测试报告', () => {
   test('test-report 规则表按子行状态汇总，未全部通过时不标测试通过', () => {
     const text = renderAppendix(base)
     expect(text).toMatch(/\| R001 \| 7 \| 3 \| 2 \| 0 \| 2 \|/)
-    expect(text).toMatch(/\| R001 \| 是 \| 是 \| 否 \| 未开展 \|/)
+    expect(text).toMatch(/\| R001 \| 是 \| 是 \| 否 \| 未取得可用结果 \|/)
   })
 
   test('A4 预检记录只取整数并重新拼出展示串，含空格的“（跳过 0）”不会被截断', () => {
