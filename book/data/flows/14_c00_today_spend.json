@@ -859,8 +859,8 @@
   "meta": {
     "case_data_version": "1",
     "case_id": "c00_r019_minimal",
-    "commit": "4c9dd12",
-    "commit_time": "2026-10-18T14:24:13+08:00",
+    "commit": "2372914",
+    "commit_time": "2026-10-18T14:27:50+08:00",
     "config_version": "DEMO-CFG-1",
     "done_modules": [
       "M1",
