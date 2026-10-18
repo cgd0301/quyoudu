@@ -214,6 +214,7 @@
 | `book/chapters/09_business.md` | 删除单次成本区间、27 组表引用、量级比较与"每 1 万元"换算；改为官方单价 + 公式 + 缺口 + 贡献额口径与不含成本 | 商业部分只声明口径与缺口 |
 | `book/chapters/12_roadmap.md` | 风险表"取值轴"改为"不设取值区间"；问卷样本标注"研究设计取值，未做统计功效计算"；截图表述改为已生成未插入 | 与事实一致 |
 | `book/chapters/11_validation.md` | 截图表述改为"已生成并单独交付、正文未插入" | 与事实一致 |
+| `book/chapters/01_problem.md`、`09_business.md`、`07_timeline.md`、`06_price_offer.md` | 修正跨章引用：替代方案矩阵→第三章、"边界"→第三章、判定与缺口分类→第四章、R009／D54 指向 `docs/rules.md` | 引用编号与成稿章号一致 |
 | `scripts/figures.ts` | 架构图"四页界面（未交付）"改为"已合入主线"，脚注改为"端到端 1 条 spec、UI 21 条未逐条覆盖" | 去掉与正文矛盾的旧标注 |
 | `scripts/book-build.ts`、`scripts/presubmit.ts` | 截图相关表述改为"已生成、未插入" | 交付说明与事实一致 |
 | `docs/_work/business_model.md` | 由脚本重新生成：只有事实、人均口径、公式与缺口 | 人读版与参数一致 |
