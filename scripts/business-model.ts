@@ -89,6 +89,8 @@ function axisOf(params: Params, key: string): number[] {
 
 /** 每"人次"的票房与票房外消费，全部由两个已知数相除/相乘得到 */
 export type Anchors = {
+  /** 未取整的人均票房，用于复算票房外消费 */
+  ticket_exact: number
   ticket_cny_per_attendance: number
   other_cny_per_attendance: number
   total_cny_per_attendance: number
@@ -107,6 +109,7 @@ export function deriveAnchors(params: Params): Anchors {
   const ticket = Math.round(perAttendance)
   const other = Math.round(perAttendance * multiplier)
   return {
+    ticket_exact: Math.round(perAttendance * 100) / 100,
     ticket_cny_per_attendance: ticket,
     other_cny_per_attendance: other,
     total_cny_per_attendance: ticket + other,
@@ -293,7 +296,7 @@ export function renderMarkdown(params: Params, model: ModelResult): string {
   lines.push('| --- | --- | --- |')
   lines.push(`| 大型演出观众（2025） | ${model.anchors.attendance_wan} 万人次 | 直接引用 |`)
   lines.push(`| 每人均摊票房 | ${model.display.ticket_per_attendance_cny} 元 | ${model.anchors.box_office_yi} 亿元 ÷ ${model.anchors.attendance_wan} 万人次 |`)
-  lines.push(`| 每人均摊票房外消费 | ${model.display.other_per_attendance_cny} 元 | 票房 × ${model.anchors.multiplier} |`)
+  lines.push(`| 每人均摊票房外消费 | ${model.display.other_per_attendance_cny} 元 | 人均票房（未取整的 ${model.anchors.ticket_exact} 元）× ${model.anchors.multiplier} |`)
   lines.push(`| 每人均摊总花费 | ${model.display.total_per_attendance_cny} 元 | 票房 + 票房外消费 |`)
   lines.push('')
   lines.push('该值是**全市场平均**，包含大量非跨城、非本目标人群的观演；不能当作本产品的客单价。')
