@@ -614,7 +614,7 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 - C7 “产品建议”按“面向工行（含工银亚洲）的产品落地建议”撰写。
 - C8 作品名称为品牌名加一句话定位，不超过25字。
 
-#### 8.8 本轮裁决（D34—D75）
+#### 8.8 本轮裁决（D34—D88）
 
 以下条目接在D33之后。与上文D01—D33或R001—R020冲突时，以本小节为准。每条均为DEMO-CFG-1。
 
@@ -662,6 +662,17 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 - D75 已有本目标付款的项目：events[] 中已有某费用项目的本目标付款（GOAL_PAYMENT，已付或预计）时，候选中同一项目的价格项默认是已购项目的另一报价，不计入后续应付F，也不在时间轴上付款（R015第4条“已购项目不能重复生成待购”，T002-05）。价格项带可选字段 settles_event_id 时，表示它是该笔付款之后的未履行部分（如定金之后的尾款），照常计入F并在 payment_at 付款（R015第4条“部分付款只保留未履行部分”，T015-04）。settles_event_id 须指向同一 cost_item_id 的本目标付款事件，否则报 REFERENCE_INVALID，该价格项仍计入并付款。已取消时，cancellable 为 true 的未付事件不再算作该项目的付款（D61）。（DEMO-CFG-1｜依 SG-63 裁决）
 - D76 回测不足与结果无效的预测值：status 为 BACKTEST_INSUFFICIENT 时，forecasts[] 保留 predicted 与转为整数分的 amount。status 为 INVALID_RESULT 时保留 predicted，amount 为 null。两种状态都只说明该预测不能使用，不把它用于候选比较或成本（§6、§7.2、R020 第11条）。（DEMO-CFG-1｜依 SG-50 裁决）
 - D77 待确认差异的新估算：新估算只取已确认价格项按当前输入重算的金额。与确认时冻结的金额不同时，按费用项目汇总 delta＝新金额－已确认金额，行动清单不改。其他候选的价格，包括未经 D14 确认的预测，不计入。因此 T013-07、T017-07 不产生待确认差异。（DEMO-CFG-1｜依 SG-67 裁决）
+- D78 精度与中间量（SG-47）：§6 的 l、b 递推式与 h 步预测按原式整体算出后再保留 12 位小数，式内不先代入舍入后的一步预测值或 φ 幂和；一步预测值、φ 幂和各自算出后保留 12 位。训练误差取 12 位的一步预测值，回测误差取 12 位的预测值。D25、D50 的 12 位口径不变。（DEMO-CFG-1｜依 SG-47 裁决）
+- D79 回测的数据可得性（SG-48）：样本序列只收 observation 的观测日不晚于 as_of 所在日、且 available_at 不晚于 as_of 的观测；可获得时间无法解析的观测不用，只给日期的 available_at 按当日结束。样本按观测日升序排列，回测起点 t 只用该序列前 t 笔，回测点取第 t+h 笔观测作实际值。因此回测不使用在相应回测时点尚不可获得的数据，也不因同日后续修订产生未来信息。（DEMO-CFG-1｜依 SG-48 裁决）
+- D80 预测状态的判定顺序（SG-49）：自上而下为 CONFIG_NOT_FROZEN → NOT_COMPARABLE → HISTORY_INSUFFICIENT → INVALID_RESULT → BACKTEST_INSUFFICIENT → AVAILABLE，命中前者即不再判后者。没有可用样本时 sample_count 为 0、history_end 为 null、horizon 为 0。horizon 小于 1（购买日不晚于历史末日）时为 INVALID_RESULT。（DEMO-CFG-1｜依 SG-49 裁决）
+- D81 确认的重复与版本（SG-64）：同一候选、同一方案版本、同一输入版本的 CONFIRM 重复提交幂等，不改记录也不加输入版本。op.plan_version 与该候选当前方案版本不符时报 REFERENCE_INVALID，只把该候选存为草案，不写入正式安排。只存草案的 CONFIRM 不增加输入版本，写入正式安排的加 1。方案的计划分配金额为 0 时不建计划分配。（DEMO-CFG-1｜依 SG-64 裁决）
+- D82 购买任务（SG-66）：只为已确认方案生成行动清单。任务编号为 TASK:<candidate_id>:<价格项序号>；案例输入没有“购买记录关联任务”的字段，因此 task_state 恒为 PENDING_PURCHASE，本版不推进到 PURCHASED 或 PAID。（DEMO-CFG-1｜依 SG-66 裁决）
+- D83 观察窗口与完整历日（SG-70）：以下情形当日不算完整历日，也不按 0 计——同一日不是恰好一条消费记录；day_coverage 为 MISSING；day_coverage 为 NO_SPEND 却带记录；任一条记录的可获得时间晚于 as_of；日常类别记录的币种不是 CNY 或金额为负。窗口终点为 as_of 所在日的前一日，向前取最多 30 个完整历日且不早于 2026-09-01；凑满 30 个时起点取第 30 个完整历日，不足时起点取 2026-09-01。（DEMO-CFG-1｜依 SG-70 裁决）
+- D84 类别标记与固定映射冲突（SG-71）：记录上写明的 covered_by_living_reserve、same_scope_as_discretionary 与 D48 的固定映射不一致时，不静默覆盖记录上的标记，也不按记录上的标记计算；该检查点的近月情景判为不可用，原因记 CATEGORY_FLAGS_MISSING。（DEMO-CFG-1｜依 SG-71 裁决）
+- D85 没有对应生活预留的日段（SG-72）：检查期间内某日没有可对应的生活预留时，把连续这样的日子按日段成组。组总额 Pg＝该类别窗口合计分×组内天数÷30，一次 ROUND_HALF_UP 取整；已列安排 Eg 只取同类别、人民币、日期落在组内的预计生活支出；情景增量 Δg＝max(0,Pg−Eg)，按 D49 在组内各日平均分摊，分币余数从早到晚各加 1 分；组的覆盖期间取该日段的首末日。（DEMO-CFG-1｜依 SG-72 裁决）
+- D86 今日实际支出与情景支出（SG-73）：参与 D22 替换的“今日已发生同口径支出”只取 as_of 当日、event_status 为 ACTUAL、带日常类别且同口径、币种为 CNY、可获得时间不晚于 as_of 的 OTHER_EXPENSE；预计类事件不计入。情景生成的支出只出现在情景时间轴上，不冒充实际发生的事件，也不进入主记录的 nodes[]。（DEMO-CFG-1｜依 SG-73 裁决）
+- D87 近月情景不可用原因只报一个（SG-74）：先后为 CONFIG_VERSION_MISSING → HISTORY_INSUFFICIENT → CATEGORY_FLAGS_MISSING → COVERAGE_UNCLEAR，命中前者即不再判后者。不可用时 groups 为空数组。（DEMO-CFG-1｜依 SG-74 裁决）
+- D88 refs 的排序（SG-75）：pending_reasons、excluded_reasons 在同一类内按 refs 逐个元素做 UTF-16 码元比较（a<b 即在前），与区域设置无关；逐个相等时较短的前缀在前；refs 也相同时按代码次序。（DEMO-CFG-1｜依 SG-75 裁决）
 
 #### 8.9 提交版数据约束
 
@@ -919,7 +930,7 @@ bi = β × (li - l(i-1)) + (1 - β) × φ × b(i-1)
 3. 否则按§4计算：检查期间按10.1；方案金额取已确认方案版本，尚未确认的新价格估算（D77）只用于R017第10条的风险重评和待确认差异，不进入D的计算（R019输入为已确认方案）；情景集合S按D26；x作为as_of时刻不属于本目标、无预留覆盖的流出，排在时间轴最前，按10.3、10.4检查；今日同口径情景支出按D22替换。
 4. D26所选的近月情景因历史不足、记录不完整、配置版本缺失、类别标注缺失或覆盖关系不清而不可用时（R018异常），从S中移出，不按0元或缺口处理；结果按“仅已确认安排”给出，标“仅依据已确认安排”，并列出不可用的情景及原因（R019异常、R010）。“仅已确认安排”本身无法评估的，按第2步处理。
 5. S中任一情景在x = 0时检查不通过（出现缺口、冲突或预算超限），显示“当前不建议新增非计划支出”，可以显示0元并说明原因（R019）。
-6. 否则，每个情景的D为满足x ≤ U0且检查通过的最大整数分x；主展示各情景D中的较低者，并注明限制来源（D26、R019第7条）。
+6. 否则，每个情景的D为满足x ≤ U0且检查通过的最大整数分x；主展示各情景D中的较低者，并注明限制来源（D26、R019第7条）。限制来源的节点下标按§12.7（25）取本检查点返回的 ResultCore nodes[] 的零起始下标，不按探测时间轴计数。
 
 #### 10.6 伪代码
 
@@ -1282,7 +1293,7 @@ evaluate(caseData, ops, config)返回{checkpoints: [{label, result}]}。每个EV
 - （22）confirmation 只在确认前模拟的计划状态为“按当前假设可行”时给出：待用户确认时的预览，或本次 ops 中已写入正式安排的 CONFIRM（含重复确认）。只能存为草案时为 null；界面按 §11.3 显示问题和风险，不显示拟发生的分配差额。（DEMO-CFG-1｜依 H3 写定）
 - （23）案例输入自带 confirmed_plan、且本次 ops 没有执行 CONFIRM 时，confirmation 为 null，不按当前输入重算 W、m 和 ΔA。§11.3 已确认所需的方案版本取 candidates[].plan_version，输入版本取 confirmed_plan.input_version。（DEMO-CFG-1｜依 H3 写定）
 - （24）dependencies[].at：预计收入与预计返还取到账日；估算费用与已确认的预测估算取对应价格项的 payment_at，与节点 at、cost.future_payments 的日期一致。（DEMO-CFG-1｜依 H3 写定）
-- （25）daily_reference.limited_by.node_index 为 x＝D＋1 时第一个未通过的节点在 nodes[] 中的下标，按触发类型与事件编号对应。D 已到 U0 上界，或该节点只在情景、探测时间轴中时为 null。（DEMO-CFG-1｜依 H3 写定）
+- （25）daily_reference.limited_by.node_index 为 x＝D＋1 时第一个未通过的节点在本检查点返回的 ResultCore nodes[] 数组中的**零起始下标**：nodes[0] 为起始节点，nodes[node_index] 即限制节点本身，按触发类型与事件编号对应。它不是探测时间轴的下标——探测时间轴里 x＝D＋1 的节点插在起始节点之后，两者的位置相差 1。该节点只在情景时间轴中、不在 nodes[] 中时，或 D 已到 U0 上界而没有限制节点时，为 null。（DEMO-CFG-1｜依 SG-68 裁决）
 - （26）forecasts 总是输出；没有可生成的条目时为 []，不省略。（DEMO-CFG-1｜依 H3 写定）
 - （27）forecasts[] 的 status 为 NOT_COMPARABLE 时不认定有效样本：sample_count 为 0，history_end 为 null，horizon 为 0，不拟合、不回测，限制由 status 表示。（DEMO-CFG-1｜依 H3 写定）
 - （28）近月情景可用时，餐饮、本地交通、日用、娱乐四类在各自覆盖期间都列出一组。窗口内没有记录的类别，组总额、已列安排和情景增量都为 0，组内每日都列出（含 0）。groups 先按餐饮、本地交通、日用、娱乐，再按 coverage_start 排序。（DEMO-CFG-1｜依 H3 写定）

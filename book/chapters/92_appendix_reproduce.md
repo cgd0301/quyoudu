@@ -42,7 +42,9 @@
 
 ## 已登记缺口的位置
 
-- `docs/_work/spec_gaps.md`：规则缺口与临时处理（含 14 条 AI 暂定项）。
-- `docs/_work/vector_gaps.md`：写不成向量断言的子用例及原因。
-- `docs/_work/test_layers.md`：每条子用例由哪一层测试覆盖。
+- `docs/_work/spec_gaps.md`：规则缺口、处理方式与状态（14 条原 AI 暂定项已裁决并写回 `docs/rules.md`；仍有 2 条"延后"由 V 约束强制）。
+- `docs/_work/spec_gaps_review.md`：本轮裁决、写回位置与验证证据。
+- `docs/_work/vector_gaps.md`：写不成向量断言的子用例及原因（含类别 B／C 的剩余限制）。
+- `docs/_work/test_layers.md`：每条子用例由哪一层测试覆盖，以及证据映射契约。
+- `docs/_work/diff_report.md`：`pnpm diff:oracle` 本轮实跑的对拍结果（含命令、提交与环境版本）。
 - `docs/traceability.csv`：规则—测试—状态，由 `pnpm trace:update` 按真实结果写入。

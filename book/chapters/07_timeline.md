@@ -20,6 +20,14 @@
 
 案例 A 新增一笔生活支出后出现最早缺口：日期 <!-- data: flows/04_cA_gap_living.json#checkpoints.0.result.earliest_gap.at -->，金额 <!-- data: flows/04_cA_gap_living.json#checkpoints.0.result.earliest_gap.amount.value | cents --> 元，类型 <!-- data: flows/04_cA_gap_living.json#checkpoints.0.result.earliest_gap.node_verdict -->，与节点 <!-- data: flows/04_cA_gap_living.json#checkpoints.0.result.earliest_gap.node_index --> 对应。
 
+## 每日参考金额的限制节点
+
+每日参考给出的金额来自"取满足检查的最大整数分 x"，它的限制来源用 `daily_reference.limited_by` 标明：`scenario` 是起限制作用的情景，`node_index` 是**本检查点返回的 `ResultCore.nodes[]` 数组中的零起始下标**（`nodes[0]` 是起始节点，§12.7（25）、D26、R019 第7条）。
+
+需要单独说明的是它**不是**内部探测时间轴的下标：探测待测额 x 时，x 的节点插在起始节点之后，所以同一个限制节点在探测时间轴上会比在 `nodes[]` 里靠后一位。以 T019-01 为例，`nodes[]` = 起始节点、9/10 付款节点、9/15 生活支出；`limited_by.node_index` 为 1（指向 9/10 付款节点），而 `x = D+1` 的探测时间轴上该节点是第 3 个（下标 2）。两种口径不能混用，单元测试直接断言"下标在 `nodes[]` 里指向限制节点本身，且不等于探测时间轴的下标"。
+
+该口径已由人工裁决写回正式条文，本轮 `pnpm diff:oracle` 与参考实现的差异为 <!-- data: status.json#oracle_diff.differences -->。此前工作记录里"参考实现按探测时间轴计数、与本实现差 1"的差异**本轮未复现**：30 个含 `daily_reference.limited_by` 的向量逐字段比对，`node_index`、`scenario`、`display`、`amount` 完全一致，因此不再作为当前事实陈述；只有出现"限制节点的 `nodes[]` 下标与探测时间轴下标不同"且参考实现按探测时间轴计数的案例才会再次触发。
+
 ## 候选比较与 Top-K
 
 候选完整组合由案例直接列出，程序只做校验、排除与排序，不做排列组合生成（D15）。可行候选按预计消费净支出升序编号并从 1 起连续，同价同号；显示位置取前 K 名，同价按编号升序，末位同价不突破 K（R016、D62、SG-62）。三类计数互斥：通过检查计入已评估数，确定排除计入确定排除数，其余计入待确认数，合计等于比较范围。

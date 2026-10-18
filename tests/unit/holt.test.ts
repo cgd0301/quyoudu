@@ -292,6 +292,31 @@ describe('状态判定', () => {
     expect(entry).toMatchObject({ status: 'CONFIG_NOT_FROZEN', configVersion: null, amount: null })
   })
 
+  test('D80 多个条件同时成立时按固定顺序取前者：配置未冻结 → 不可比 → 历史不足 → 结果无效 → 回测不足', () => {
+    const forecastAt = (observations: readonly PriceObservation[], purchaseDate: string): HoltForecast => {
+      const [entry] = forecastSeries(
+        { seriesId: SERIES_ID, observations, asOf: AS_OF, targets: [{ costItemId: 'LODGING', purchaseDate }] },
+        DEMO_CFG_1,
+      )
+      if (entry === undefined) throw new Error('应生成一条预测')
+      return entry
+    }
+    // 配置未冻结、不可比、历史不足同时成立：只报配置未冻结
+    expect(run(mixedTiers, [12], { ...DEMO_CFG_1, configVersion: null })[0]?.status).toBe('CONFIG_NOT_FROZEN')
+    // 不可比与历史不足同时成立（样本数也不足 14 笔）：只报不可比
+    const fewMixed = mixedTiers.slice(0, 10)
+    expect(fewMixed.length).toBeLessThan(MIN_SAMPLES)
+    expect(run(fewMixed, [12])[0]?.status).toBe('NOT_COMPARABLE')
+    // 历史不足与结果无效同时成立（购买日不晚于历史末日，horizon 为 0）：只报历史不足
+    const short = [observation(1, 58000), observation(2, 59000)]
+    expect(forecastAt(short, '2026-09-02')).toMatchObject({ status: 'HISTORY_INSUFFICIENT', horizon: 0, sampleCount: 2, amount: null })
+    // 结果无效与回测不足同时成立：回测误差数确实不足，但先判结果无效
+    const nearDeclining = declining.slice(0, MIN_SAMPLES)
+    const byInvalid = forecastAt(nearDeclining, dateOf(10, 13))
+    expect(byInvalid.backtestCount).toBeLessThan(DEMO_CFG_1.forecast.minBacktestErrors)
+    expect(byInvalid).toMatchObject({ status: 'INVALID_RESULT', amount: null })
+  })
+
   test('各状态的条目补上 confirmed 后都符合 ResultCore forecasts 结构，金额为整数分', () => {
     const forecastSchema = resultCoreSchema.shape.forecasts.unwrap().element
     const entries = [

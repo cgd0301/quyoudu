@@ -432,6 +432,43 @@ describe('§10.5 每日参考的前提与展示', () => {
     })
   })
 
+  test('SG-68 limited_by.node_index 是返回的 nodes[] 的零起始下标，不是探测时间轴的下标', () => {
+    const { input } = loadVector('T019-01')
+    const result = run(input)
+    const amount = result.dailyReference.amount
+    if (amount === undefined) throw new Error('T019-01 应给出金额')
+    // 零起始：nodes[0] 是起始节点，所以限制节点可以是 0；T019-01 的限制节点是下标 1 的 9/10 付款节点
+    expect(result.nodes[0]?.trigger.kind).toBe('START')
+    expect(result.dailyReference.limitedBy).toEqual({ scenario: 'CONFIRMED_ONLY', nodeIndex: 1 })
+    const index = result.dailyReference.limitedBy?.nodeIndex
+    if (index === null || index === undefined) throw new Error('T019-01 应有下标')
+    const node = result.nodes[index]
+    expect(node?.at).toBe('2026-09-10')
+    expect(node?.trigger.eventIds).toEqual(amount.basis.eventIds)
+    // 同一下标必须能定位到限制节点本身：x＝D＋1 的探测时间轴在该节点前多插了 DAILY:X
+    const probe = checkDaily(probeOf(input), amount.value + 1)
+    expect(probe.pass).toBe(false)
+    expect(probe.timeline.nodes.length).toBe(result.nodes.length + 1)
+    expect(probe.timeline.nodes[1]?.trigger.eventIds).toEqual([PROBE_ID])
+    expect(probe.timeline.nodes.slice(2).map((item) => item.at)).toEqual(result.nodes.slice(1).map((item) => item.at))
+    expect(probe.failingNode).toBe(2)
+    expect(probe.timeline.nodes[2]?.trigger.eventIds).toEqual(amount.basis.eventIds)
+    // 因此按下标定位时，探测时间轴的 2 与 nodes[] 的 1 指向同一个节点：口径差 1，不能混用
+    expect(probe.timeline.nodes[2]?.at).toBe(result.nodes[1]?.at)
+    expect(probe.failingNode).not.toBe(result.dailyReference.limitedBy?.nodeIndex)
+  })
+
+  test('SG-68 没有限制节点时 node_index 为 null，且不指向探测时间轴里的待测额节点', () => {
+    const bound = run(loadVector('T004-06').input)
+    expect(bound.dailyReference.limitedBy).toEqual({ scenario: 'CONFIRMED_ONLY', nodeIndex: null })
+    expect(bound.nodes.map((item) => item.trigger.kind)).not.toContain('OTHER_EXPENSE')
+    expect(bound.dailyReference.amount?.value).toBe(10000)
+    // D 到 U0 上界：x＝D＋1 仍不通过，但没有对应的事件节点，因此不给下标
+    const probe = checkDaily(probeOf(loadVector('T004-06').input), 10001)
+    expect(probe.pass).toBe(false)
+    expect(probe.failingNode).toBe(1)
+  })
+
   test('§4 最小案例 D=100 由 9/10 付款节点限制；D 到 U0 时没有限制节点；记一笔 40 元当日支出后重算得 60，不是 20', () => {
     const before = run(loadVector('T019-01').input)
     expect(before.snapshot?.unallocated.value).toBe(30000)
