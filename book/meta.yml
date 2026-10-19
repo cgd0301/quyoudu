@@ -1,13 +1,15 @@
 # book/meta.yml
-title: "趣有度：跨城观演资金规划助手"
-subtitle: "2026 工行杯 / 青年群体服务赛道"
-team_name: "NaiLong(tmp)"
+title: "趣有度：青年大额消费的资金安排与方案比较工具"
+subtitle: "第十七届“工行杯”全国大学生金融科技创新大赛 · 青年群体服务方向"
+# 队名待团队确认：仓库内只有 "NaiLong(tmp)"，其中 "(tmp)" 是临时占位文本，
+# 未经报名系统核实前不写成正式队名，也不擅自另起新名。
+team_name: "NaiLong（队名待团队确认）"
 school: "香港理工大学"
 members:
   - name: "陈冠达"
     role: "队长 / 产品与规则"
-  - name: "张洛华"
+  - name: "张烙华"
     role: "计算与测试"
   - name: "刘博文"
     role: "原型实现"
-date: "2026-10"
+date: "2026-10-19"

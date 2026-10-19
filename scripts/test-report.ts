@@ -184,7 +184,7 @@ export type ReportInput = {
  * 未运行时如实写未执行，不把已通过的端到端列成“未完成”。
  */
 export function e2eRemaining(e2e: GateRun): string {
-  if (e2e.status === '通过') return `端到端已运行并通过（${e2e.detail}），UI 层子用例仍未逐条覆盖，界面不计为整体通过`
+  if (e2e.status === '通过') return `端到端已运行并通过（${e2e.detail}），UI 层 21 条子用例中 13 条有对应用例、3 条仅有补充断言、5 条未覆盖，界面不计为整体通过`
   return `端到端：${e2e.detail}`
 }
 
@@ -192,11 +192,11 @@ export function e2eRemaining(e2e: GateRun): string {
 export function renderAppendix(input: ReportInput): string {
   const { commit } = input
   const lines: string[] = []
-  lines.push('# 附录A 测试与验证记录', '')
+  lines.push('# 附录 B　测试、追溯及覆盖矩阵', '')
   lines.push(`- 生成方式：\`pnpm test:report\`；代码与数据提交 \`${commit.hash}\`（${commit.time}）；配置版本 ${DEMO_CFG_1.configVersion ?? '未给出'}`)
   lines.push('- 数据性质：模拟数据。以下为技术测试结果，不代表需求成立、市场预测效果或用户效果。')
   lines.push('')
-  lines.push('## A.1 分层结果（口径分开计数）', '')
+  lines.push('## B.1 分层结果（口径分开计数）', '')
   lines.push('| 口径 | 结果 | 说明 |')
   lines.push('| --- | --- | --- |')
   lines.push(`| 测试套件 | ${input.unit.suites} | vitest 的 suite 计数：含文件内的 describe 分组，不是文件数 |`)
@@ -226,7 +226,7 @@ export function renderAppendix(input: ReportInput): string {
     `| 自然语言层（NL 子用例） | ${input.nlLayer.covered}／${input.nlLayer.total} 已执行且通过 | 由单元测试覆盖，不是端到端 |`,
   )
   lines.push('')
-  lines.push('## A.2 按规则编号的追溯结果', '')
+  lines.push('## B.2 按规则编号的追溯结果', '')
   lines.push('| 规则 | 子用例 | 通过 | 部分覆盖 | 未通过 | 未执行 |')
   lines.push('| --- | --- | --- | --- | --- | --- |')
   for (const row of input.rules) {
@@ -237,8 +237,8 @@ export function renderAppendix(input: ReportInput): string {
     `追溯表共 ${input.traceRows} 条数据行：通过 ${input.traceCounts.pass}、部分覆盖 ${input.traceCounts.partial}、已执行未通过 ${input.traceCounts.failed}、待执行 ${input.traceCounts.pending}（含父行）。`,
   )
   lines.push('')
-  lines.push('## A.3 功能实现状态表', '')
-  lines.push('按“规则已确认／已实现／测试通过／真实用户验证”四级标注；真实用户验证一栏为“未做规则级验证”：30 条问卷只支持样本内需求与功能偏好，未验证任何单条规则的实际效果（见 `docs/_work/survey/findings.md`）。')
+  lines.push('## B.3 功能实现状态表', '')
+  lines.push('按“规则已确认／已实现／测试通过／真实用户验证”四级标注；真实用户验证一栏为“未做规则级验证”：30 位受访者（n=30）的问卷只支持样本内需求与功能偏好，未验证任何单条规则的实际效果（见 `docs/_work/survey/findings.md`）。')
   lines.push('')
   lines.push('| 规则 | 规则已确认 | 已实现 | 测试通过 | 真实用户验证 |')
   lines.push('| --- | --- | --- | --- | --- |')
@@ -246,7 +246,7 @@ export function renderAppendix(input: ReportInput): string {
     lines.push(`| ${row.rule} | 是 | ${row.implemented ? '是' : '否'} | ${row.tested ? '是' : '否'} | 未做规则级验证 |`)
   }
   lines.push('')
-  lines.push('## A.4 未完成的检查及原因', '')
+  lines.push('## B.4 未完成的检查及原因', '')
   lines.push(`- ${e2eRemaining(input.e2e)}`)
   if (input.docLint.status !== '通过') lines.push(`- 文档检查：${input.docLint.detail}`)
   lines.push(`- 案例与向量结构校验：${input.cases.status}`)
@@ -352,7 +352,7 @@ export async function main(): Promise<number> {
       detail:
         index.playwright === null
           ? '未执行：本轮没有运行 Playwright（pnpm test:e2e 需要已安装的浏览器）'
-          : `通过 ${index.playwright.passed}／失败 ${index.playwright.failed}／跳过 ${index.playwright.skipped}；按 spec 计数，不等于 UI 层子用例逐条覆盖`,
+          : `通过 ${index.playwright.passed}／失败 ${index.playwright.failed}／跳过 ${index.playwright.skipped}；按 spec 计数，UI 层 21 条子用例中 13 条有对应用例、3 条仅有补充断言、5 条未覆盖`,
     },
     docLint: {
       status: docStatus,

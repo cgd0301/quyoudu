@@ -213,7 +213,8 @@ function architecture(): Figure {
     if (index < layers.length - 1) parts.push(arrow(x + 215, 245, x + 235, 245))
   })
   parts.push(label(40, 415, '引擎只用确定性代码：无 Date.now、无随机数、无网络；模型输出（src/nl）只能成为待确认值，不进入计算（AGENTS.md §3）。', 12, 'start', 'normal', MUTED))
-  parts.push(label(40, 440, '界面已合入主线：端到端 1 条 spec 覆盖主流程，UI 层 21 条子用例尚未逐条覆盖（附录A）。', 12, 'start', 'normal', WARN))
+  parts.push(label(40, 440, '界面已合入主线：端到端 17 条 spec 通过；UI 层 21 条子用例中 13 条覆盖、3 条部分覆盖、5 条未覆盖。', 12, 'start', 'normal', WARN))
+  parts.push(label(40, 462, '界面因此不计为整体通过，逐条分布见附录 B。', 12, 'start', 'normal', WARN))
   return { name: 'fig_architecture', title: '系统总体架构', sources: ['src/engine/'], note: '按仓库现有目录与 rules.md §12 绘制', text: frame('图 1 系统总体架构', '输入 → 确定性引擎 → 结果契约 → 交付层', parts.join('\n')) }
 }
 

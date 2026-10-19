@@ -27,6 +27,7 @@
 <text x="761" y="206" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">book/data 导出</text>
 <text x="761" y="232" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">图表与项目书</text>
 <text x="40" y="415" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">引擎只用确定性代码：无 Date.now、无随机数、无网络；模型输出（src/nl）只能成为待确认值，不进入计算（AGENTS.md §3）。</text>
-<text x="40" y="440" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#b45309">界面已合入主线：端到端 1 条 spec 覆盖主流程，UI 层 21 条子用例尚未逐条覆盖（附录A）。</text>
+<text x="40" y="440" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#b45309">界面已合入主线：端到端 17 条 spec 通过；UI 层 21 条子用例中 13 条覆盖、3 条部分覆盖、5 条未覆盖。</text>
+<text x="40" y="462" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#b45309">界面因此不计为整体通过，逐条分布见附录 B。</text>
 <text x="40" y="544" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">模拟数据｜数据来源见 book/figures/index.md</text>
 </svg>

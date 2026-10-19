@@ -18,6 +18,7 @@
     "test:report": "tsx scripts/test-report.ts",
     "figures": "tsx scripts/figures.ts",
     "book:build": "tsx scripts/book-build.ts",
+    "book:pdf": "tsx scripts/book-pdf.ts",
     "count:chars": "tsx scripts/count-chars.ts",
     "lint": "oxlint",
     "spec:lint": "tsx scripts/spec-lint.ts",

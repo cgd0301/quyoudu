@@ -10,7 +10,7 @@
     "status": "通过"
   },
   "e2e": {
-    "detail": "通过 1／失败 0／跳过 0；按 spec 计数，不等于 UI 层子用例逐条覆盖",
+    "detail": "通过 17／失败 0／跳过 0；按 spec 计数，UI 层 21 条子用例中 13 条有对应用例、3 条仅有补充断言、5 条未覆盖",
     "status": "通过"
   },
   "golden": {
@@ -150,9 +150,9 @@
       "children": 7,
       "failed": 0,
       "implemented": true,
-      "partial": 2,
-      "pass": 2,
-      "pending": 3,
+      "partial": 1,
+      "pass": 4,
+      "pending": 2,
       "real_user_validation": "未做规则级验证",
       "rule": "R009",
       "tested": false
@@ -172,8 +172,8 @@
       "children": 5,
       "failed": 0,
       "implemented": true,
-      "partial": 2,
-      "pass": 2,
+      "partial": 1,
+      "pass": 3,
       "pending": 1,
       "real_user_validation": "未做规则级验证",
       "rule": "R011",
@@ -183,19 +183,19 @@
       "children": 6,
       "failed": 0,
       "implemented": true,
-      "partial": 1,
-      "pass": 5,
+      "partial": 0,
+      "pass": 6,
       "pending": 0,
       "real_user_validation": "未做规则级验证",
       "rule": "R012",
-      "tested": false
+      "tested": true
     },
     {
       "children": 8,
       "failed": 0,
       "implemented": true,
-      "partial": 3,
-      "pass": 5,
+      "partial": 2,
+      "pass": 6,
       "pending": 0,
       "real_user_validation": "未做规则级验证",
       "rule": "R013",
@@ -227,19 +227,19 @@
       "children": 9,
       "failed": 0,
       "implemented": true,
-      "partial": 1,
-      "pass": 8,
+      "partial": 0,
+      "pass": 9,
       "pending": 0,
       "real_user_validation": "未做规则级验证",
       "rule": "R016",
-      "tested": false
+      "tested": true
     },
     {
       "children": 12,
       "failed": 0,
       "implemented": true,
-      "partial": 4,
-      "pass": 7,
+      "partial": 0,
+      "pass": 11,
       "pending": 1,
       "real_user_validation": "未做规则级验证",
       "rule": "R017",
@@ -250,8 +250,8 @@
       "failed": 0,
       "implemented": true,
       "partial": 4,
-      "pass": 4,
-      "pending": 4,
+      "pass": 5,
+      "pending": 3,
       "real_user_validation": "未做规则级验证",
       "rule": "R018",
       "tested": false
@@ -271,8 +271,8 @@
       "children": 12,
       "failed": 0,
       "implemented": true,
-      "partial": 5,
-      "pass": 0,
+      "partial": 3,
+      "pass": 2,
       "pending": 7,
       "real_user_validation": "未做规则级验证",
       "rule": "R020",
@@ -286,22 +286,22 @@
   },
   "traceability": {
     "failed": 0,
-    "partial": 43,
-    "pass": 116,
-    "pending": 22,
+    "partial": 30,
+    "pass": 131,
+    "pending": 20,
     "rows": 181
   },
   "unfinished": [
-    "端到端已运行并通过（通过 1／失败 0／跳过 0；按 spec 计数，不等于 UI 层子用例逐条覆盖），UI 层子用例仍未逐条覆盖，界面不计为整体通过",
+    "端到端已运行并通过（通过 17／失败 0／跳过 0；按 spec 计数，UI 层 21 条子用例中 13 条有对应用例、3 条仅有补充断言、5 条未覆盖），UI 层 21 条子用例中 13 条有对应用例、3 条仅有补充断言、5 条未覆盖，界面不计为整体通过",
     "向量断言跳过 0 条；单元测试跳过 1 条"
   ],
   "unit": {
     "failed": 0,
     "files": 31,
-    "passed": 1178,
+    "passed": 1181,
     "skipped": 1,
     "suites": 154,
-    "tests": 1179
+    "tests": 1182
   },
   "vectors": {
     "assertions_passed": 1004,
