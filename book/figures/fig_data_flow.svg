@@ -45,5 +45,5 @@
 <text x="688" y="488" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">book/build 成稿</text>
 <rect x="790" y="440" width="176" height="86" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
 <text x="878" y="488" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#1f2937">doc:lint / count:chars</text>
-<text x="40" y="544" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">模拟数据｜数据来源见 book/figures/index.md</text>
+<text x="40" y="544" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">结构图：按 docs/rules.md 与仓库现有目录/代码人工整理，非引擎导出</text>
 </svg>

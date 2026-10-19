@@ -104,17 +104,26 @@ describe('test-report 测试报告', () => {
     const passed = { ...base, e2e: { status: '通过', exit_code: 0, detail: '通过 17／失败 0／跳过 0；按 spec 计数，UI 层 21 条子用例中 13 条有对应用例、3 条仅有补充断言、5 条未覆盖' } }
     const text = renderAppendix(passed)
     expect(text).toMatch(/端到端（Playwright） \| 通过/)
-    expect(text).toContain('端到端已运行并通过')
+    expect(text).toContain('UI 层未整体通过')
     expect(text).toContain('UI 层 21 条子用例中 13 条有对应用例、3 条仅有补充断言、5 条未覆盖')
+    expect(text).toContain('不计为整体通过')
+    // 同一句不得在 B.4 里连写两次（旧版缺陷：detail 与说明重复拼接）
+    expect(text).not.toMatch(/），UI 层 21 条子用例/)
     expect(text).not.toContain('未执行：前端未交付')
     // 未运行时仍按“未完成”如实列出
     expect(renderAppendix(base)).toContain('- 端到端：未执行：前端未交付')
   })
 
-  test('test-report 规则表按子行状态汇总，未全部通过时不标测试通过', () => {
+  test('test-report 规则汇总按子行状态聚合，未全部通过时不标测试通过', () => {
     const text = renderAppendix(base)
+    // B.2 仍逐规则列出子行分布
     expect(text).toMatch(/\| R001 \| 7 \| 3 \| 2 \| 0 \| 2 \|/)
-    expect(text).toMatch(/\| R001 \| 是 \| 是 \| 否 \| 未做规则级验证 \|/)
+    // B.3 改为汇总结论：R001 有部分覆盖/待执行，因此不得进入“测试通过”名单
+    expect(text).toContain('没有任何一条规则的“测试通过”为“是”')
+    expect(text).not.toContain('| R001 | 是 | 是 | 否 | 未做规则级验证 |')
+    // 全部子行通过时才列入名单
+    const allPass = { ...base, rules: [{ ...base.rules[0]!, pass: 7, partial: 0, pending: 0, tested: true }] }
+    expect(renderAppendix(allPass)).toContain('**测试通过**：1 条（R001）')
   })
 
   test('A4 预检记录只取整数并重新拼出展示串，含空格的“（跳过 0）”不会被截断', () => {

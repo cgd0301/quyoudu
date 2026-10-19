@@ -7,6 +7,7 @@ import type { Op } from './engine/ops/schema.ts'
 import { formatCents } from './engine/money/format.ts'
 import { LABEL_TEXT, type ResultCore } from './engine/result.ts'
 import type { CaseFile } from './engine/schema.ts'
+import { dailyReasonText, dailyValueText } from './ui/dailyText.ts'
 import './App.css'
 
 const demoCase = JSON.parse(caseSource) as CaseFile
@@ -120,40 +121,7 @@ function candidateReason(code: string): string {
   }
 }
 
-/** §11.4 的每日参考文案：AMOUNT 不是状态文案，有金额时不显示状态字样 */
-function dailyStatusText(display: ResultCore['dailyReference']['display']): string {
-  switch (display) {
-    case 'AMOUNT':
-      return ''
-    case 'NEED_CONFIRMED_PLAN':
-      return LABEL_TEXT.NEED_CONFIRMED_PLAN
-    case 'UNAVAILABLE':
-      return LABEL_TEXT.UNAVAILABLE
-    case 'NOT_RECOMMENDED':
-      return LABEL_TEXT.NOT_RECOMMENDED
-  }
-}
-
-/** 情景不可用原因的中文（§11.4、R018 异常、D87 的固定优先级只影响顺序，不改文案） */
-const SCENARIO_REASON_TEXT: Record<ResultCore['dailyReference']['unavailable'][number]['reason'], string> = {
-  HISTORY_INSUFFICIENT: '历史不足',
-  RECORDS_INCOMPLETE: '记录不完整',
-  CATEGORY_FLAGS_MISSING: '类别标注缺失',
-  COVERAGE_UNCLEAR: '覆盖关系不清',
-  CONFIG_VERSION_MISSING: '配置版本缺失',
-}
-
-/** 没有金额时给出真实原因，不统一写成“尚无已确认方案” */
-function dailyReasonText(reference: ResultCore['dailyReference']): string {
-  if (reference.amount != null) return LABEL_TEXT.DAILY_DISCLAIMER
-  if (reference.missingReasons.length > 0) return reference.missingReasons.map((reason) => LABEL_TEXT[reason]).join('、')
-  if (reference.unavailable.length > 0) {
-    return reference.unavailable.map((row) => `${row.scenario === 'RECENT_MONTH' ? '近月情景' : '仅已确认安排'}：${SCENARIO_REASON_TEXT[row.reason]}`).join('；')
-  }
-  if (reference.display === 'NEED_CONFIRMED_PLAN') return '还没有已确认方案'
-  if (reference.display === 'NOT_RECOMMENDED') return '待测额为 0 时已不通过：存在缺口、冲突或预算超限'
-  return '关键资金、付款、生活安排、用途或检查期间不足'
-}
+/** 每日参考的文案与取值规则见 src/ui/dailyText.ts（由单元测试覆盖） */
 
 /** D13 的五档价格依据，逐档给文案；不把未知档位一律写成“模拟报价” */
 const PRICE_BASIS_TEXT: Record<string, string> = {
@@ -498,7 +466,6 @@ function App() {
   const cash = demoCase.snapshot.cash
   const lowestCandidate = rankedCandidates[0]
   const currentPage = pages.find((page) => page.id === activePage)!
-  const dailyLabel = dailyStatusText(result.dailyReference.display)
   const dailyReason = dailyReasonText(result.dailyReference)
   const disabledPlanControl = !isConfirmed || isCancelled
 
@@ -622,7 +589,7 @@ function App() {
                 </div>
                 <div className="metric-cell">
                   <span className="metric-label">今日额外支出参考</span>
-                  <strong className="metric-status">{result.dailyReference.amount == null ? dailyLabel : moneyText(result.dailyReference.amount.value)}</strong>
+                  <strong className="metric-status">{dailyValueText(result.dailyReference)}</strong>
                   <small>{dailyReason}</small>
                 </div>
                 <div className="metric-cell metric-forecast">
@@ -863,7 +830,7 @@ function App() {
                 <div className="calendar-metrics">
                   <div><span>检查起点</span><strong>{shortDate(result.checkPeriod.start)}</strong></div>
                   <div><span>检查终点</span><strong>{result.checkPeriod.end ? shortDate(result.checkPeriod.end) : '待确认'}</strong></div>
-                  <div><span>当日参考</span><strong>{result.dailyReference.amount == null ? dailyLabel : moneyText(result.dailyReference.amount.value)}</strong></div>
+                  <div><span>当日参考</span><strong>{dailyValueText(result.dailyReference)}</strong></div>
                 </div>
               </div>
 
@@ -1060,7 +1027,7 @@ function App() {
                     )}
                     <div className="daily-reference-block">
                       <span>每日非计划支出参考</span>
-                      <strong>{result.dailyReference.amount == null ? dailyLabel : moneyText(result.dailyReference.amount.value)}</strong>
+                      <strong>{dailyValueText(result.dailyReference)}</strong>
                       <small>{result.labels.includes('DAILY_DISCLAIMER') ? LABEL_TEXT.DAILY_DISCLAIMER : '确认状态不会代替付款检查。'}</small>
                     </div>
                     <div className="dependency-list">
