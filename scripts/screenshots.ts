@@ -14,9 +14,14 @@ import { chromium } from '@playwright/test'
 import { createServer } from 'vite'
 
 const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)))
-const OUT_DIR = path.join(root, 'submission', 'screenshots')
+// SHOT_DIR 默认仍写 submission/screenshots（原行为不变）；需要宽版截图时指定另一个目录，
+// 避免覆盖既有四张交付截图。
+const OUT_DIR = path.join(root, process.env.SHOT_DIR ?? path.join('submission', 'screenshots'))
 const PORT = Number(process.env.SHOT_PORT ?? '5199')
 const BASE = `http://127.0.0.1:${PORT}`
+// 默认 414×900 为手机版视口；项目书排版需要更宽的视口才能让整页在 A4 上可读。
+const VIEWPORT_WIDTH = Number(process.env.SHOT_WIDTH ?? '414')
+const VIEWPORT_HEIGHT = Number(process.env.SHOT_HEIGHT ?? '900')
 
 export type Shot = { file: string; page: string; note: string }
 
@@ -33,7 +38,7 @@ async function main(): Promise<number> {
   await server.listen()
   const browser = await chromium.launch()
   try {
-    const page = await browser.newPage({ viewport: { width: 414, height: 900 }, deviceScaleFactor: 2 })
+    const page = await browser.newPage({ viewport: { width: VIEWPORT_WIDTH, height: VIEWPORT_HEIGHT }, deviceScaleFactor: 2 })
     const errors: string[] = []
     page.on('console', (message) => {
       if (message.type() === 'error') errors.push(message.text())

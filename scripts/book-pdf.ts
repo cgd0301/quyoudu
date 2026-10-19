@@ -271,7 +271,9 @@ html, body { margin: 0; padding: 0; background: #fff }
 body {
   font-family: "Noto Serif SC", "Source Han Serif SC", "Songti SC", SimSun, serif;
   font-size: 10.2pt; line-height: 1.72; color: #1c2226;
-  text-align: justify; text-justify: inter-ideograph;
+  /* 中文整行本来就会被填满；用 justify 时，含长路径/代码的行会被拉成稀字距，
+     因此正文改为左对齐，避免出现跨行大间隙。 */
+  text-align: left;
   -webkit-print-color-adjust: exact; print-color-adjust: exact;
 }
 .page { position: relative; width: 210mm; height: 297mm; overflow: hidden; background: #fff; page-break-after: always; break-after: page }

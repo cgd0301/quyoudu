@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 570" width="1000" height="570" role="img" aria-label="图 2 产品决策流程">
+<rect x="0" y="0" width="1000" height="570" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="1.2"/>
+<text x="40" y="46" font-size="22" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">图 2 产品决策流程</text>
+<text x="40" y="72" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">从用户输入到行动清单：三条泳道与七个环节</text>
+<rect x="40" y="104" width="250" height="372" rx="6" fill="#eff6ff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="165" y="128" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1f2937">用户动作</text>
+<rect x="300" y="104" width="330" height="372" rx="6" fill="#ecfdf5" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="465" y="128" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#047857">引擎处理（确定性）</text>
+<rect x="640" y="104" width="290" height="372" rx="6" fill="#fff7ed" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="785" y="128" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1f2937">系统输出</text>
+<rect x="40" y="146" width="250" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="48" y="169" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">说清需求：演出、城市、预算、现金、收入</text>
+<rect x="300" y="146" width="330" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="308" y="169" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">抽取固定 13 个字段，未提到的留空（D30）</text>
+<rect x="640" y="146" width="290" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="648" y="169" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">待确认值清单与待办</text>
+<line x1="140" y1="184" x2="140" y2="192" stroke="#6b7280" stroke-width="1.4"/><polygon points="140,192 133,188 133,196" fill="#6b7280"/>
+<rect x="40" y="192" width="250" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="48" y="215" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">补足真正影响判断的资料</text>
+<rect x="300" y="192" width="330" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="308" y="215" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">只追问影响当前结论的字段，最多 2 问／3 轮（D52）</text>
+<rect x="640" y="192" width="290" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="648" y="215" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">缺口提示；仍缺则转表单</text>
+<line x1="140" y1="230" x2="140" y2="238" stroke="#6b7280" stroke-width="1.4"/><polygon points="140,238 133,234 133,242" fill="#6b7280"/>
+<rect x="40" y="238" width="250" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="48" y="261" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">核对费用项与价格依据</text>
+<rect x="300" y="238" width="330" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="308" y="261" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">按费用项目汇总；未知金额不按 0（R010）</text>
+<rect x="640" y="238" width="290" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="648" y="261" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">费用组成与价格档位</text>
+<line x1="140" y1="276" x2="140" y2="284" stroke="#6b7280" stroke-width="1.4"/><polygon points="140,284 133,280 133,288" fill="#6b7280"/>
+<rect x="40" y="284" width="250" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="48" y="307" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">——（无需操作）</text>
+<rect x="300" y="284" width="330" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="308" y="307" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">逐付款日检查可用资金（D05、D36）</text>
+<rect x="640" y="284" width="290" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="648" y="307" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">通过／付款缺口／保护性缺口／冲突</text>
+<line x1="140" y1="322" x2="140" y2="330" stroke="#6b7280" stroke-width="1.4"/><polygon points="140,330 133,326 133,334" fill="#6b7280"/>
+<rect x="40" y="330" width="250" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="48" y="353" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">在给定完整组合中选定候选</text>
+<rect x="300" y="330" width="330" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="308" y="353" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">对每个完整组合做约束校验、排除与排序（D15、R016）</text>
+<rect x="640" y="330" width="290" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="648" y="353" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">已评估／排除／待确认计数，前 K 名</text>
+<line x1="140" y1="368" x2="140" y2="376" stroke="#6b7280" stroke-width="1.4"/><polygon points="140,376 133,372 133,380" fill="#6b7280"/>
+<rect x="40" y="376" width="250" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="48" y="399" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">确认方案</text>
+<rect x="300" y="376" width="330" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="308" y="399" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">写入正式安排并冻结行动清单（R017、D46）</text>
+<rect x="640" y="376" width="290" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="648" y="399" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">行动清单与计划状态</text>
+<line x1="140" y1="414" x2="140" y2="422" stroke="#6b7280" stroke-width="1.4"/><polygon points="140,422 133,418 133,426" fill="#6b7280"/>
+<rect x="40" y="422" width="250" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="48" y="445" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">修改输入（如收入延期）</text>
+<rect x="300" y="422" width="330" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="308" y="445" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">按新输入重算，不沿用旧结论（R013）</text>
+<rect x="640" y="422" width="290" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="648" y="445" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">风险与状态更新；清单不变</text>
+<text x="40" y="500" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">用户给出的是“完整组合”；系统只做校验、排除与排序，不生成用户没有输入过的组合，也不自动下单或代付。</text>
+<text x="40" y="522" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">“补足资料”一步不做智能补全：缺失金额不估算、缺失日期不默认成今天。</text>
+<text x="40" y="554" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">依据 docs/rules.md 条文与已实现代码绘制｜案例金额为模拟数据</text>
+</svg>
