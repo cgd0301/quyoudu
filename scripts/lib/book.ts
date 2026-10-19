@@ -9,7 +9,7 @@
  * - 前置：项目摘要（不编号）；
  * - 主文：第一章—第八章，按“问题→方案→技术→验证→市场→商业→落地”顺序编号；
  * - 收尾：结论、产品建议（不编号）；
- * - 附录 A—E：规则细节、测试与覆盖、复现与数据字典、来源与证据、图表索引。
+ * - 附录 A—F：规则细节、测试与覆盖、复现与数据字典、来源与证据、风险台账、图表索引。
  *
  * numbered=false 的章节不参与“第N章”编号，标题按 title 原样输出。
  */
@@ -49,10 +49,11 @@ export const CHAPTERS: readonly Chapter[] = [
   { file: '91_appendix_test_report.md', title: '附录 B　测试、追溯及覆盖矩阵', kind: 'appendix', numbered: false },
   { file: '93_appendix_reproduce.md', title: '附录 C　数据字典与复现方式', kind: 'appendix', numbered: false },
   { file: '94_appendix_sources.md', title: '附录 D　外部来源、问卷统计与证据登记', kind: 'appendix', numbered: false },
+  { file: '95_appendix_risk.md', title: '附录 E　风险台账与决策条件', kind: 'appendix', numbered: false },
 ]
 
-/** 图表索引不单独成章，由 book:build 从 book/figures/index.md 生成，作为附录 E */
-export const FIGURE_APPENDIX = { title: '附录 E　图表与索引', source: 'book/figures/index.md' }
+/** 图表索引不单独成章，由 book:build 从 book/figures/index.md 生成，作为附录 F */
+export const FIGURE_APPENDIX = { title: '附录 F　图表与索引', source: 'book/figures/index.md' }
 
 /** 由脚本生成、不手工编辑的章节 */
 export const GENERATED_CHAPTERS = new Set(['91_appendix_test_report.md'])

@@ -23,22 +23,17 @@
 
 ## 5.3 本轮实际运行结果
 
-下表是本轮（2026-10-19）实际执行的命令与结果，不是历史记录。口径分开计数，不同口径不相互换算：
+本轮（2026-10-19）实际执行的门禁结果如下，**口径分开计数、不相互换算**；完整的分层结果表（含测试套件、预检记录、逐项说明）见附录 B.1。
 
-| 口径 | 结果 | 说明 |
-| --- | --- | --- |
-| 测试套件 | <!-- data: status.json#unit.suites --> | vitest 的 suite 计数，含文件内的 describe 分组 |
-| 测试文件 | <!-- data: status.json#unit.files --> | vitest 实际运行的测试文件数 |
-| 单元测试用例 | 通过 <!-- data: status.json#unit.passed -->／失败 <!-- data: status.json#unit.failed -->／跳过 <!-- data: status.json#unit.skipped -->／注册 <!-- data: status.json#unit.tests --> | 注册数含跳过用例 |
-| 测试向量 | 通过 <!-- data: status.json#vectors.vectors_passed -->／<!-- data: status.json#vectors.vectors_total --> | 一个向量含多条断言 |
-| 向量断言 | 通过 <!-- data: status.json#vectors.assertions_passed -->／失败 0／跳过 <!-- data: status.json#vectors.assertions_skipped --> | 运行错误 <!-- data: status.json#vectors.run_errors --> |
-| 案例与向量结构校验 | **通过** | 退出码 <!-- data: status.json#cases.exit_code -->（`validate:cases`） |
-| Golden 冻结 | **通过** | 退出码 <!-- data: status.json#golden.exit_code --> |
-| 规格自洽 | **通过** | `spec:lint` 警告 <!-- data: status.json#spec_lint.warnings --> 条 |
-| 参考实现对拍 | 差异 <!-- data: status.json#oracle_diff.differences --> | 检查点 TypeScript <!-- data: status.json#oracle_diff.checkpoints_ts -->／参考实现 <!-- data: status.json#oracle_diff.checkpoints_oracle --> |
-| 文档检查 | **通过** | <!-- data: status.json#doc_lint.checks --> 项检查，失败 <!-- data: status.json#doc_lint.failed --> |
-| 端到端（Playwright） | **通过** | 通过 17／失败 0／跳过 0（按 spec 计） |
-| 自然语言层子用例 | 6／6 已执行且通过 | 由单元测试覆盖，不是端到端 |
+| 关键指标 | 结果 |
+| --- | --- |
+| 测试向量 | 通过 <!-- data: status.json#vectors.vectors_passed -->／<!-- data: status.json#vectors.vectors_total -->；断言通过 <!-- data: status.json#vectors.assertions_passed -->／<!-- data: status.json#vectors.assertions_total -->，运行错误 <!-- data: status.json#vectors.run_errors --> |
+| 单元测试 | 通过 <!-- data: status.json#unit.passed -->／失败 <!-- data: status.json#unit.failed -->／跳过 <!-- data: status.json#unit.skipped -->；测试文件 <!-- data: status.json#unit.files --> 个 |
+| 参考实现对拍 | 差异 <!-- data: status.json#oracle_diff.differences -->，检查点 <!-- data: status.json#oracle_diff.checkpoints_ts -->／<!-- data: status.json#oracle_diff.checkpoints_oracle --> |
+| 结构校验与冻结 | `validate:cases` 退出码 <!-- data: status.json#cases.exit_code -->；`golden:check` 退出码 <!-- data: status.json#golden.exit_code -->；`spec:lint` 警告 <!-- data: status.json#spec_lint.warnings --> 条 |
+| 文档检查 | <!-- data: status.json#doc_lint.checks --> 项，失败 <!-- data: status.json#doc_lint.failed --> |
+| 端到端（Playwright） | 17 条 spec 通过（主流程 1 条＋带子用例编号 13 条＋补充断言 3 条） |
+| 自然语言层 | 6／6 子用例通过；由单元测试覆盖，不是端到端 |
 
 **这张表不等于"业务规则全部验证通过"。** 它说明的是：已登记的子用例、向量与文档检查在当前代码上运行通过。逐规则的覆盖分布见 5.4 与附录 B——其中仍有"部分覆盖"与"未执行"的条目。
 
