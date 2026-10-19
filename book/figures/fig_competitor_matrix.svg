@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 480" width="1000" height="480" role="img" aria-label="图 15 竞品能力矩阵">
+<rect x="0" y="0" width="1000" height="480" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="1.2"/>
+<text x="40" y="46" font-size="22" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">图 15 竞品能力矩阵</text>
+<text x="40" y="72" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">六类替代方案与本项目的功能边界（“未核实”≠“不支持”）</text>
+<rect x="20" y="110" width="280" height="36" rx="3" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="26" y="132" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">能力／产品</text>
+<rect x="300" y="110" width="110" height="36" rx="3" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="306" y="132" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">趣有度</text>
+<rect x="410" y="110" width="110" height="36" rx="3" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="416" y="132" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">记账类 App</text>
+<rect x="520" y="110" width="120" height="36" rx="3" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="526" y="132" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">预算＋预测订阅</text>
+<rect x="640" y="110" width="130" height="36" rx="3" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="646" y="132" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">支付平台记账本</text>
+<rect x="770" y="110" width="110" height="36" rx="3" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="776" y="132" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">银行手机 App</text>
+<rect x="880" y="110" width="128" height="36" rx="3" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="886" y="132" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">电子表格自建</text>
+<rect x="20" y="146" width="280" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="26" y="168" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">事后流水记录与分类报表</text>
+<rect x="300" y="146" width="110" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="355" y="168" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#6b7280">不做</text>
+<rect x="410" y="146" width="110" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="465" y="168" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#047857">支持</text>
+<rect x="520" y="146" width="120" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="580" y="168" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#047857">支持</text>
+<rect x="640" y="146" width="130" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="705" y="168" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#047857">支持</text>
+<rect x="770" y="146" width="110" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="825" y="168" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#b45309">未核实</text>
+<rect x="880" y="146" width="128" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="944" y="168" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#7c3aed">需自建</text>
+<rect x="20" y="182" width="280" height="36" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="26" y="204" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">未来多笔付款的时间轴</text>
+<rect x="300" y="182" width="110" height="36" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="355" y="204" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#047857">支持</text>
+<rect x="410" y="182" width="110" height="36" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="465" y="204" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#b45309">未核实</text>
+<rect x="520" y="182" width="120" height="36" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="580" y="204" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#047857">支持</text>
+<rect x="640" y="182" width="130" height="36" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="705" y="204" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#b45309">未核实</text>
+<rect x="770" y="182" width="110" height="36" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="825" y="204" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#b45309">未核实</text>
+<rect x="880" y="182" width="128" height="36" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="944" y="204" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#7c3aed">需自建</text>
+<rect x="20" y="218" width="280" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="26" y="240" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">保护性资金与目标分配分离</text>
+<rect x="300" y="218" width="110" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="355" y="240" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#047857">支持</text>
+<rect x="410" y="218" width="110" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="465" y="240" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#b45309">未核实</text>
+<rect x="520" y="218" width="120" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="580" y="240" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#b45309">未核实</text>
+<rect x="640" y="218" width="130" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="705" y="240" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#6b7280">不适用</text>
+<rect x="770" y="218" width="110" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="825" y="240" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#b45309">未核实</text>
+<rect x="880" y="218" width="128" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="944" y="240" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#7c3aed">需自建</text>
+<rect x="20" y="254" width="280" height="36" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="26" y="276" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">完整方案约束检查与排序</text>
+<rect x="300" y="254" width="110" height="36" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="355" y="276" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#047857">支持</text>
+<rect x="410" y="254" width="110" height="36" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="465" y="276" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#b45309">未核实</text>
+<rect x="520" y="254" width="120" height="36" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="580" y="276" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#b45309">未核实</text>
+<rect x="640" y="254" width="130" height="36" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="705" y="276" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#b45309">未核实</text>
+<rect x="770" y="254" width="110" height="36" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="825" y="276" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#b45309">未核实</text>
+<rect x="880" y="254" width="128" height="36" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="944" y="276" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#7c3aed">需自建</text>
+<rect x="20" y="290" width="280" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="26" y="312" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">信息不足时给“暂无法判断”</text>
+<rect x="300" y="290" width="110" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="355" y="312" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#047857">支持</text>
+<rect x="410" y="290" width="110" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="465" y="312" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#b45309">未核实</text>
+<rect x="520" y="290" width="120" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="580" y="312" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#b45309">未核实</text>
+<rect x="640" y="290" width="130" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="705" y="312" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#6b7280">不适用</text>
+<rect x="770" y="290" width="110" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="825" y="312" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#b45309">未核实</text>
+<rect x="880" y="290" width="128" height="36" rx="0" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="944" y="312" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#7c3aed">取决于公式</text>
+<rect x="20" y="326" width="280" height="36" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="26" y="348" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">是否需要账户授权</text>
+<rect x="300" y="326" width="110" height="36" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="355" y="348" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#047857">不需要</text>
+<rect x="410" y="326" width="110" height="36" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="465" y="348" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#b45309">部分需要</text>
+<rect x="520" y="326" width="120" height="36" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="580" y="348" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#b91c1c">需要</text>
+<rect x="640" y="326" width="130" height="36" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="705" y="348" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#b91c1c">需要</text>
+<rect x="770" y="326" width="110" height="36" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="825" y="348" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="normal" fill="#b91c1c">需要</text>
+<rect x="880" y="326" width="128" height="36" rx="0" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="944" y="348" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#047857">不需要</text>
+<text x="20" y="380" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">绿＝本项目已实现且可核对；橙＝官方页面未描述该能力，记为“未核实”，不写成“不支持”；紫＝需要用户自行搭建。</text>
+<text x="20" y="404" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">竞品事实只取官方页面能读到的内容（附录 D 的 E20—E30），访问日期 2026-10-19；不含对竞品内部实现的推测。</text>
+<text x="20" y="428" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">结论：趣有度只在“事前、多笔、有硬时点的可行性判断与方案比较”这一窄缝里主张差异，不在记账、报表与长周期预测上比拼。</text>
+<text x="40" y="464" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">竞品事实仅取官方页面（附录 D 的 E20—E30）｜不代表对竞品内部实现的判断</text>
+</svg>

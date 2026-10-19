@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 720" width="1000" height="720" role="img" aria-label="图 15 测试覆盖矩阵（按规则）">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 720" width="1000" height="720" role="img" aria-label="图 13 测试覆盖矩阵（按规则）">
 <rect x="0" y="0" width="1000" height="720" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="1.2"/>
-<text x="40" y="46" font-size="22" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">图 15 测试覆盖矩阵（按规则）</text>
+<text x="40" y="46" font-size="22" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">图 13 测试覆盖矩阵（按规则）</text>
 <text x="40" y="72" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">追溯状态分布；未执行不计为通过</text>
 <text x="60" y="110" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">每条规则下子用例的追溯状态（pass / partial / failed / pending）</text>
 <rect x="200" y="128" width="274.2857142857143" height="14" rx="2" fill="#047857" stroke="#047857" stroke-width="1.2"/>

@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" role="img" aria-label="图 3 数据流与依赖">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" role="img" aria-label="图 12 数据流与依赖">
 <rect x="0" y="0" width="1000" height="560" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="1.2"/>
-<text x="40" y="46" font-size="22" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">图 3 数据流与依赖</text>
+<text x="40" y="46" font-size="22" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">图 12 数据流与依赖</text>
 <text x="40" y="72" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">受控输入 → 验证 → 数据产物 → 文档</text>
 <rect x="40" y="116" width="150" height="86" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
 <text x="115" y="164" font-size="14" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1f2937">受控输入</text>

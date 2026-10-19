@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 510" width="1000" height="510" role="img" aria-label="图 18 路线图阶段闸门">
+<rect x="0" y="0" width="1000" height="510" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="1.2"/>
+<text x="40" y="46" font-size="22" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">图 18 路线图阶段闸门</text>
+<text x="40" y="72" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">五个阶段、各自通过条件与相互依赖</text>
+<rect x="40" y="130" width="172" height="96" rx="6" fill="#ecfdf5" stroke="#047857" stroke-width="1.2"/>
+<text x="52" y="156" font-size="16" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#047857">S1</text>
+<text x="86" y="156" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">UI 覆盖补齐</text>
+<text x="52" y="182" font-size="9" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">通过条件：</text>
+<text x="52" y="198" font-size="9" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">21 条 UI 子用例全部有对应用例</text>
+<text x="52" y="222" font-size="9" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">验证成本：低</text>
+<line x1="212" y1="178" x2="230" y2="178" stroke="#6b7280" stroke-width="1.4"/><polygon points="230,178 223,174 223,182" fill="#6b7280"/>
+<rect x="230" y="130" width="172" height="96" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="242" y="156" font-size="16" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1d4ed8">S2</text>
+<text x="276" y="156" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">任务可用性</text>
+<text x="242" y="182" font-size="9" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">通过条件：</text>
+<text x="242" y="198" font-size="9" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">多数人可无指导完成并能说出最早缺口</text>
+<text x="242" y="222" font-size="9" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">验证成本：中</text>
+<line x1="402" y1="178" x2="420" y2="178" stroke="#6b7280" stroke-width="1.4"/><polygon points="420,178 413,174 413,182" fill="#6b7280"/>
+<rect x="420" y="130" width="172" height="96" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="432" y="156" font-size="16" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1d4ed8">S3</text>
+<text x="466" y="156" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">结果理解与信任</text>
+<text x="432" y="182" font-size="9" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">通过条件：</text>
+<text x="432" y="198" font-size="9" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">能区分可行／暂无法判断／0 元</text>
+<text x="432" y="222" font-size="9" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">验证成本：中</text>
+<line x1="592" y1="178" x2="610" y2="178" stroke="#6b7280" stroke-width="1.4"/><polygon points="610,178 603,174 603,182" fill="#6b7280"/>
+<rect x="610" y="130" width="172" height="96" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="622" y="156" font-size="16" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1d4ed8">S4</text>
+<text x="656" y="156" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">价格点与真实行为</text>
+<text x="622" y="182" font-size="9" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">通过条件：</text>
+<text x="622" y="198" font-size="9" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">出现可重复的非零支付</text>
+<text x="622" y="222" font-size="9" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">验证成本：中高</text>
+<line x1="782" y1="178" x2="800" y2="178" stroke="#6b7280" stroke-width="1.4"/><polygon points="800,178 793,174 793,182" fill="#6b7280"/>
+<rect x="800" y="130" width="172" height="96" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="812" y="156" font-size="16" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1d4ed8">S5</text>
+<text x="846" y="156" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">机构合作探索</text>
+<text x="812" y="182" font-size="9" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">通过条件：</text>
+<text x="812" y="198" font-size="9" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">一方愿在不改排序前提下提供场景</text>
+<text x="812" y="222" font-size="9" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">验证成本：高</text>
+<text x="40" y="262" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#b45309">闸门规则：不满足通过条件就停在本阶段，不进入下一步，也不对外声称已完成。S1 未过之前，界面不计为整体通过。</text>
+<rect x="40" y="286" width="900" height="150" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="60" y="312" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">依赖关系</text>
+<text x="60" y="340" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">· S1 高（当前唯一可自行完成）</text>
+<text x="470" y="340" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">S2 依赖 S1：界面不完整时，可用性测试测的是缺陷</text>
+<text x="60" y="366" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">· S2 与 S3 可同批招募</text>
+<text x="470" y="366" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">同一批 8—12 名用户先做任务再做理解追问</text>
+<text x="60" y="392" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">· S4 依赖 S2、S3</text>
+<text x="470" y="392" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">用户看不懂结论时，测出的付费意愿没有意义</text>
+<text x="60" y="418" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">· S5 可与 S2 并行</text>
+<text x="470" y="418" font-size="10" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">机构访谈不改代码，但结论不得反过来改排序规则</text>
+<text x="40" y="470" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">本节不写日期、用户量、收入或留存目标：这些指标没有基线，也没有可靠的外部对照；写出来只能是愿望。</text>
+<text x="40" y="494" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">依据第 8.3 节与 docs/_work/test_layers.md 绘制｜不含日期、用户量与收入目标</text>
+</svg>

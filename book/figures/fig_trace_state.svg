@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" role="img" aria-label="图 16 追溯表状态分布">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" role="img" aria-label="图 14 追溯表状态分布">
 <rect x="0" y="0" width="1000" height="560" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="1.2"/>
-<text x="40" y="46" font-size="22" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">图 16 追溯表状态分布</text>
+<text x="40" y="46" font-size="22" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">图 14 追溯表状态分布</text>
 <text x="40" y="72" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">通过 / 部分覆盖 / 未通过 / 待执行</text>
 <line x1="110" y1="360" x2="890" y2="360" stroke="#cbd5e1" stroke-width="1.4"/>
 <line x1="110" y1="140" x2="110" y2="360" stroke="#cbd5e1" stroke-width="1.4"/>

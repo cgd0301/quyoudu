@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 540" width="1000" height="540" role="img" aria-label="图 4 计划变化前后对照（模拟案例 C02）">
+<rect x="0" y="0" width="1000" height="540" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="1.2"/>
+<text x="40" y="46" font-size="22" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">图 4 计划变化前后对照（模拟案例 C02）</text>
+<text x="40" y="72" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">收入延期一个节点后，计划状态、最早缺口与每日参考如何变化</text>
+<rect x="60" y="104" width="380" height="44" rx="6" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.2"/>
+<text x="250" y="132" font-size="14" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#1d4ed8">变化前：确认 C02（输入版本 v2）</text>
+<rect x="560" y="104" width="380" height="44" rx="6" fill="#fef2f2" stroke="#fecaca" stroke-width="1.2"/>
+<text x="750" y="132" font-size="14" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="middle" font-weight="bold" fill="#b91c1c">变化后：家教收入 10/20 延至 11/20（v3）</text>
+<line x1="440" y1="126" x2="560" y2="126" stroke="#6b7280" stroke-width="1.4"/><polygon points="560,126 553,122 553,130" fill="#6b7280"/>
+<rect x="60" y="176" width="240" height="38" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="72" y="200" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">计划状态</text>
+<rect x="300" y="176" width="300" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="312" y="200" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">按当前假设可行</text>
+<rect x="610" y="176" width="330" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="622" y="200" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">发现付款缺口</text>
+<rect x="60" y="222" width="240" height="38" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="72" y="246" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">最早缺口</text>
+<rect x="300" y="222" width="300" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="312" y="246" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">无</text>
+<rect x="610" y="222" width="330" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="622" y="246" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">2026-10-25｜60.00 元</text>
+<rect x="60" y="268" width="240" height="38" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="72" y="292" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">每日额外支出参考</text>
+<rect x="300" y="268" width="300" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="312" y="292" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">140.00 元</text>
+<rect x="610" y="268" width="330" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="622" y="292" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">当前不建议新增非计划支出</text>
+<rect x="60" y="314" width="240" height="38" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="72" y="338" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">检查期间最低 U</text>
+<rect x="300" y="314" width="300" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="312" y="338" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">140.00 元</text>
+<rect x="610" y="314" width="330" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="622" y="338" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">-440.00 元</text>
+<rect x="60" y="360" width="240" height="38" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="72" y="384" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">已评估／排除方案</text>
+<rect x="300" y="360" width="300" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="312" y="384" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">4／3</text>
+<rect x="610" y="360" width="330" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="622" y="384" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">0／7</text>
+<rect x="60" y="406" width="240" height="38" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="72" y="430" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">行动清单</text>
+<rect x="300" y="406" width="300" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="312" y="430" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">4 项（已冻结）</text>
+<rect x="610" y="406" width="330" height="38" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="622" y="430" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">4 项（内容不变）</text>
+<text x="60" y="470" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">两列为同一模拟案例（C02、金额为模拟值）在规则 R013 下按新输入重算的结果对照，不是两个真实用户的财务改善对比。</text>
+<text x="60" y="492" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">确认时冻结的行动清单在重算后不变；是否改方案由用户决定（R017）。</text>
+<text x="40" y="524" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">模拟数据｜数据来源见 book/figures/index.md</text>
+</svg>
