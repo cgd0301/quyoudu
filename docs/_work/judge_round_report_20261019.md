@@ -381,19 +381,21 @@ node .cache/map-figs.cjs         # 图片 → 页面位置映射（供 6.3 表�
 ## 11 改动文件清单与边界说明
 
 **改动（均在项目书工作范围内）**
-- `book/chapters/`：00、01、02、03、05、06、07、08、09、90、92、94
+- `book/chapters/`：00、01、02、03、04、05、06、07、08、09、90、92、94；**新增 95_appendix_risk.md（附录 E）**
 - `book/figures/`：新增 7 个 SVG、`index.md` 重编、11 个既有 SVG 仅改图号
 - `submission/趣有度_项目书.pdf`：重新生成
 - `submission/screenshots/wide/`：**新增** 4 张宽版截图（原 4 张未动）
 - `docs/_work/judge_round_report_20261019.md`：本文件
 
-**改动了三个 `scripts/` 文件，理由如下（需团队知情）**
+**改动了五个 `scripts/` 文件，理由如下（需团队知情）**
 AGENTS.md §5 把"项目书相关工作"限定在 `book/**`、`submission/**` 与若干 `docs/_work/*`，`scripts/` 未列入。本轮改了三个脚本，理由是其**唯一产物就是项目书交付物**，且属 `book:build`／`book:pdf`／`figures`／`shots` 链路的实现细节，不涉及引擎、规则或测试预期：
 
 | 文件 | 改动 | 为什么必须改 |
 | --- | --- | --- |
 | `scripts/figures.ts` | 图号占位符 + 按正文顺序编号；新增 7 个图函数；图注口径可配置 | 图号与阅读顺序矛盾（6/16 张），且不如此无法插入新图而不手工重排 |
 | `scripts/book-pdf.ts` | 正文 `text-align: justify` → `left` | 长路径行被拉成稀字距，肉眼可见的排版缺陷 |
+| `scripts/lib/book.ts` | `CHAPTERS` 增加 `95_appendix_risk.md`（附录 E）；`FIGURE_APPENDIX` 标题由"附录 E　图表与索引"改为"附录 F　图表与索引" | 任务要求"完整风险台账不必全部放在主文"，附录 E 需要一个落点；顺延才能保持 A→F 的字母顺序 |
+| `scripts/book-build.ts` | 封面注记"附录 A—E"改为"附录 A—F" | 与新的六附录结构一致 |
 | `scripts/screenshots.ts` | 增加 `SHOT_DIR`／`SHOT_WIDTH`／`SHOT_HEIGHT` 环境变量（默认值不变） | 需要宽版截图；**默认行为与输出路径完全不变**，不覆盖既有交付截图 |
 
 未改动：`src/**`、`tests/**`、`fixtures/**`、`oracle/**`、`docs/rules.md`、`docs/policy_card.md`、`docs/scope.md`、`docs/sources.md`、`docs/traceability.csv`。
