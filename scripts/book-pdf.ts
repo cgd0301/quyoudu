@@ -287,7 +287,7 @@ body {
 .page-num { font-variant-numeric: tabular-nums; color: #46505a }
 .cover { position: absolute; inset: 0; padding: 36mm 24mm 20mm; display: flex; flex-direction: column }
 .cover .kicker { font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif; font-size: 8.8pt; letter-spacing: .14em; color: #0d6b4f; margin-bottom: 6mm }
-.cover h1 { font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif; font-size: 24pt; line-height: 1.36; margin: 0 0 4mm; color: #0b3d2c; font-weight: 800; text-align: left }
+.cover h1 { font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif; font-size: 20pt; line-height: 1.4; margin: 0 0 4mm; color: #0b3d2c; font-weight: 800; text-align: left }
 .cover .sub { font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif; font-size: 11.5pt; color: #2f4a3f; margin-bottom: 9mm; text-align: left; line-height: 1.6 }
 .cover .rule { height: 1.4pt; background: linear-gradient(90deg,#0d6b4f,#8fbfa8); width: 46mm; margin: 0 0 9mm }
 .cover .meta { font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif; font-size: 10.2pt; line-height: 2; color: #22302a; text-align: left }
