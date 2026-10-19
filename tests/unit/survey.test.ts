@@ -218,4 +218,92 @@ describe('survey 问卷统计口径', () => {
     expect(assessInput(schema(), '').map((issue) => issue.code)).toContain('empty')
     expect(() => summarize(schema(), '', {})).toThrow(SurveyInputBlocked)
   })
+
+  test('Q10 分组口径：五组之和必须等于 30，任何付费 8 = 按次 5 + 月费 2 + 一次性 1', () => {
+    const deployed = parseSchema(readFileSync(`${REPO_ROOT}/docs/_work/survey/schema.json`, 'utf8'))
+    const text = readFileSync(`${REPO_ROOT}/docs/_work/survey/analysis/responses.csv`, 'utf8')
+    const metadata = JSON.parse(readFileSync(`${REPO_ROOT}/docs/_work/survey/analysis/metadata.json`, 'utf8')) as Record<string, string | number>
+    const summary = summarize(deployed, text, metadata)
+    const q10 = summary.questions.find((question) => question.id === 'Q10')
+    expect(q10?.answered).toBe(30)
+    const groups = new Map((q10?.groups ?? []).map((group) => [group.id, group.count]))
+    expect(groups.get('any_paid')).toBe(8)
+    expect(groups.get('free_only')).toBe(12)
+    expect(groups.get('institution_free')).toBe(5)
+    expect(groups.get('undecided')).toBe(4)
+    expect(groups.get('conditional')).toBe(1)
+    // 任何付费的三种方式必须能对上原始选项人数，不能只写合计
+    const optionCount = (option: string): number => q10?.counts.find((item) => item.option === option)?.count ?? -1
+    expect(optionCount('为一次完整的消费计划支付少量费用') + optionCount('为持续使用支付月费') + optionCount('为高级功能支付一次性费用')).toBe(8)
+    expect(optionCount('只使用免费版本，不愿付费') + optionCount('由银行、学校或其他机构提供免费服务')).toBe(17)
+    // 单选：全部选项与全部分组都必须等于有效回答数，出现 29/30 这类缺口即失败
+    expect(q10?.counts.reduce((sum, item) => sum + item.count, 0)).toBe(30)
+    expect((q10?.groups ?? []).reduce((sum, group) => sum + group.count, 0)).toBe(30)
+  })
+
+  test('报告的分组表显式写出分母与分组合计；分组不完整时必须打印口径警告', () => {
+    const deployed = parseSchema(readFileSync(`${REPO_ROOT}/docs/_work/survey/schema.json`, 'utf8'))
+    const text = readFileSync(`${REPO_ROOT}/docs/_work/survey/analysis/responses.csv`, 'utf8')
+    const report = renderReport(summarize(deployed, text, {}), deployed)
+    expect(report).toContain('**分组口径**（单选，选项互斥；分组按选项合并，分母仍为该题有效回答）')
+    expect(report).toContain('| **分组合计** | 以上全部分组 | 30 | 100% |')
+    expect(report).not.toContain('口径警告')
+
+    const partial = parseSchema(
+      JSON.stringify({
+        version: 'test-partial',
+        title: '分组不完整的测试 schema',
+        rules: { min_duration_seconds: 0, attention_check: null, duplicate_key: null, duplicate_keep: 'first', required: ['Q1'], min_valid_for_conclusions: 1 },
+        questions: [
+          {
+            id: 'Q1',
+            label: 'q1',
+            type: 'single',
+            options: ['1 次', '2—3 次'],
+            groups: [{ id: 'one', label: '只选一次', options: ['1 次'] }],
+          },
+        ],
+      }),
+    )
+    const partialReport = renderReport(summarize(partial, 'meta_duration_seconds,Q1\n10,1 次\n11,2—3 次', {}), partial)
+    expect(partialReport).toContain('口径警告')
+    expect(partialReport).toContain('分组只覆盖 1/2')
+  })
+
+  test('分组定义不合法时直接报错：多选题不能分组、组内选项必须属于该题、同一选项不能重复计入', () => {
+    const base = {
+      version: 'test-bad-group',
+      title: '非法分组',
+      rules: { min_duration_seconds: 0, attention_check: null, duplicate_key: null, duplicate_keep: 'first', required: ['Q1'], min_valid_for_conclusions: 1 },
+      questions: [{ id: 'Q1', label: 'q1', type: 'multi', options: ['甲', '乙'] }],
+    }
+    expect(() => parseSchema(JSON.stringify({ ...base, questions: [{ ...base.questions[0], groups: [{ id: 'g', label: 'g', options: ['甲'] }] }] }))).toThrow(/单选题/)
+    expect(() =>
+      parseSchema(
+        JSON.stringify({
+          ...base,
+          questions: [{ id: 'Q1', label: 'q1', type: 'single', options: ['甲', '乙'], groups: [{ id: 'g', label: 'g', options: ['丙'] }] }],
+        }),
+      ),
+    ).toThrow(/不在题目选项/)
+    expect(() =>
+      parseSchema(
+        JSON.stringify({
+          ...base,
+          questions: [
+            {
+              id: 'Q1',
+              label: 'q1',
+              type: 'single',
+              options: ['甲', '乙'],
+              groups: [
+                { id: 'g1', label: 'g1', options: ['甲'] },
+                { id: 'g2', label: 'g2', options: ['甲'] },
+              ],
+            },
+          ],
+        }),
+      ),
+    ).toThrow(/重复计入/)
+  })
 })

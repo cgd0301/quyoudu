@@ -101,11 +101,11 @@ describe('test-report 测试报告', () => {
   })
 
   test('端到端已通过时不列进“未完成的检查”，但仍写明 spec 数不等于 UI 子用例逐条覆盖', () => {
-    const passed = { ...base, e2e: { status: '通过', exit_code: 0, detail: '通过 1／失败 0／跳过 0；按 spec 计数，不等于 UI 层子用例逐条覆盖' } }
+    const passed = { ...base, e2e: { status: '通过', exit_code: 0, detail: '通过 17／失败 0／跳过 0；按 spec 计数，UI 层 21 条子用例中 13 条有对应用例、3 条仅有补充断言、5 条未覆盖' } }
     const text = renderAppendix(passed)
     expect(text).toMatch(/端到端（Playwright） \| 通过/)
     expect(text).toContain('端到端已运行并通过')
-    expect(text).toContain('UI 层子用例仍未逐条覆盖')
+    expect(text).toContain('UI 层 21 条子用例中 13 条有对应用例、3 条仅有补充断言、5 条未覆盖')
     expect(text).not.toContain('未执行：前端未交付')
     // 未运行时仍按“未完成”如实列出
     expect(renderAppendix(base)).toContain('- 端到端：未执行：前端未交付')

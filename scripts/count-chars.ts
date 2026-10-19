@@ -96,7 +96,7 @@ export function renderReport(report: CharReport): string {
     `合计（不含概述与产品建议）：${report.total.wordlike} 字；非空白字符 ${report.total.chars}`,
     `图表：${report.figures} 张（建议不少于 ${report.official.figures_recommended} 张）`,
     `页数估算：约 ${report.pages_estimate} 页（按每页 ${CHARS_PER_PAGE} 非空白字符折算；官方没有给换算口径，这是估算值，不是官方指标）`,
-    `官方页数建议：含附录 ${report.official.pages_recommended} 页以上`,
+    `来源建议：含附录 ${report.official.pages_recommended} 页以上（仓库来源摘录，非官方硬性限制）`,
   ]
   return `${lines.join('\n')}\n`
 }

@@ -27,11 +27,19 @@ export const REPORT_PATH = `${SURVEY_DIR}/report.md`
 
 export type QuestionType = 'single' | 'multi' | 'scale' | 'open' | 'meta'
 
+/** 单选题的分组口径：把若干互斥选项合并成一个可复算的类别 */
+export type SurveyGroup = {
+  id: string
+  label: string
+  options: string[]
+}
+
 export type SurveyQuestion = {
   id: string
   label: string
   type: QuestionType
   options?: string[]
+  groups?: SurveyGroup[]
   min?: number
   max?: number
 }
@@ -125,6 +133,8 @@ export type QuestionStats = {
   answered: number
   missing: number
   counts: { option: string; count: number; share: number }[]
+  /** 单选题分组统计；没有 groups 时为空数组 */
+  groups: { id: string; label: string; options: string[]; count: number; share: number }[]
   mean: number | null
   median: number | null
   /** 多选题平均选择项数 */
@@ -195,6 +205,26 @@ export function parseSchema(text: string): SurveySchema {
         throw new Error(`${q.id} 的 options 不合法`)
       }
       question.options = q.options as string[]
+    }
+    if (q.groups !== undefined) {
+      if (q.type !== 'single') throw new Error(`${q.id} 的 groups 只能用于单选题`)
+      if (!Array.isArray(q.groups) || q.groups.length === 0) throw new Error(`${q.id} 的 groups 不合法`)
+      const used = new Set<string>()
+      question.groups = q.groups.map((item, groupIndex) => {
+        if (item === null || typeof item !== 'object' || Array.isArray(item)) throw new Error(`${q.id} 的第 ${groupIndex + 1} 个分组不是对象`)
+        const group = item as Record<string, unknown>
+        if (typeof group.id !== 'string' || group.id === '') throw new Error(`${q.id} 的第 ${groupIndex + 1} 个分组缺少 id`)
+        if (typeof group.label !== 'string' || group.label === '') throw new Error(`${q.id} 的 ${group.id} 缺少 label`)
+        if (!Array.isArray(group.options) || group.options.length === 0 || !group.options.every((option) => typeof option === 'string')) {
+          throw new Error(`${q.id} 的 ${group.id} 的 options 不合法`)
+        }
+        for (const option of group.options as string[]) {
+          if (!question.options?.includes(option)) throw new Error(`${q.id} 的 ${group.id} 含不在题目选项里的取值：${option}`)
+          if (used.has(option)) throw new Error(`${q.id} 的选项 ${option} 被多个分组重复计入`)
+          used.add(option)
+        }
+        return { id: group.id, label: group.label, options: group.options as string[] }
+      })
     }
     if (q.type === 'scale') {
       if (typeof q.min !== 'number' || typeof q.max !== 'number' || q.min >= q.max) throw new Error(`${q.id} 的 min/max 不合法`)
@@ -295,7 +325,7 @@ export function summarizeQuestions(schema: SurveySchema, valid: readonly Respons
   const total = valid.length
   return schema.questions.map((question) => {
     if (question.type === 'meta') {
-      return { id: question.id, label: question.label, type: question.type, answered: total, missing: 0, counts: [], mean: null, median: null, averageSelections: null, openCount: null }
+      return { id: question.id, label: question.label, type: question.type, answered: total, missing: 0, counts: [], groups: [], mean: null, median: null, averageSelections: null, openCount: null }
     }
     if (question.type === 'multi') {
       const options = question.options ?? []
@@ -324,6 +354,7 @@ export function summarizeQuestions(schema: SurveySchema, valid: readonly Respons
         answered: answeredRows.length,
         missing: valid.length - answeredRows.length,
         counts,
+        groups: [],
         mean: null,
         median: null,
         averageSelections: selections.length === 0 ? null : round1(selections.reduce((sum, value) => sum + value, 0) / selections.length),
@@ -332,7 +363,7 @@ export function summarizeQuestions(schema: SurveySchema, valid: readonly Respons
     }
     if (question.type === 'open') {
       const answered = valid.filter((row) => !isBlank(cell(row.values, question.id))).length
-      return { id: question.id, label: question.label, type: question.type, answered, missing: valid.length - answered, counts: [], mean: null, median: null, averageSelections: null, openCount: answered }
+      return { id: question.id, label: question.label, type: question.type, answered, missing: valid.length - answered, counts: [], groups: [], mean: null, median: null, averageSelections: null, openCount: answered }
     }
     // single / scale
     const answeredRows = valid.filter((row) => !isBlank(cell(row.values, question.id)))
@@ -350,7 +381,18 @@ export function summarizeQuestions(schema: SurveySchema, valid: readonly Respons
       if (numbers.length > 0) mean = round1(numbers.reduce((sum, value) => sum + value, 0) / numbers.length)
       med = median(numbers)
     }
-    return { id: question.id, label: question.label, type: question.type, answered: answeredRows.length, missing: valid.length - answeredRows.length, counts, mean, median: med, averageSelections: null, openCount: null }
+    // 分组口径只用于互斥单选题：分组按选项合并，分母仍等于该题有效回答数
+    const groups = (question.groups ?? []).map((group) => {
+      const count = answeredRows.filter((row) => group.options.includes(cell(row.values, question.id))).length
+      return {
+        id: group.id,
+        label: group.label,
+        options: group.options,
+        count,
+        share: answeredRows.length === 0 ? 0 : round1((count / answeredRows.length) * 100),
+      }
+    })
+    return { id: question.id, label: question.label, type: question.type, answered: answeredRows.length, missing: valid.length - answeredRows.length, counts, groups, mean, median: med, averageSelections: null, openCount: null }
   })
 }
 
@@ -457,7 +499,7 @@ export function renderReport(summary: SurveySummary, schema: SurveySchema): stri
   lines.push(`- 有效 / 提交：${summary.valid} / ${summary.submitted}`)
   if (summary.belowMinimum) lines.push(`- **样本量不足（<${summary.minValidForConclusions}）**：只作探索性描述，不用于推广结论。`)
   lines.push(`- 题型与清洗规则：\`${SCHEMA_PATH}\`（version ${schema.version}）`)
-  lines.push('- 样本性质：便利/非概率样本；30 条提交不等于 30 位独立受访者（导出件无应答编号）；不得外推为全国青年比例。')
+  lines.push('- 样本性质：便利/非概率样本；样本量为 30 位独立受访者（n=30，团队确认，不做身份去重）；导出件无应答编号，本报告不执行按应答编号的去重；不得外推为全国青年比例。')
   lines.push('- 解读、证据强度与局限：见 `docs/_work/survey/findings.md`；本文件只含统计表，不构成需求结论。')
   lines.push('')
   lines.push('## 清洗明细', '')
@@ -486,6 +528,24 @@ export function renderReport(summary: SurveySummary, schema: SurveySchema): stri
       lines.push('| 选项 | 人数 | 占比（分母=该题有效回答） |')
       lines.push('| --- | --- | --- |')
       for (const item of question.counts) lines.push(`| ${item.option} | ${item.count} | ${item.share}% |`)
+      if (question.groups.length > 0) {
+        const grouped = question.groups.reduce((sum, group) => sum + group.count, 0)
+        const remaining = question.answered - grouped
+        lines.push('')
+        lines.push('**分组口径**（单选，选项互斥；分组按选项合并，分母仍为该题有效回答）')
+        lines.push('')
+        lines.push('| 分组 | 由哪些选项合并 | 人数 | 占比 |')
+        lines.push('| --- | --- | --- | --- |')
+        for (const group of question.groups) lines.push(`| ${group.label}（${group.id}） | ${group.options.join('、')} | ${group.count} | ${group.share}% |`)
+        lines.push(`| **分组合计** | 以上全部分组 | ${grouped} | ${question.answered === 0 ? 0 : round1((grouped / question.answered) * 100)}% |`)
+        if (remaining !== 0) {
+          lines.push('')
+          lines.push(
+            `> **口径警告**：分组只覆盖 ${grouped}/${question.answered}，还有 ${remaining} 人未归入任何分组；` +
+              '引用分组合计时必须说明这一点，不得把它当作全量分类（各类之和不等于分母是口径缺陷，不是数据缺失）。',
+          )
+        }
+      }
     }
     lines.push('')
   }
