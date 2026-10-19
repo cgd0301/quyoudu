@@ -150,6 +150,10 @@ test('T018-09 付款缺口只展示最早缺口、金额与依据，不显示失
   await expect(page.getByText(/最早缺口 · \d{4}\.\d{2}\.\d{2}/)).toBeVisible()
   await expect(page.locator('.gap-summary').getByText(/\d+\.\d{2} 元/)).toBeVisible()
   await expect(page.getByText(/失败概率|成功概率|概率是多少/)).toHaveCount(0)
+  // 每日参考：延期后 display=NOT_RECOMMENDED，必须显示状态文案，不能显示成 0.00 元
+  // （该分支的回归由 tests/unit/ui-daily-text.test.ts 覆盖；此处验证真实渲染）
+  await expect(page.locator('.daily-reference-block').getByText('当前不建议新增非计划支出')).toBeVisible()
+  await expect(page.locator('.daily-reference-block').getByText(/^0\.00 元$/)).toHaveCount(0)
 })
 
 test('T020-06 价格趋势用模拟数据标识，不表述为真实预测效果', async ({ page }) => {

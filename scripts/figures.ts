@@ -137,13 +137,19 @@ function wrapLines(text: string, limit: number): string[] {
   return [first, second]
 }
 
-function frame(title: string, subtitle: string, body: string, height = 560, footer = '模拟数据｜数据来源见 book/figures/index.md'): string {
+/**
+ * 结构图的落款：架构/流程/状态树是按规则与仓库现有代码人工整理的，
+ * 既不是引擎导出的数值，也不是模拟案例数据，不能沿用默认的"模拟数据"字样。
+ */
+const STRUCTURE_FOOTER = '结构图：按 docs/rules.md 与仓库现有目录/代码人工整理，非引擎导出'
+
+function frame(title: string, subtitle: string, body: string, height = 560, footer = '模拟数据｜数据来源见 book/figures/index.md', width = W): string {
   // 图号在 buildFigures() 之后按“正文出现顺序”统一编号（见 main），
   // 这里先把写死的图号换成占位符，避免新增图表时手工重排全部编号。
   const numbered = title.replace(/^图\s*\d+\s*/, `图 ${FIGURE_TOKEN} `)
   return [
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${height}" width="${W}" height="${height}" role="img" aria-label="${esc(numbered)}">`,
-    rect(0, 0, W, height, '#ffffff', '#ffffff', 0),
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="img" aria-label="${esc(numbered)}">`,
+    rect(0, 0, width, height, '#ffffff', '#ffffff', 0),
     label(40, 46, numbered, 22, 'start', 'bold'),
     label(40, 72, subtitle, 13, 'start', 'normal', MUTED),
     body,
@@ -235,7 +241,7 @@ function architecture(): Figure {
   parts.push(label(40, 415, '引擎只用确定性代码：无 Date.now、无随机数、无网络；模型输出（src/nl）只能成为待确认值，不进入计算（AGENTS.md §3）。', 12, 'start', 'normal', MUTED))
   parts.push(label(40, 440, '界面已合入主线：端到端 17 条 spec 通过；UI 层 21 条子用例中 13 条覆盖、3 条部分覆盖、5 条未覆盖。', 12, 'start', 'normal', WARN))
   parts.push(label(40, 462, '界面因此不计为整体通过，逐条分布见附录 B。', 12, 'start', 'normal', WARN))
-  return { name: 'fig_architecture', title: '系统总体架构', sources: ['src/engine/'], note: '按仓库现有目录与 rules.md §12 绘制', text: frame('图 1 系统总体架构', '输入 → 确定性引擎 → 结果契约 → 交付层', parts.join('\n')) }
+  return { name: 'fig_architecture', title: '系统总体架构', sources: ['src/engine/'], note: '按仓库现有目录与 rules.md §12 绘制', text: frame('图 1 系统总体架构', '输入 → 确定性引擎 → 结果契约 → 交付层', parts.join('\n'), 560, STRUCTURE_FOOTER) }
 }
 
 function pipeline(): Figure {
@@ -252,7 +258,7 @@ function pipeline(): Figure {
     if (col < 5 && index < steps.length - 1) parts.push(arrow(x + 140, y + 46, x + 158, y + 46))
   })
   parts.push(label(40, 430, '每个 EVALUATE 生成一个检查点；工程规则：金额整数分、只用 as_of 模拟时钟、排序与状态优先级集中在此（AGENTS.md §3、R013）。', 12, 'start', 'normal', MUTED))
-  return { name: 'fig_engine_pipeline', title: '确定性引擎执行流程', sources: ['src/engine/evaluate.ts'], note: '按 evaluate() 的实际调用顺序', text: frame('图 2 确定性引擎执行流程', '一次 evaluate 的模块顺序与检查点', parts.join('\n')) }
+  return { name: 'fig_engine_pipeline', title: '确定性引擎执行流程', sources: ['src/engine/evaluate.ts'], note: '按 evaluate() 的实际调用顺序', text: frame('图 2 确定性引擎执行流程', '一次 evaluate 的模块顺序与检查点', parts.join('\n'), 560, STRUCTURE_FOOTER) }
 }
 
 function dataFlow(): Figure {
@@ -274,7 +280,7 @@ function dataFlow(): Figure {
     })
     if (index < rows.length - 1) parts.push(arrow(490, y + 86, 490, y + 108))
   })
-  return { name: 'fig_data_flow', title: '数据流与依赖', sources: ['package.json', 'book/data'], note: '由脚本串联，可整体重跑', text: frame('图 3 数据流与依赖', '受控输入 → 验证 → 数据产物 → 文档', parts.join('\n')) }
+  return { name: 'fig_data_flow', title: '数据流与依赖', sources: ['package.json', 'book/data'], note: '由脚本串联，可整体重跑', text: frame('图 3 数据流与依赖', '受控输入 → 验证 → 数据产物 → 文档', parts.join('\n'), 560, STRUCTURE_FOOTER) }
 }
 
 const COST_ITEM_LABELS: Record<string, string> = {
@@ -302,7 +308,7 @@ function costComposition(): Figure {
   if (byItem.size === 0) byItem.set('NET', result.cost.net_spend.value)
   const values = [...byItem.entries()].map(([key, value]) => ({ label: costLabel(key), value }))
   const parts = [
-    barChart({ x: 70, y: 130, width: 860, height: 240, values }),
+    barChart({ x: 70, y: 130, width: 860, height: 240, values, unit: '元' }),
     label(80, 420, `后续应付 ${money(result.cost.future_payable.value)}；净支出 ${money(result.cost.net_spend.value)}；已付 ${money(result.cost.paid_total.value)}；行动清单 ${result.action_list.length} 项。`, 12),
     label(80, 446, '口径：已确认方案分支中，按费用项目汇总的后续应付（R007、D75）；不含保护性预留与机动预留。', 12, 'start', 'normal', MUTED),
   ]
@@ -420,7 +426,7 @@ function candidateCompare(): Figure {
     note: candidate.rank !== null ? `Top${candidate.rank}` : candidate.feasible ? '' : '排除',
   }))
   const parts = [
-    barChart({ x: 90, y: 130, width: 820, height: 250, values }),
+    barChart({ x: 90, y: 130, width: 820, height: 250, values, unit: '元' }),
     label(90, 420, `评估 ${result.optimization.evaluated_count} 个、确定排除 ${result.optimization.excluded_count} 个、待确认 ${result.optimization.pending_count} 个；K = ${result.optimization.top_k}。`, 12),
     label(90, 446, '口径：净支出取候选分支 M4 的 P+F−R；同价按编号升序，末位同价不突破 K（R016、D15）。', 12, 'start', 'normal', MUTED),
   ]
@@ -482,7 +488,7 @@ function planStateTree(): Figure {
   parts.push(label(80, 300, '计划状态取值（rules.md §11.1；优先级由高到低）', 13, 'start', 'bold'))
   states.forEach((state, index) => parts.push(label(100, 330 + index * 24, `· ${state}`, 12)))
   parts.push(label(60, 480, '三类状态分别保存，不互相覆盖；取消与暂停不改底层检查口径（D19、D47）。', 12, 'start', 'normal', MUTED))
-  return { name: 'fig_plan_state_tree', title: '三类状态与计划状态取值', sources: ['docs/rules.md §11'], note: '§11.1—§11.3', text: frame('图 10 三类状态与计划状态取值', '计划、优化、确认状态分开保存', parts.join('\n')) }
+  return { name: 'fig_plan_state_tree', title: '三类状态与计划状态取值', sources: ['docs/rules.md §11'], note: '§11.1—§11.3', text: frame('图 10 三类状态与计划状态取值', '计划、优化、确认状态分开保存', parts.join('\n'), 560, STRUCTURE_FOOTER) }
 }
 
 function confirmFlow(): Figure {
@@ -575,7 +581,7 @@ function forecastStatus(): Figure {
     label(40, 320, '未确认的预测不进入候选比较（D14、R020 第9条）；历史不足时如实显示“历史不足”，不补造参考价。', 12),
     label(40, 346, '口径：样本门槛 14、回测门槛 5，均取 DEMO-CFG-1；导出结果来自 book/data/cases/cB_topk.json。', 12, 'start', 'normal', MUTED),
   ]
-  return { name: 'fig_forecast_status', title: '预测条目状态', sources: ['book/data/cases/cB_topk.json'], note: 'D24、D76', text: frame('图 13 预测条目的状态与门槛', '每条预测的样本、步长与可用性', parts.join('\n')) }
+  return { name: 'fig_forecast_status', title: '预测条目状态', sources: ['book/data/cases/cB_topk.json'], note: 'D24、D76', text: frame('图 13 预测条目的状态与门槛', '每条预测的样本、步长与可用性', parts.join('\n'), 560, '模拟案例导出结果｜10 列字段与 ResultCore.forecasts[] 一一对应', 1200) }
 }
 
 function scenarioFigure(): Figure {
@@ -1175,7 +1181,7 @@ function orderByReadingOrder(figures: readonly Figure[]): Figure[] {
 }
 
 function indexMarkdown(figures: readonly Figure[]): string {
-  const lines = ['# 图表索引', '', '全部图由 `pnpm figures` 从 `book/data` 的正式导出结果生成；数值图不含手工填写的数字。图号按正文出现顺序编排。', '', '| 编号 | 图名 | 文件名 | 数据来源 | 口径说明 |', '| --- | --- | --- | --- | --- |']
+  const lines = ['# 图表索引', '', '全书 23 张 SVG 图由 `pnpm figures` 的可复现脚本绘制，4 张原型截图为界面实拍。但**数据来源分五类，不能一律写成“由引擎导出结果自动生成”**：', '', '- **引擎导出结果**（`book/data` 的正式导出）：图 3—图 8、图 13、图 14、图 20；', '- **规则条文与代码结构**（人工按 `docs/rules.md` 与 `src/` 绘制，结构为人工整理）：图 2、图 9—图 12、图 18、图 21、图 23；', '- **问卷统计**（`docs/_work/survey/`，受访者自报，非引擎输出）：图 1；', '- **外部公开资料**（协会、统计部门、竞品官方页面，非本项目数据）：图 15、图 16；', '- **人工整理的商业分析**（不含预测数值）：图 17。', '', '原型截图 4 张标注“模拟数据”，不由脚本绘制。下表逐行列出来源与口径。图号按正文出现顺序编排。', '', '| 编号 | 图名 | 文件名 | 数据来源 | 口径说明 |', '| --- | --- | --- | --- | --- |']
   figures.forEach((figure, index) => {
     lines.push(`| 图 ${index + 1} | ${figure.title} | ${figure.name}.svg | ${figure.sources.join('<br>')} | ${figure.note} |`)
   })

@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" width="1000" height="560" role="img" aria-label="图 22 预测条目的状态与门槛">
-<rect x="0" y="0" width="1000" height="560" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="1.2"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" width="1200" height="560" role="img" aria-label="图 22 预测条目的状态与门槛">
+<rect x="0" y="0" width="1200" height="560" rx="0" fill="#ffffff" stroke="#ffffff" stroke-width="1.2"/>
 <text x="40" y="46" font-size="22" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="bold" fill="#1f2937">图 22 预测条目的状态与门槛</text>
 <text x="40" y="72" font-size="13" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">每条预测的样本、步长与可用性</text>
 <rect x="40" y="120" width="130" height="26" rx="3" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.2"/>
@@ -44,5 +44,5 @@
 <text x="1108" y="163" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">未确认</text>
 <text x="40" y="320" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#1f2937">未确认的预测不进入候选比较（D14、R020 第9条）；历史不足时如实显示“历史不足”，不补造参考价。</text>
 <text x="40" y="346" font-size="12" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">口径：样本门槛 14、回测门槛 5，均取 DEMO-CFG-1；导出结果来自 book/data/cases/cB_topk.json。</text>
-<text x="40" y="544" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">模拟数据｜数据来源见 book/figures/index.md</text>
+<text x="40" y="544" font-size="11" font-family="'Noto Sans CJK SC','Microsoft YaHei',sans-serif" text-anchor="start" font-weight="normal" fill="#6b7280">模拟案例导出结果｜10 列字段与 ResultCore.forecasts[] 一一对应</text>
 </svg>

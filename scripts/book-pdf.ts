@@ -270,7 +270,7 @@ const CSS = String.raw`
 html, body { margin: 0; padding: 0; background: #fff }
 body {
   font-family: "Noto Serif SC", "Source Han Serif SC", "Songti SC", SimSun, serif;
-  font-size: 10.2pt; line-height: 1.72; color: #1c2226;
+  font-size: 10pt; line-height: 1.6; color: #1c2226;
   /* 中文整行本来就会被填满；用 justify 时，含长路径/代码的行会被拉成稀字距，
      因此正文改为左对齐，避免出现跨行大间隙。 */
   text-align: left;
@@ -278,11 +278,11 @@ body {
 }
 .page { position: relative; width: 210mm; height: 297mm; overflow: hidden; background: #fff; page-break-after: always; break-after: page }
 .page:last-child { page-break-after: auto; break-after: auto }
-.page-head, .page-foot { position: absolute; left: 20mm; right: 20mm; display: flex; font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif; font-size: 7.8pt; color: #7c8794 }
-.page-head { top: 10.5mm; justify-content: space-between; gap: 8mm }
+.page-head, .page-foot { position: absolute; left: 18mm; right: 18mm; display: flex; font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif; font-size: 7.6pt; color: #7c8794 }
+.page-head { top: 9.5mm; justify-content: space-between; gap: 8mm }
 .page-head .hr { text-align: right; color: #4f6b5d; overflow: hidden; white-space: nowrap }
-.page-foot { bottom: 9mm; justify-content: space-between; align-items: baseline; border-top: .4pt solid #d7dfda; padding-top: 2.2mm }
-.page-body { position: absolute; top: 21mm; left: 20mm; right: 20mm; bottom: 19mm; overflow: hidden }
+.page-foot { bottom: 8mm; justify-content: space-between; align-items: baseline; border-top: .4pt solid #d7dfda; padding-top: 2mm }
+.page-body { position: absolute; top: 18.5mm; left: 18mm; right: 18mm; bottom: 15.5mm; overflow: hidden }
 .page-body > *:first-child { margin-top: 0 }
 .page-num { font-variant-numeric: tabular-nums; color: #46505a }
 .cover { position: absolute; inset: 0; padding: 36mm 24mm 20mm; display: flex; flex-direction: column }
@@ -293,40 +293,40 @@ body {
 .cover .meta { font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif; font-size: 10.2pt; line-height: 2; color: #22302a; text-align: left }
 .cover .meta b { color: #0b3d2c; font-weight: 600 }
 .cover .note { margin-top: auto; font-size: 8.3pt; line-height: 1.66; color: #5d6a63; border-top: .5pt solid #cfdad4; padding-top: 4mm; text-align: left }
-.toc-title { font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif; font-size: 17pt; font-weight: 800; color: #0b3d2c; margin: 0 0 5mm }
-.toc-row { display: flex; align-items: baseline; gap: 2mm; font-size: 10pt; line-height: 1.9 }
-.toc-row.lvl3 { font-size: 8.9pt; color: #44514b; padding-left: 7mm; line-height: 1.7 }
+.toc-title { font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif; font-size: 17pt; font-weight: 800; color: #0b3d2c; margin: 0 0 4mm }
+.toc-row { display: flex; align-items: baseline; gap: 2mm; font-size: 9.6pt; line-height: 1.62 }
+.toc-row.lvl3 { font-size: 8.6pt; color: #44514b; padding-left: 7mm; line-height: 1.46 }
 .toc-row .t { max-width: 88% }
 .toc-row .dots { flex: 1; border-bottom: .5pt dotted #b9c4be; transform: translateY(-2px) }
-.toc-row .num { font-variant-numeric: tabular-nums; color: #33403a; font-family: "Noto Sans SC","Microsoft YaHei",sans-serif; font-size: 9pt }
+.toc-row .num { font-variant-numeric: tabular-nums; color: #33403a; font-family: "Noto Sans SC","Microsoft YaHei",sans-serif; font-size: 8.8pt }
 .toc-row.lvl2 { font-weight: 700; color: #10382b; font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif }
 .toc-group { position: relative; width: 100% }
-h2.chap { font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif; font-size: 15.5pt; font-weight: 800; color: #0b3d2c;
-  margin: 0 0 5mm; padding: 0 0 2.6mm; border-bottom: 1.1pt solid #0d6b4f; line-height: 1.34; text-align: left }
-h2.chap .pre { display: block; font-size: 8.4pt; letter-spacing: .2em; color: #4d7a68; font-weight: 600; margin-bottom: 1.4mm }
-h3 { font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif; font-size: 11.5pt; font-weight: 700; color: #123f30;
-  margin: 5.2mm 0 2.2mm; line-height: 1.45; text-align: left; padding-left: 2.6mm; border-left: 2.4pt solid #4f9a7c }
-h4 { font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif; font-size: 10.3pt; font-weight: 700; color: #1c4b3a; margin: 3.4mm 0 1.4mm; text-align: left }
-p { margin: 0 0 2.4mm; orphans: 2; widows: 2 }
+h2.chap { font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif; font-size: 15pt; font-weight: 800; color: #0b3d2c;
+  margin: 0 0 4.2mm; padding: 0 0 2.4mm; border-bottom: 1.1pt solid #0d6b4f; line-height: 1.34; text-align: left }
+h2.chap .pre { display: block; font-size: 8.4pt; letter-spacing: .2em; color: #4d7a68; font-weight: 600; margin-bottom: 1.2mm }
+h3 { font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif; font-size: 11.2pt; font-weight: 700; color: #123f30;
+  margin: 4.2mm 0 1.8mm; line-height: 1.42; text-align: left; padding-left: 2.6mm; border-left: 2.4pt solid #4f9a7c }
+h4 { font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif; font-size: 10.1pt; font-weight: 700; color: #1c4b3a; margin: 3mm 0 1.2mm; text-align: left }
+p { margin: 0 0 2mm; orphans: 2; widows: 2 }
 strong { font-weight: 700; color: #0f2f24 }
-code { font-family: "Cascadia Mono", Consolas, "Noto Sans SC", monospace; font-size: 8.7pt; background: #f2f6f4; border: .4pt solid #dde6e1; border-radius: 1mm; padding: 0 .7mm; color: #164b38 }
-pre { margin: 0 0 2.6mm; background: #f5f8f6; border: .5pt solid #dbe5df; border-left: 2.2pt solid #4f9a7c; border-radius: 1mm; padding: 2.4mm 3mm; white-space: pre-wrap; word-break: break-word }
-pre code { background: none; border: none; padding: 0; font-size: 8.4pt; line-height: 1.55 }
-ul, ol { margin: 0 0 2.4mm; padding-left: 6mm }
-li { margin: 0 0 1.2mm; line-height: 1.66 }
-blockquote { margin: 0 0 2.6mm; padding: 2.2mm 3.2mm; background: #f4f8f6; border-left: 2.2pt solid #7fb59c; color: #23453a; font-size: 9.5pt }
-table { width: 100%; border-collapse: collapse; margin: 0 0 2.8mm; font-size: 8.4pt; line-height: 1.48; font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif }
-th, td { border: .4pt solid #cdd9d3; padding: 1.4mm 1.7mm; vertical-align: top; text-align: left; word-break: break-word }
+code { font-family: "Cascadia Mono", Consolas, "Noto Sans SC", monospace; font-size: 8.5pt; background: #f2f6f4; border: .4pt solid #dde6e1; border-radius: 1mm; padding: 0 .7mm; color: #164b38 }
+pre { margin: 0 0 2.2mm; background: #f5f8f6; border: .5pt solid #dbe5df; border-left: 2.2pt solid #4f9a7c; border-radius: 1mm; padding: 2mm 2.6mm; white-space: pre-wrap; word-break: break-word }
+pre code { background: none; border: none; padding: 0; font-size: 8.2pt; line-height: 1.5 }
+ul, ol { margin: 0 0 2mm; padding-left: 6mm }
+li { margin: 0 0 .9mm; line-height: 1.56 }
+blockquote { margin: 0 0 2.2mm; padding: 1.8mm 3mm; background: #f4f8f6; border-left: 2.2pt solid #7fb59c; color: #23453a; font-size: 9.3pt }
+table { width: 100%; border-collapse: collapse; margin: 0 0 2.4mm; font-size: 8.2pt; line-height: 1.44; font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif }
+th, td { border: .4pt solid #cdd9d3; padding: 1.1mm 1.5mm; vertical-align: top; text-align: left; word-break: break-word }
 th { background: #eaf2ee; color: #10382b; font-weight: 700 }
 tr:nth-child(even) td { background: #fafcfb }
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums }
 td.code-id, th.code-id { white-space: nowrap; font-variant-numeric: tabular-nums }
-figure { margin: 0 0 2mm; text-align: center }
-figure img { display: block; margin: 0 auto; max-width: 100%; max-height: 180mm; object-fit: contain }
+figure { margin: 0 0 1.6mm; text-align: center }
+figure img { display: block; margin: 0 auto; max-width: 100%; max-height: 158mm; object-fit: contain }
 figure img.shot { border: .4pt solid #d5ded9 }
-figcaption { margin-top: 1.4mm; font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif; font-size: 8.1pt; color: #5c6b64; line-height: 1.5; text-align: center }
-.notes { margin-top: 3.4mm; border-top: .5pt solid #d3ded8; padding-top: 1.8mm; font-size: 7.8pt; line-height: 1.52; color: #55635c; font-family: "Noto Sans SC","Microsoft YaHei",sans-serif }
-.notes .item { display: flex; gap: 1.5mm; margin-bottom: .9mm }
+figcaption { margin-top: 1.2mm; font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif; font-size: 8pt; color: #5c6b64; line-height: 1.46; text-align: center }
+.notes { margin-top: 2.8mm; border-top: .5pt solid #d3ded8; padding-top: 1.6mm; font-size: 7.5pt; line-height: 1.46; color: #55635c; font-family: "Noto Sans SC","Microsoft YaHei",sans-serif }
+.notes .item { display: flex; gap: 1.5mm; margin-bottom: .7mm }
 .notes .no { color: #0d6b4f; font-weight: 700; min-width: 4mm }
 sup.fnref { font-size: 6.4pt; vertical-align: super; line-height: 0; color: #0d6b4f; font-weight: 700 }
 sup.fnref a { text-decoration: none; color: inherit }
@@ -369,7 +369,7 @@ function renderBlock(block: Block, notes: Map<string, number>): string {
       // 图表索引表列多且内容长，固定列宽比自动分配更整齐
       const isFigureIndex = block.header.some((text) => text.includes('文件名'))
       const colgroup = isFigureIndex
-        ? '<colgroup><col style="width:7%"><col style="width:18%"><col style="width:19%"><col style="width:30%"><col style="width:26%"></colgroup>'
+        ? '<colgroup><col style="width:6%"><col style="width:16%"><col style="width:24%"><col style="width:28%"><col style="width:26%"></colgroup>'
         : ''
       const tableStyle = isFigureIndex ? ' style="table-layout:fixed"' : ''
       return `<table${tableStyle}>${colgroup}<thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`
@@ -470,9 +470,9 @@ async function renderWithBrowser(
 <meta name="description" content="${esc(subtitle)}">
 <script>window.__name = function (fn) { return fn }</script>
 <style>${CSS}</style></head><body>
-<div id="flow" style="position:absolute;left:-6000px;top:0;width:170mm">${bodyHtml}</div>
+<div id="flow" style="position:absolute;left:-6000px;top:0;width:174mm">${bodyHtml}</div>
 <div id="stage"></div>
-<div id="measure" style="position:absolute;left:-6000px;top:0;width:170mm"></div>
+<div id="measure" style="position:absolute;left:-6000px;top:0;width:174mm"></div>
 </body></html>`,
   )
   trace(`渲染源已写入 ${BUILD_DIR}/.pdf-render.html：${sections.length} 节、${imageCount} 张图`)

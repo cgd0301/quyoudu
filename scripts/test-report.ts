@@ -184,7 +184,14 @@ export type ReportInput = {
  * 未运行时如实写未执行，不把已通过的端到端列成“未完成”。
  */
 export function e2eRemaining(e2e: GateRun): string {
-  if (e2e.status === '通过') return `端到端已运行并通过（${e2e.detail}），UI 层 21 条子用例中 13 条有对应用例、3 条仅有补充断言、5 条未覆盖，界面不计为整体通过`
+  if (e2e.status === '通过') {
+    // e2e.detail 已含"UI 层 21 条子用例中 13 条…"，此处不得重复同一句（旧版曾连写两次）
+    return (
+      `UI 层未整体通过：${e2e.detail}。5 条未覆盖为 T001-03、T009-06、T013-01、T020-02、T020-04` +
+      '（其中 T020-02／T020-04 是价格预测的回测指标展示，界面没有对应展示位置）。' +
+      '**界面因此不计为整体通过**，补齐属 S1 阶段（主文 8.3 节）。'
+    )
+  }
   return `端到端：${e2e.detail}`
 }
 
@@ -237,14 +244,28 @@ export function renderAppendix(input: ReportInput): string {
     `追溯表共 ${input.traceRows} 条数据行：通过 ${input.traceCounts.pass}、部分覆盖 ${input.traceCounts.partial}、已执行未通过 ${input.traceCounts.failed}、待执行 ${input.traceCounts.pending}（含父行）。`,
   )
   lines.push('')
-  lines.push('## B.3 功能实现状态表', '')
-  lines.push('按“规则已确认／已实现／测试通过／真实用户验证”四级标注；真实用户验证一栏为“未做规则级验证”：30 位受访者（n=30）的问卷只支持样本内需求与功能偏好，未验证任何单条规则的实际效果（见 `docs/_work/survey/findings.md`）。')
+  const testedRules = input.rules.filter((row) => row.tested).map((row) => row.rule)
+  const implementedRules = input.rules.filter((row) => row.implemented).length
+  const thinnest = input.rules.reduce((worst, row) =>
+    row.pending + row.partial > worst.pending + worst.partial ? row : worst,
+  )
+  lines.push('## B.3 功能实现状态', '')
+  lines.push(
+    '按“规则已确认／已实现／测试通过／真实用户验证”四级标注。**逐规则的取值见 B.2；这里只给汇总结论，不再重复一张 20 行、四列取值几乎全同的表**：',
+  )
   lines.push('')
-  lines.push('| 规则 | 规则已确认 | 已实现 | 测试通过 | 真实用户验证 |')
-  lines.push('| --- | --- | --- | --- | --- |')
-  for (const row of input.rules) {
-    lines.push(`| ${row.rule} | 是 | ${row.implemented ? '是' : '否'} | ${row.tested ? '是' : '否'} | 未做规则级验证 |`)
-  }
+  lines.push(`- **规则已确认**：${input.rules.length} 条规则（R001—R020）全部写入 \`docs/rules.md\`；`)
+  lines.push(`- **已实现**：${implementedRules}／${input.rules.length} 条有实现证据（M1—M9 代码模块）；`)
+  lines.push(
+    testedRules.length === 0
+      ? '- **测试通过**：没有任何一条规则的“测试通过”为“是”；'
+      : `- **测试通过**：${testedRules.length} 条（${testedRules.join('、')}）的“测试通过”为“是”；其余 ${input.rules.length - testedRules.length} 条仍有部分覆盖或待执行项；覆盖最薄的是 ${thinnest.rule}（通过 ${thinnest.pass}、部分覆盖 ${thinnest.partial}、待执行 ${thinnest.pending}）；`,
+  )
+  lines.push(
+    '- **真实用户验证**：**全部未做**。30 位受访者的问卷只支持样本内需求与功能偏好，未验证任何单条规则的实际效果（`docs/_work/survey/findings.md`）。',
+  )
+  lines.push('')
+  lines.push('确需逐规则核对时以 `docs/traceability.csv` 与 B.2 为准。')
   lines.push('')
   lines.push('## B.4 未完成的检查及原因', '')
   lines.push(`- ${e2eRemaining(input.e2e)}`)
